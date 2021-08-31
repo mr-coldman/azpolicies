@@ -1,0 +1,62 @@
+{
+ "properties": {
+  "displayName": "SQL 데이터베이스에 투명한 데이터 암호화를 사용하도록 설정해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "미사용 데이터를 보호하고 규정 준수 요구 사항을 충족하려면 투명한 데이터 암호화를 사용하도록 설정해야 합니다.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "SQL"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Sql/servers/databases"
+     },
+     {
+      "field": "name",
+      "notEquals": "master"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Sql/servers/databases/transparentDataEncryption",
+     "name": "current",
+     "existenceCondition": {
+      "anyOf": [
+       {
+        "field": "Microsoft.Sql/transparentDataEncryption.status",
+        "equals": "enabled"
+       },
+       {
+        "field": "Microsoft.Sql/servers/databases/transparentDataEncryption/state",
+        "equals": "enabled"
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/17k78e20-9358-41c9-923c-fb736d382a12",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "17k78e20-9358-41c9-923c-fb736d382a12"
+}

@@ -1,0 +1,48 @@
+{
+ "properties": {
+  "displayName": "리소스 그룹에 태그 및 값 필요",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "리소스 그룹에 필요한 태그와 값을 적용합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Tags"
+  },
+  "parameters": {
+   "tagName": {
+    "type": "String",
+    "metadata": {
+     "displayName": "태그 이름",
+     "description": "태그의 이름(예: 'environment')"
+    }
+   },
+   "tagValue": {
+    "type": "String",
+    "metadata": {
+     "displayName": "태그 값",
+     "description": "태그의 값(예: 'production')"
+    }
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+     },
+     {
+      "field": "[concat('tags[', parameters('tagName'), ']')]",
+      "notEquals": "[parameters('tagValue')]"
+     }
+    ]
+   },
+   "then": {
+    "effect": "deny"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/8ce3da23-7156-49e4-b145-24f95f9dcb46",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "8ce3da23-7156-49e4-b145-24f95f9dcb46"
+}

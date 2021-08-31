@@ -1,0 +1,197 @@
+{
+ "properties": {
+  "displayName": "Kubernetes 클러스터 Pod 및 컨테이너는 승인된 사용자 및 그룹 ID로만 실행해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Microsoft.Kubernetes.Data",
+  "description": "이 정책은 Pod 및 컨테이너가 Kubernetes 클러스터에서 실행하는 데 사용할 수 있는 사용자, 주 그룹, 보조 그룹 및 파일 시스템 그룹 ID를 제어합니다. 이 정책은 일반적으로 AKS(Azure Kubernetes Service)에 사용할 수 있으며, AKS Engine 및 Azure Arc 사용 Kubernetes의 미리 보기에 사용할 수 있습니다. 이 정책 사용에 대한 지침은 https://aka.ms/kubepolicydoc를 참조하세요.",
+  "metadata": {
+   "version": "4.0.0",
+   "category": "Kubernetes"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "'감사'는 비준수 리소스 생성이나 업데이트를 허용하지만 리소스에 비준수로 플래그 지정합니다. '거부'는 비준수 리소스 생성이나 업데이트를 차단합니다. '사용 안 함'은 정책을 끕니다."
+    },
+    "allowedValues": [
+     "audit",
+     "deny",
+     "disabled"
+    ],
+    "defaultValue": "audit"
+   },
+   "excludedNamespaces": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "네임스페이스 제외",
+     "description": "정책 평가에서 제외할 Kubernetes 네임스페이스의 목록입니다."
+    },
+    "defaultValue": [
+     "kube-system",
+     "gatekeeper-system",
+     "azure-arc"
+    ]
+   },
+   "namespaces": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "네임스페이스 포함",
+     "description": "정책 평가에만 포함할 Kubernetes 네임스페이스의 목록입니다. 빈 목록은 정책이 모든 네임스페이스의 모든 리소스에 적용됨을 의미합니다."
+    },
+    "defaultValue": []
+   },
+   "labelSelector": {
+    "type": "Object",
+    "metadata": {
+     "displayName": "Kubernetes 레이블 선택기",
+     "description": "정책 평가를 위해 Kubernetes 리소스를 선택하는 레이블 쿼리입니다. 빈 레이블 선택기는 모든 Kubernetes 리소스와 일치합니다."
+    },
+    "defaultValue": {}
+   },
+   "runAsUserRule": {
+    "type": "String",
+    "metadata": {
+     "displayName": "사용자 규칙으로 실행",
+     "description": "컨테이너가 실행할 수 있는 'RunAsUser' 규칙입니다."
+    },
+    "allowedValues": [
+     "MustRunAs",
+     "MustRunAsNonRoot",
+     "RunAsAny"
+    ],
+    "defaultValue": "MustRunAsNonRoot"
+   },
+   "runAsUserRanges": {
+    "type": "Object",
+    "metadata": {
+     "displayName": "허용된 사용자 ID 범위",
+     "description": "컨테이너에서 사용할 수 있는 사용자 ID 범위입니다."
+    },
+    "defaultValue": {
+     "ranges": []
+    }
+   },
+   "runAsGroupRule": {
+    "type": "String",
+    "metadata": {
+     "displayName": "그룹 규칙으로 실행",
+     "description": "컨테이너가 실행할 수 있는 'RunAsGroup' 규칙입니다."
+    },
+    "allowedValues": [
+     "MustRunAs",
+     "MayRunAs",
+     "RunAsAny"
+    ],
+    "defaultValue": "RunAsAny"
+   },
+   "runAsGroupRanges": {
+    "type": "Object",
+    "metadata": {
+     "displayName": "허용된 그룹 ID 범위",
+     "description": "컨테이너에서 사용할 수 있는 그룹 ID 범위입니다."
+    },
+    "defaultValue": {
+     "ranges": []
+    }
+   },
+   "supplementalGroupsRule": {
+    "type": "String",
+    "metadata": {
+     "displayName": "보조 그룹 규칙",
+     "description": "컨테이너가 실행할 수 있는 'SupplementalGroups' 규칙입니다."
+    },
+    "allowedValues": [
+     "MustRunAs",
+     "MayRunAs",
+     "RunAsAny"
+    ],
+    "defaultValue": "RunAsAny"
+   },
+   "supplementalGroupsRanges": {
+    "type": "Object",
+    "metadata": {
+     "displayName": "허용된 보조 그룹 ID 범위",
+     "description": "컨테이너에서 사용할 수 있는 보조 그룹 ID 범위입니다."
+    },
+    "defaultValue": {
+     "ranges": []
+    }
+   },
+   "fsGroupRule": {
+    "type": "String",
+    "metadata": {
+     "displayName": "파일 시스템 그룹 규칙",
+     "description": "컨테이너에서 실행할 수 있는 'FSGroup' 규칙입니다."
+    },
+    "allowedValues": [
+     "MustRunAs",
+     "MayRunAs",
+     "RunAsAny"
+    ],
+    "defaultValue": "RunAsAny"
+   },
+   "fsGroupRanges": {
+    "type": "Object",
+    "metadata": {
+     "displayName": "허용된 파일 시스템 그룹 ID 범위",
+     "description": "Pod에서 사용할 수 있는 파일 시스템 그룹 범위입니다."
+    },
+    "defaultValue": {
+     "ranges": []
+    }
+   },
+   "excludedContainers": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "Containers exclusions",
+     "description": "The list of InitContainers and Containers to exclude from policy evaluation. The identify is the name of container. Use an empty list to apply this policy to all containers in all namespaces."
+    },
+    "defaultValue": []
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "in": [
+     "AKS Engine",
+     "Microsoft.Kubernetes/connectedClusters",
+     "Microsoft.ContainerService/managedClusters"
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "constraintTemplate": "https://store.policy.core.windows.net/kubernetes/allowed-users-groups/v2/template.yaml",
+     "constraint": "https://store.policy.core.windows.net/kubernetes/allowed-users-groups/v2/constraint.yaml",
+     "excludedNamespaces": "[parameters('excludedNamespaces')]",
+     "namespaces": "[parameters('namespaces')]",
+     "labelSelector": "[parameters('labelSelector')]",
+     "values": {
+      "runAsUser": {
+       "rule": "[parameters('runAsUserRule')]",
+       "ranges": "[parameters('runAsUserRanges').ranges]"
+      },
+      "runAsGroup": {
+       "rule": "[parameters('runAsGroupRule')]",
+       "ranges": "[parameters('runAsGroupRanges').ranges]"
+      },
+      "supplementalGroups": {
+       "rule": "[parameters('supplementalGroupsRule')]",
+       "ranges": "[parameters('supplementalGroupsRanges').ranges]"
+      },
+      "fsGroup": {
+       "rule": "[parameters('fsGroupRule')]",
+       "ranges": "[parameters('fsGroupRanges').ranges]"
+      },
+      "excludedContainers": "[parameters('excludedContainers')]"
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/f06ddb64-5fa3-4b77-b166-acb36f7f6042",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "f06ddb64-5fa3-4b77-b166-acb36f7f6042"
+}

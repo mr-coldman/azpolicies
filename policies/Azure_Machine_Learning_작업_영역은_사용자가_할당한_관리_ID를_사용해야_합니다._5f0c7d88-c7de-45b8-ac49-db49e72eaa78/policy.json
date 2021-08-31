@@ -1,0 +1,55 @@
+{
+ "properties": {
+  "displayName": "Azure Machine Learning 작업 영역은 사용자가 할당한 관리 ID를 사용해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "사용자 할당 관리 ID를 사용하여 Azure ML 작업 영역 및 연결된 리소스, Azure Container Registry, KeyVault, Storage 및 App Insights에 대한 액세스를 관리합니다. 기본적으로 시스템이 할당한 관리 ID는 Azure ML 작업 영역에서 연결된 리소스에 액세스하는 데 사용됩니다. 사용자가 할당한 관리 ID를 사용하여 Azure 리소스로 ID를 만들고 해당 ID의 수명 주기를 유지 관리할 수 있습니다. https://docs.microsoft.com/azure/machine-learning/how-to-use-managed-identities?tabs=python에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Machine Learning"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.MachineLearningServices/workspaces"
+     },
+     {
+      "anyOf": [
+       {
+        "field": "Microsoft.MachineLearningServices/workspaces/primaryUserAssignedIdentity",
+        "exists": false
+       },
+       {
+        "field": "Microsoft.MachineLearningServices/workspaces/primaryUserAssignedIdentity",
+        "equals": ""
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/5f0c7d88-c7de-45b8-ac49-db49e72eaa78",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "5f0c7d88-c7de-45b8-ac49-db49e72eaa78"
+}

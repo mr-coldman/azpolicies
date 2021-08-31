@@ -1,0 +1,49 @@
+{
+ "properties": {
+  "displayName": "Cloud Services(확장 지원) 역할 인스턴스에 시스템 업데이트가 설치되어 있어야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "최신 보안 및 중요 업데이트가 설치되어 있는지 확인하여 Cloud Service(확장 지원) 역할 인스턴스를 보호합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Security Center"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Compute/cloudServices"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Security/assessments",
+     "name": "bd20bd91-aaf1-7f14-b6e4-866de2f43146",
+     "existenceCondition": {
+      "field": "Microsoft.Security/assessments/status.code",
+      "in": [
+       "NotApplicable",
+       "Healthy"
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/4df26ba8-026d-45b0-9521-bffa44d741d2",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "4df26ba8-026d-45b0-9521-bffa44d741d2"
+}

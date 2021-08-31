@@ -1,0 +1,47 @@
+{
+ "properties": {
+  "displayName": "Azure Synapse 작업 영역의 관리형 작업 영역 가상 네트워크를 사용하도록 설정해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "관리형 작업 영역 가상 네트워크를 사용하도록 설정하면 작업 영역이 다른 작업 영역에서 격리된 네트워크가 됩니다. 이 가상 네트워크에 배포된 데이터 통합 및 Spark 리소스도 Spark 활동에 대한 사용자 수준 격리를 제공합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Synapse"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Synapse/workspaces"
+     },
+     {
+      "field": "Microsoft.Synapse/workspaces/managedVirtualNetwork",
+      "notEquals": "default"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/2d9dbfa3-927b-4cf0-9d0f-08747f971650",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "2d9dbfa3-927b-4cf0-9d0f-08747f971650"
+}

@@ -1,0 +1,45 @@
+{
+ "properties": {
+  "displayName": "PostgreSQL 서버는 가상 네트워크 서비스 엔드포인트를 사용해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "가상 네트워크 기반 방화벽 규칙은 트래픽이 Azure 경계 내에 유지되도록 하면서 특정 서브넷에서 Azure Database for PostgreSQL로 트래픽이 흐르도록 하는 데 사용됩니다. 이 정책은 Azure Database for PostgreSQL에 사용 중인 가상 네트워크 서비스 엔드포인트가 있는지를 감사하는 방법을 제공합니다.",
+  "metadata": {
+   "version": "1.0.2",
+   "category": "SQL"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.DBforPostgreSQL/servers"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.DBforPostgreSQL/servers/virtualNetworkRules",
+     "existenceCondition": {
+      "field": "Microsoft.DBforPostgreSQL/servers/virtualNetworkRules/virtualNetworkSubnetId",
+      "exists": "true"
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/3c14b034-bcb6-4905-94e7-5b8e98a47b65",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "3c14b034-bcb6-4905-94e7-5b8e98a47b65"
+}

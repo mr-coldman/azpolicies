@@ -1,0 +1,59 @@
+{
+ "properties": {
+  "displayName": "WAF(웹 애플리케이션 방화벽)는 Azure Front Door Service에 대해 지정된 모드를 사용해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Front Door Service에 대한 모든 웹 애플리케이션 방화벽 정책에서 '검색' 또는 '금지' 모드가 활성화되도록 합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Network"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   },
+   "modeRequirement": {
+    "type": "String",
+    "metadata": {
+     "displayName": "모드 요구 사항",
+     "description": "모든 WAF 정책에 필요한 모드"
+    },
+    "allowedValues": [
+     "Prevention",
+     "Detection"
+    ],
+    "defaultValue": "Detection"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Network/frontdoorwebapplicationfirewallpolicies"
+     },
+     {
+      "field": "Microsoft.Network/frontdoorWebApplicationFirewallPolicies/policySettings.mode",
+      "notEquals": "[parameters('modeRequirement')]"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/425bea59-a659-4cbb-8d31-34499bd030b8",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "425bea59-a659-4cbb-8d31-34499bd030b8"
+}

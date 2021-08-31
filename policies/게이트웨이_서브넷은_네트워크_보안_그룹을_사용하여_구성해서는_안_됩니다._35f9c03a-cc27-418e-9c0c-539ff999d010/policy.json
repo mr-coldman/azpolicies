@@ -1,0 +1,37 @@
+{
+ "properties": {
+  "displayName": "게이트웨이 서브넷은 네트워크 보안 그룹을 사용하여 구성해서는 안 됩니다.",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "이 정책은 게이트웨이 서브넷이 네트워크 보안 그룹으로 구성되는 경우 거부합니다. 게이트웨이 서브넷에 네트워크 보안 그룹을 할당하면 게이트웨이가 작동을 중지합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Network"
+  },
+  "parameters": {},
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Network/virtualNetworks/subnets"
+     },
+     {
+      "field": "name",
+      "equals": "GatewaySubnet"
+     },
+     {
+      "field": "Microsoft.Network/virtualNetworks/subnets/networkSecurityGroup.id",
+      "exists": "true"
+     }
+    ]
+   },
+   "then": {
+    "effect": "deny"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/35f9c03a-cc27-418e-9c0c-539ff999d010",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "35f9c03a-cc27-418e-9c0c-539ff999d010"
+}

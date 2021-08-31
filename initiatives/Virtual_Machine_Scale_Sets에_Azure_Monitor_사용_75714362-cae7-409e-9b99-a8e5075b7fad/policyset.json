@@ -1,0 +1,108 @@
+{
+ "properties": {
+  "displayName": "Virtual Machine Scale Sets에 Azure Monitor 사용",
+  "policyType": "BuiltIn",
+  "description": "지정된 범위(관리 그룹, 구독 또는 리소스 그룹)에서 Virtual Machine Scale Sets에 대해 Azure Monitor를 사용하도록 설정합니다. Log Analytics 작업 영역을 매개 변수로 사용합니다. 참고: 확장 집합 upgradePolicy가 [수동]으로 설정된 경우 모든 VM에 대해 업그레이드를 호출하여 모든 VM에 확장을 적용해야 합니다. CLI에서 이는 az vmss update-instances가 됩니다.",
+  "metadata": {
+   "version": "1.0.1",
+   "category": "Monitoring"
+  },
+  "parameters": {
+   "logAnalytics_1": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Log Analytics 작업 영역",
+     "description": "드롭다운 목록에서 Log Analytics 작업 영역을 선택하세요. 이 작업 영역이 할당 범위를 벗어나는 경우 정책 할당의 보안 주체 ID에 'Log Analytics Contributor' 권한(또는 이와 비슷한 권한)을 수동으로 부여해야 합니다.",
+     "strongType": "omsWorkspace"
+    }
+   },
+   "listOfImageIdToInclude_windows": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "선택사항: 범위에 추가할 Windows OS를 지원하는 VM 이미지",
+     "description": "예제 값: '/subscriptions/<subscriptionId>/resourceGroups/YourResourceGroup/providers/Microsoft.Compute/images/ContosoStdImage'"
+    },
+    "defaultValue": []
+   },
+   "listOfImageIdToInclude_linux": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "선택사항: 범위에 추가할 Linux OS를 지원하는 VM 이미지",
+     "description": "예제 값: '/subscriptions/<subscriptionId>/resourceGroups/YourResourceGroup/providers/Microsoft.Compute/images/ContosoStdImage'"
+    },
+    "defaultValue": []
+   }
+  },
+  "policyDefinitions": [
+   {
+    "policyDefinitionReferenceId": "LogAnalyticsExtension_Windows_VMSS_Deploy",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/3c1b3629-c8f8-4bf6-862c-037cb9094038",
+    "parameters": {
+     "logAnalytics": {
+      "value": "[parameters('logAnalytics_1')]"
+     },
+     "listOfImageIdToInclude": {
+      "value": "[parameters('listOfImageIdToInclude_windows')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "LogAnalyticsExtension_Linux_VMSS_Deploy",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/5ee9e9ed-0b42-41b7-8c9c-3cfb2fbe2069",
+    "parameters": {
+     "logAnalytics": {
+      "value": "[parameters('logAnalytics_1')]"
+     },
+     "listOfImageIdToInclude": {
+      "value": "[parameters('listOfImageIdToInclude_linux')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "DependencyAgentExtension_Windows_VMSS_Deploy",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/3be22e3b-d919-47aa-805e-8985dbeb0ad9",
+    "parameters": {
+     "listOfImageIdToInclude": {
+      "value": "[parameters('listOfImageIdToInclude_windows')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "DependencyAgentExtension_Linux_VMSS_Deploy",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/765266ab-e40e-4c61-bcb2-5a5275d0b7c0",
+    "parameters": {
+     "listOfImageIdToInclude": {
+      "value": "[parameters('listOfImageIdToInclude_linux')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "LogAnalytics_OSImage_VMSS_Audit",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/5c3bc7b8-a64c-4e08-a9cd-7ff0f31e1138",
+    "parameters": {
+     "listOfImageIdToInclude_windows": {
+      "value": "[parameters('listOfImageIdToInclude_windows')]"
+     },
+     "listOfImageIdToInclude_linux": {
+      "value": "[parameters('listOfImageIdToInclude_linux')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "DependencyAgent_OSImage_VMSS_Audit",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/e2dd799a-a932-4e9d-ac17-d473bc3c6c10",
+    "parameters": {
+     "listOfImageIdToInclude_windows": {
+      "value": "[parameters('listOfImageIdToInclude_windows')]"
+     },
+     "listOfImageIdToInclude_linux": {
+      "value": "[parameters('listOfImageIdToInclude_linux')]"
+     }
+    }
+   }
+  ]
+ },
+ "id": "/providers/Microsoft.Authorization/policySetDefinitions/75714362-cae7-409e-9b99-a8e5075b7fad",
+ "type": "Microsoft.Authorization/policySetDefinitions",
+ "name": "75714362-cae7-409e-9b99-a8e5075b7fad"
+}

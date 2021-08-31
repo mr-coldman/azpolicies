@@ -1,0 +1,47 @@
+{
+ "properties": {
+  "displayName": "관리형 애플리케이션의 애플리케이션 정의는 고객이 제공한 스토리지 계정을 사용해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "규정 또는 준수 요구 사항인 경우 고유한 스토리지 계정을 사용하여 애플리케이션 정의 데이터를 제어합니다. 만드는 동안 제공한 스토리지 계정 내에 관리형 애플리케이션 정의를 저장하도록 선택하여, 규정 준수 요구 사항을 이행하기 위해 위치 및 액세스를 완전히 관리할 수 있습니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Managed Application"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정합니다."
+    },
+    "allowedValues": [
+     "audit",
+     "deny",
+     "disabled"
+    ],
+    "defaultValue": "audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Solutions/applicationDefinitions"
+     },
+     {
+      "field": "Microsoft.Solutions/applicationDefinitions/storageAccountId",
+      "exists": "false"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/9db7917b-1607-4e7d-a689-bca978dd0633",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "9db7917b-1607-4e7d-a689-bca978dd0633"
+}

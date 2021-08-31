@@ -1,0 +1,57 @@
+{
+ "properties": {
+  "displayName": "Synapse 작업 영역에서 감사를 사용하도록 설정해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "전용 SQL 풀의 모든 데이터베이스에서 데이터베이스 활동을 추적하고 감사 로그에 저장하려면 Synapse 작업 영역에서 감사를 사용하도록 설정해야 합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Synapse"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "setting": {
+    "type": "String",
+    "metadata": {
+     "displayName": "원하는 감사 설정"
+    },
+    "allowedValues": [
+     "enabled",
+     "disabled"
+    ],
+    "defaultValue": "enabled"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Synapse/workspaces"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Synapse/workspaces/auditingSettings",
+     "name": "default",
+     "existenceCondition": {
+      "field": "Microsoft.Synapse/workspaces/auditingSettings/state",
+      "equals": "[parameters('setting')]"
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/e04e5000-cd89-451d-bb21-a14d24ff9c73",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "e04e5000-cd89-451d-bb21-a14d24ff9c73"
+}

@@ -1,0 +1,59 @@
+{
+ "properties": {
+  "displayName": "공용 네트워크 액세스를 사용하지 않도록 Azure Web PubSub 서비스 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Web PubSub 리소스에 공용 네트워크 액세스를 사용하지 않도록 설정하여 퍼블릭 인터넷을 통해 액세스할 수 없도록 합니다. 이렇게 하면 데이터 유출 위험이 감소합니다. https://aka.ms/awps/networkacls에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Web PubSub"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Modify",
+     "Disabled"
+    ],
+    "defaultValue": "Modify"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.SignalRService/webPubSub"
+     },
+     {
+      "field": "Microsoft.SignalRService/webPubSub/publicNetworkAccess",
+      "notEquals": "Disabled"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "conflictEffect": "Audit",
+     "roleDefinitionIds": [
+      "/providers/Microsoft.Authorization/roleDefinitions/8cf5e20a-e4b2-4e9d-b3a1-5ceb692c2761"
+     ],
+     "operations": [
+      {
+       "operation": "addOrReplace",
+       "field": "Microsoft.SignalRService/webPubSub/publicNetworkAccess",
+       "value": "Disabled"
+      }
+     ]
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/5b1213e4-06e4-4ccc-81de-4201f2f7131a",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "5b1213e4-06e4-4ccc-81de-4201f2f7131a"
+}

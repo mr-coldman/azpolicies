@@ -1,0 +1,78 @@
+{
+ "properties": {
+  "displayName": "스토리지 계정에 Advanced Threat Protection 배포",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "이 정책은 스토리지 계정에서 Advanced Threat Protection을 사용합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Storage"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "DeployIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "DeployIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Storage/storageAccounts"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Security/advancedThreatProtectionSettings",
+     "name": "current",
+     "existenceCondition": {
+      "field": "Microsoft.Security/advancedThreatProtectionSettings/isEnabled",
+      "equals": "true"
+     },
+     "roleDefinitionIds": [
+      "/providers/Microsoft.Authorization/roleDefinitions/fb1c8493-542b-48eb-b624-b4c8fea62acd"
+     ],
+     "deployment": {
+      "properties": {
+       "mode": "incremental",
+       "template": {
+        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "storageAccountName": {
+          "type": "string"
+         }
+        },
+        "resources": [
+         {
+          "apiVersion": "2019-01-01",
+          "type": "Microsoft.Storage/storageAccounts/providers/advancedThreatProtectionSettings",
+          "name": "[concat(parameters('storageAccountName'), '/Microsoft.Security/current')]",
+          "properties": {
+           "isEnabled": true
+          }
+         }
+        ]
+       },
+       "parameters": {
+        "storageAccountName": {
+         "value": "[field('name')]"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/361c2074-3595-4e5d-8cab-4f21dffc835c",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "361c2074-3595-4e5d-8cab-4f21dffc835c"
+}

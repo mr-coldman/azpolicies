@@ -1,0 +1,46 @@
+{
+ "properties": {
+  "displayName": "Azure API for FHIR은 고객 관리형 키를 사용하여 미사용 데이터를 암호화해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "규정 또는 준수 요구 사항인 경우 고객 관리형 키를 사용하여 Azure API for FHIR에 저장된 미사용 데이터 암호화를 제어합니다. 고객 관리형 키는 서비스 관리형 키로 수행된 기본 암호화 외에 두 번째 암호화 계층을 추가하여 이중 암호화를 제공합니다.",
+  "metadata": {
+   "version": "1.0.1",
+   "category": "API for FHIR"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "audit",
+     "disabled"
+    ],
+    "defaultValue": "audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.HealthcareApis/services"
+     },
+     {
+      "field": "Microsoft.HealthcareApis/services/cosmosDbConfiguration.keyVaultKeyUri",
+      "exists": "false"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/051cba44-2429-45b9-9649-46cec11c7119",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "051cba44-2429-45b9-9649-46cec11c7119"
+}

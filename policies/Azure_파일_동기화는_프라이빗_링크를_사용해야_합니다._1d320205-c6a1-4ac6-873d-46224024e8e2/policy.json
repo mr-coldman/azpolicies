@@ -1,0 +1,57 @@
+{
+ "properties": {
+  "displayName": "Azure 파일 동기화는 프라이빗 링크를 사용해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "표시된 스토리지 동기화 서비스 리소스의 프라이빗 엔드포인트를 만들면 인터넷에서 액세스할 수 있는 퍼블릭 엔드포인트를 사용하지 않고 조직 네트워크의 개인 IP 주소 공간 내에서 스토리지 동기화 서비스 리소스를 처리할 수 있습니다. 프라이빗 엔드포인트를 만들면 퍼블릭 엔드포인트를 비활성화할 수 없습니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Storage"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.StorageSync/storageSyncServices"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.StorageSync/storageSyncServices/privateEndpointConnections",
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.StorageSync/storageSyncServices/privateEndpointConnections/privateEndpoint",
+        "exists": "true"
+       },
+       {
+        "field": "Microsoft.StorageSync/storageSyncServices/privateEndpointConnections/provisioningState",
+        "equals": "Succeeded"
+       },
+       {
+        "field": "Microsoft.StorageSync/storageSyncServices/privateEndpointConnections/privateLinkServiceConnectionState.status",
+        "equals": "Approved"
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/1d320205-c6a1-4ac6-873d-46224024e8e2",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "1d320205-c6a1-4ac6-873d-46224024e8e2"
+}

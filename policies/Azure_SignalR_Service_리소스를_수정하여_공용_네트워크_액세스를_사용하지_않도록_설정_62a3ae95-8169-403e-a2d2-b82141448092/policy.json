@@ -1,0 +1,78 @@
+{
+ "properties": {
+  "displayName": "Azure SignalR Service 리소스를 수정하여 공용 네트워크 액세스를 사용하지 않도록 설정",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure SignalR Service 리소스의 보안을 강화하려면 퍼블릭 인터넷에 노출되지 않고 프라이빗 엔드포인트에서만 액세스할 수 있어야 합니다. https://aka.ms/asrs/networkacls에 설명된 것처럼 공용 네트워크 액세스 속성을 사용하지 않도록 설정하세요. 이 옵션은 Azure IP 범위 밖의 퍼블릭 주소 공간에서 액세스를 사용하지 않도록 설정하며 IP 또는 가상 네트워크 기반 방화벽 규칙과 일치하는 모든 로그인을 거부함으로써 데이터 유출 위험을 줄입니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "SignalR"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Modify",
+     "Disabled"
+    ],
+    "defaultValue": "Modify"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.SignalRService/SignalR"
+     },
+     {
+      "anyOf": [
+       {
+        "field": "Microsoft.SignalRService/SignalR/networkACLs.defaultAction",
+        "equals": "Allow"
+       },
+       {
+        "field": "Microsoft.SignalRService/SignalR/networkACLs.publicNetwork.allow",
+        "exists": false
+       },
+       {
+        "count": {
+         "field": "Microsoft.SignalRService/SignalR/networkACLs.publicNetwork.allow[*]"
+        },
+        "greater": 0
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "conflictEffect": "Audit",
+     "roleDefinitionIds": [
+      "/providers/Microsoft.Authorization/roleDefinitions/8cf5e20a-e4b2-4e9d-b3a1-5ceb692c2761"
+     ],
+     "operations": [
+      {
+       "operation": "addOrReplace",
+       "field": "Microsoft.SignalRService/SignalR/networkACLs.defaultAction",
+       "value": "Deny"
+      },
+      {
+       "operation": "addOrReplace",
+       "field": "Microsoft.SignalRService/SignalR/networkACLs.publicNetwork.allow",
+       "value": []
+      }
+     ]
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/62a3ae95-8169-403e-a2d2-b82141448092",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "62a3ae95-8169-403e-a2d2-b82141448092"
+}

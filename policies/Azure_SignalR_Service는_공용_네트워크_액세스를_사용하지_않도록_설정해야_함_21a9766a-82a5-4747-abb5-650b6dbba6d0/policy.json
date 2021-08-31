@@ -1,0 +1,61 @@
+{
+ "properties": {
+  "displayName": "Azure SignalR Service는 공용 네트워크 액세스를 사용하지 않도록 설정해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure SignalR Service 리소스의 보안을 강화하려면 퍼블릭 인터넷에 노출되지 않고 프라이빗 엔드포인트에서만 액세스할 수 있어야 합니다. https://aka.ms/asrs/networkacls에 설명된 것처럼 공용 네트워크 액세스 속성을 사용하지 않도록 설정하세요. 이 옵션은 Azure IP 범위 밖의 퍼블릭 주소 공간에서 액세스를 사용하지 않도록 설정하며 IP 또는 가상 네트워크 기반 방화벽 규칙과 일치하는 모든 로그인을 거부함으로써 데이터 유출 위험을 줄입니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "SignalR"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.SignalRService/SignalR"
+     },
+     {
+      "anyOf": [
+       {
+        "field": "Microsoft.SignalRService/SignalR/networkACLs.defaultAction",
+        "equals": "Allow"
+       },
+       {
+        "field": "Microsoft.SignalRService/SignalR/networkACLs.publicNetwork.allow",
+        "exists": false
+       },
+       {
+        "count": {
+         "field": "Microsoft.SignalRService/SignalR/networkACLs.publicNetwork.allow[*]"
+        },
+        "greater": 0
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/21a9766a-82a5-4747-abb5-650b6dbba6d0",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "21a9766a-82a5-4747-abb5-650b6dbba6d0"
+}

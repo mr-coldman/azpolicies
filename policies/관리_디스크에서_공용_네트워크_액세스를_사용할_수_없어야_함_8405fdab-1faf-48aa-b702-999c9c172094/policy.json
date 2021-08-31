@@ -1,0 +1,49 @@
+{
+ "properties": {
+  "displayName": "관리 디스크에서 공용 네트워크 액세스를 사용할 수 없어야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "공용 네트워크 액세스를 사용하지 않도록 설정하면 관리 디스크가 퍼블릭 인터넷에 노출되지 않도록 하여 보안이 향상됩니다. 프라이빗 엔드포인트를 만들면 관리 디스크의 노출을 제한할 수 있습니다. https://aka.ms/disksprivatelinksdoc에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Compute"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "이 효과는 정책 규칙이 일치하도록 평가될 때 발생하는 동작을 결정합니다."
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Compute/disks"
+     },
+     {
+      "field": "Microsoft.Compute/disks/networkAccessPolicy",
+      "notIn": [
+       "DenyAll",
+       "AllowPrivate"
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/8405fdab-1faf-48aa-b702-999c9c172094",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "8405fdab-1faf-48aa-b702-999c9c172094"
+}

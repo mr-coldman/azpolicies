@@ -1,0 +1,49 @@
+{
+ "properties": {
+  "displayName": "가상 머신의 관리 포트는 Just-In-Time 네트워크 액세스 제어로 보호해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "가능한 네트워크 JIT(Just In Time) 액세스는 Azure Security Center에서 권장 사항으로 모니터링됩니다.",
+  "metadata": {
+   "version": "3.0.0",
+   "category": "Security Center"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Compute/virtualMachines"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Security/assessments",
+     "name": "805651bc-6ecd-4c73-9b55-97a19d0582d0",
+     "existenceCondition": {
+      "field": "Microsoft.Security/assessments/status.code",
+      "in": [
+       "NotApplicable",
+       "Healthy"
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/b0f33259-77d7-4c9e-aac6-3aabcfae693c",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "b0f33259-77d7-4c9e-aac6-3aabcfae693c"
+}

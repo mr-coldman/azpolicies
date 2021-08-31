@@ -1,0 +1,63 @@
+{
+ "properties": {
+  "displayName": "Azure Monitor 로그 프로필은 범주 '쓰기,' '삭제' 및 '작업'에 대한 로그를 수집해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "이 정책을 사용하면 로그 프로필이 '쓰기,' '삭제' 및 '작업' 범주에 대한 로그를 수집합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Monitoring"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Resources/subscriptions"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Insights/logprofiles",
+     "existenceCondition": {
+      "allOf": [
+       {
+        "not": {
+         "field": "Microsoft.Insights/logProfiles/categories[*]",
+         "notEquals": "Write"
+        }
+       },
+       {
+        "not": {
+         "field": "Microsoft.Insights/logProfiles/categories[*]",
+         "notEquals": "Delete"
+        }
+       },
+       {
+        "not": {
+         "field": "Microsoft.Insights/logProfiles/categories[*]",
+         "notEquals": "Action"
+        }
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/1a4e592a-6a6e-44a5-9814-e36264ca96e7",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "1a4e592a-6a6e-44a5-9814-e36264ca96e7"
+}

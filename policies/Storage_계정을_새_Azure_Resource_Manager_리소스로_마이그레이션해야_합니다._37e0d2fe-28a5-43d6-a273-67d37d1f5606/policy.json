@@ -1,0 +1,50 @@
+{
+ "properties": {
+  "displayName": "Storage 계정을 새 Azure Resource Manager 리소스로 마이그레이션해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "Storage 계정에 대해 새 Azure Resource Manager를 사용하여 더 강력한 액세스 제어(RBAC), 더 나은 감사, Azure Resource Manager 기반 배포 및 관리, 관리 ID 액세스, 암호를 위해 키 자격 증명 모음에 액세스, Azure AD 기반 인증, 보다 쉬운 보안 관리를 위한 태그 및 리소스 그룹 지원과 같은 보안 기능 향상을 제공합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Storage"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "이 효과는 정책 규칙이 일치하도록 평가될 때 발생하는 동작을 결정합니다."
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "in": [
+       "Microsoft.ClassicStorage/storageAccounts",
+       "Microsoft.Storage/StorageAccounts"
+      ]
+     },
+     {
+      "value": "[field('type')]",
+      "equals": "Microsoft.ClassicStorage/storageAccounts"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/37e0d2fe-28a5-43d6-a273-67d37d1f5606",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "37e0d2fe-28a5-43d6-a273-67d37d1f5606"
+}

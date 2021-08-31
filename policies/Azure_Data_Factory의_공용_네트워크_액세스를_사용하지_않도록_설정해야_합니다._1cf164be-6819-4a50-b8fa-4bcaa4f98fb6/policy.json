@@ -1,0 +1,47 @@
+{
+ "properties": {
+  "displayName": "Azure Data Factory의 공용 네트워크 액세스를 사용하지 않도록 설정해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "공용 네트워크 액세스 속성을 사용하지 않도록 설정하여 프라이빗 엔드포인트에서만 Azure Data Factory에 액세스할 수 있도록 하면 보안이 강화됩니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Data Factory"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.DataFactory/factories"
+     },
+     {
+      "field": "Microsoft.DataFactory/factories/publicNetworkAccess",
+      "notEquals": "Disabled"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/1cf164be-6819-4a50-b8fa-4bcaa4f98fb6",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "1cf164be-6819-4a50-b8fa-4bcaa4f98fb6"
+}

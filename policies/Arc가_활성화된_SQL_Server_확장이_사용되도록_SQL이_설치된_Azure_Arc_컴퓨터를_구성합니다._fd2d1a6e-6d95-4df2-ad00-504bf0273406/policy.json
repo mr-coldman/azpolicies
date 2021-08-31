@@ -1,0 +1,126 @@
+{
+ "properties": {
+  "displayName": "Arc가 활성화된 SQL Server 확장이 사용되도록 SQL이 설치된 Azure Arc 컴퓨터를 구성합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": " SQL Server - Azure Arc 지원 Windows 서버에서 SQL 인스턴스를 찾을 때 기본적으로 Azure Arc 리소스가 생성되도록 하려면 Arc 머신에 SQL Server 확장이 활성화되어 있어야 합니다. 자세한 내용을 확인하려면 https://docs.microsoft.com/en-us/sql/sql-server/azure-arc/overview?view=sql-server-ver15를 방문하세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "SQL"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "DeployIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "DeployIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.HybridCompute/machines"
+     },
+     {
+      "field": "Microsoft.HybridCompute/imageOffer",
+      "like": "windows*"
+     },
+     {
+      "field": "Microsoft.HybridCompute/machines/mssqlDiscovered",
+      "equals": "true"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.HybridCompute/machines/extensions",
+     "roleDefinitionIds": [
+      "/providers/Microsoft.Authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"
+     ],
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.HybridCompute/machines/extensions/type",
+        "equals": "WindowsAgent.SqlServer"
+       },
+       {
+        "field": "Microsoft.HybridCompute/machines/extensions/publisher",
+        "equals": "Microsoft.AzureData"
+       },
+       {
+        "field": "Microsoft.HybridCompute/machines/extensions/provisioningState",
+        "equals": "Succeeded"
+       }
+      ]
+     },
+     "deployment": {
+      "properties": {
+       "mode": "incremental",
+       "template": {
+        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "vmName": {
+          "type": "string"
+         },
+         "location": {
+          "type": "string"
+         }
+        },
+        "variables": {
+         "vmExtensionName": "WindowsAgent.SqlServer",
+         "vmExtensionPublisher": "Microsoft.AzureData",
+         "vmExtensionType": "WindowsAgent.SqlServer"
+        },
+        "resources": [
+         {
+          "name": "[concat(parameters('vmName'), '/', variables('vmExtensionName'))]",
+          "type": "Microsoft.HybridCompute/machines/extensions",
+          "location": "[parameters('location')]",
+          "apiVersion": "2019-12-12",
+          "properties": {
+           "publisher": "[variables('vmExtensionPublisher')]",
+           "type": "[variables('vmExtensionType')]",
+           "settings": {
+            "SqlManagement": {
+             "IsEnabled": true
+            },
+            "ExcludedInstances": []
+           }
+          }
+         }
+        ],
+        "outputs": {
+         "policy": {
+          "type": "string",
+          "value": "[concat('Enabled extension for VM', ': ', parameters('vmName'))]"
+         }
+        }
+       },
+       "parameters": {
+        "vmName": {
+         "value": "[field('name')]"
+        },
+        "location": {
+         "value": "[field('location')]"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/fd2d1a6e-6d95-4df2-ad00-504bf0273406",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "fd2d1a6e-6d95-4df2-ad00-504bf0273406"
+}

@@ -1,0 +1,66 @@
+{
+ "properties": {
+  "displayName": "Azure Data Box 작업에서 고객 관리형 키를 사용하여 디바이스 잠금 해제 암호를 암호화해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "고객 관리형 키를 사용하여 Azure Data Box의 디바이스 잠금 해제 암호의 암호화를 제어합니다. 고객 관리형 키는 디바이스를 준비하고 자동화된 방법으로 데이터를 복사하기 위해 Data Box 서비스에서 디바이스 잠금 해제 암호에 대한 액세스를 관리하는 데도 도움이 됩니다. 디바이스의 데이터 자체는 AES(Advanced Encryption Standard) 256비트 암호화를 사용하여 미사용 시 이미 암호화되며 디바이스 잠금 해제 암호는 Microsoft 관리형 키를 사용하여 기본적으로 암호화됩니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Data Box"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책의 원하는 효과"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   },
+   "supportedSKUs": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "지원되는 SKU",
+     "description": "고객 관리형 키 암호화 키를 지원하는 SKU 목록"
+    },
+    "allowedValues": [
+     "DataBox",
+     "DataBoxHeavy"
+    ],
+    "defaultValue": [
+     "DataBox",
+     "DataBoxHeavy"
+    ]
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.DataBox/jobs"
+     },
+     {
+      "field": "Microsoft.Databox/jobs/sku.name",
+      "in": "[parameters('supportedSKUs')]"
+     },
+     {
+      "field": "Microsoft.DataBox/jobs/details.keyEncryptionKey.kekType",
+      "notEquals": "CustomerManaged"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/86efb160-8de7-451d-bc08-5d475b0aadae",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "86efb160-8de7-451d-bc08-5d475b0aadae"
+}

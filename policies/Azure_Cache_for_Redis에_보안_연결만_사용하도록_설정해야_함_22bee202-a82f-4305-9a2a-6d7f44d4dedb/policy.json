@@ -1,0 +1,47 @@
+{
+ "properties": {
+  "displayName": "Azure Cache for Redis에 보안 연결만 사용하도록 설정해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Cache for Redis에 대한 SSL을 통한 연결 사용만 감사합니다. 보안 연결을 사용하여 서버 및 서비스 간 인증을 보장하고 전송 중인 데이터를 메시지 가로채기(man-in-the-middle), 도청 및 세션 하이재킹과 같은 네트워크 계층 공격으로부터 보호합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Cache"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "이 효과는 정책 규칙이 일치하도록 평가될 때 발생하는 동작을 결정합니다."
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Cache/redis"
+     },
+     {
+      "field": "Microsoft.Cache/Redis/enableNonSslPort",
+      "equals": "true"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/22bee202-a82f-4305-9a2a-6d7f44d4dedb",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "22bee202-a82f-4305-9a2a-6d7f44d4dedb"
+}

@@ -1,0 +1,61 @@
+{
+ "properties": {
+  "displayName": "Azure HDInsight 클러스터는 가상 네트워크에 삽입해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "가상 네트워크에 Azure HDInsight 클러스터를 삽입하면 고급 HDInsight 네트워킹 및 보안 기능의 잠금이 해제되며 네트워크 보안 구성을 제어할 수 있습니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "HDInsight"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled",
+     "Deny"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.HDInsight/clusters"
+     },
+     {
+      "count": {
+       "field": "Microsoft.HDInsight/clusters/computeProfile.roles[*]",
+       "where": {
+        "anyOf": [
+         {
+          "field": "Microsoft.HDInsight/clusters/computeProfile.roles[*].virtualNetworkProfile.id",
+          "exists": false
+         },
+         {
+          "field": "Microsoft.HDInsight/clusters/computeProfile.roles[*].virtualNetworkProfile.subnet",
+          "exists": false
+         }
+        ]
+       }
+      },
+      "greater": 0
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/b0ab5b05-1c98-40f7-bb9e-dc568e41b501",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "b0ab5b05-1c98-40f7-bb9e-dc568e41b501"
+}

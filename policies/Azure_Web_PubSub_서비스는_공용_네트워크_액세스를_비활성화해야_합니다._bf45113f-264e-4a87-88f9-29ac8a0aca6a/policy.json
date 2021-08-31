@@ -1,0 +1,47 @@
+{
+ "properties": {
+  "displayName": "Azure Web PubSub 서비스는 공용 네트워크 액세스를 비활성화해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "공용 네트워크 액세스를 사용하지 않도록 설정하면 Azure Web PubSub 서비스가 공용 인터넷에 노출되지 않도록 하여 보안이 향상됩니다. 프라이빗 엔드포인트를 만들면 Azure Web PubSub 서비스의 노출을 제한할 수 있습니다. https://aka.ms/awps/networkacls에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Web PubSub"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.SignalRService/webPubSub"
+     },
+     {
+      "field": "Microsoft.SignalRService/webPubSub/publicNetworkAccess",
+      "notEquals": "Disabled"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/bf45113f-264e-4a87-88f9-29ac8a0aca6a",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "bf45113f-264e-4a87-88f9-29ac8a0aca6a"
+}

@@ -1,0 +1,55 @@
+{
+ "properties": {
+  "displayName": "가상 네트워크는 지정된 가상 네트워크 게이트웨이를 사용해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "이 정책은 기본 경로가 지정된 가상 네트워크 게이트웨이를 가리키지 않는 경우 모든 가상 네트워크를 감사합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Network"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "virtualNetworkGatewayId": {
+    "type": "String",
+    "metadata": {
+     "displayName": "가상 네트워크 게이트웨이 ID",
+     "description": "가상 네트워크 게이트웨이의 리소스 ID입니다. 예: /subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroup/providers/Microsoft.Network/virtualNetworkGateways/Name"
+    }
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Network/virtualNetworks"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Network/virtualNetworks/subnets",
+     "name": "GatewaySubnet",
+     "existenceCondition": {
+      "not": {
+       "field": "Microsoft.Network/virtualNetworks/subnets/ipConfigurations[*].id",
+       "notContains": "[concat(parameters('virtualNetworkGatewayId'), '/')]"
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/f1776c76-f58c-4245-a8d0-2b207198dc8b",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "f1776c76-f58c-4245-a8d0-2b207198dc8b"
+}
