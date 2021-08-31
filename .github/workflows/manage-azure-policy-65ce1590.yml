@@ -1,0 +1,32 @@
+name: manage-azure-policy-65ce1590
+on:
+  workflow_dispatch:
+    inputs:
+      remarks:
+        description: 'Reason for triggering the workflow run'
+        required: false
+        default: 'Updating Azure Policies'
+
+
+## Uncomment the following if you wish to automatically trigger workflow run with every commit
+#
+#  push:
+#    paths:
+#      - 'policies/재해_복구가_구성되어_있지_않은_가상_머신_감사_0015ea4d-51ff-4ce3-8d8c-f3f8f0179a56/**'
+#      - .github/workflows/manage-azure-policy-65ce1590.yml
+jobs:
+  apply-azure-policy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS_65ce1590}}
+        allow-no-subscriptions: true
+    - name: Create or Update Azure Policies
+      uses: azure/manage-azure-policy@v0
+      with:
+        paths: |
+          policies/재해_복구가_구성되어_있지_않은_가상_머신_감사_0015ea4d-51ff-4ce3-8d8c-f3f8f0179a56/**
