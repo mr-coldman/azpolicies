@@ -1,0 +1,49 @@
+{
+ "properties": {
+  "displayName": "소유자 권한이 있는 사용되지 않는 계정은 구독에서 제거해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "소유자 권한이 있는 사용되지 않는 계정은 구독에서 제거해야 합니다. 사용되지 않는 계정은 로그인하지 못하도록 차단된 계정입니다.",
+  "metadata": {
+   "version": "3.0.0",
+   "category": "Security Center"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Resources/subscriptions"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Security/assessments",
+     "name": "e52064aa-6853-e252-a11e-dffc675689c2",
+     "existenceCondition": {
+      "field": "Microsoft.Security/assessments/status.code",
+      "in": [
+       "NotApplicable",
+       "Healthy"
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/ebb62a0c-3560-49e1-89ed-27e074e9f8ad",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "ebb62a0c-3560-49e1-89ed-27e074e9f8ad"
+}

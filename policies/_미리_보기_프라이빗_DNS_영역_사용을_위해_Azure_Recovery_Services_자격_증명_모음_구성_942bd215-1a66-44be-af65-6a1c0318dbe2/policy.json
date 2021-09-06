@@ -1,0 +1,116 @@
+{
+ "properties": {
+  "displayName": "[미리 보기]: 프라이빗 DNS 영역 사용을 위해 Azure Recovery Services 자격 증명 모음 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "프라이빗 DNS 영역을 사용하여 프라이빗 엔드포인트에 대한 DNS 확인을 재정의합니다. 프라이빗 DNS 영역을 가상 네트워크에 연결하여 Recovery Services 자격 증명 모음을 확인합니다. https://aka.ms/privatednszone에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0-preview",
+   "category": "Site Recovery",
+   "preview": true
+  },
+  "parameters": {
+   "privateDnsZoneId": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Azure Recovery용 프라이빗 DNS 영역 ID 중요 보관소 리소스",
+     "description": "프라이빗 DNS 영역을 복구 서비스 자격 증명 모음에서 프라이빗 엔드포인트 레코드를 자격 증명 모음으로 확인하는 데 필요한 프라이빗 DNS 영역 이름입니다.",
+     "strongType": "Microsoft.Network/privateDnsZones"
+    }
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "DeployIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "DeployIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Network/privateEndpoints"
+     },
+     {
+      "count": {
+       "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].groupIds[*]",
+       "where": {
+        "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].groupIds[*]",
+        "equals": "AzureSiteRecovery"
+       }
+      },
+      "greaterOrEquals": 1
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+     "roleDefinitionIds": [
+      "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
+     ],
+     "deployment": {
+      "properties": {
+       "mode": "incremental",
+       "template": {
+        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "privateDnsZoneId": {
+          "type": "string"
+         },
+         "privateEndpointName": {
+          "type": "string"
+         },
+         "location": {
+          "type": "string"
+         }
+        },
+        "resources": [
+         {
+          "name": "[concat(parameters('privateEndpointName'), '/deployedByPolicy')]",
+          "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+          "apiVersion": "2020-03-01",
+          "location": "[parameters('location')]",
+          "properties": {
+           "privateDnsZoneConfigs": [
+            {
+             "name": "privatelink-siterecovery",
+             "properties": {
+              "privateDnsZoneId": "[parameters('privateDnsZoneId')]"
+             }
+            }
+           ]
+          }
+         }
+        ]
+       },
+       "parameters": {
+        "privateDnsZoneId": {
+         "value": "[parameters('privateDnsZoneId')]"
+        },
+        "privateEndpointName": {
+         "value": "[field('name')]"
+        },
+        "location": {
+         "value": "[field('location')]"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/942bd215-1a66-44be-af65-6a1c0318dbe2",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "942bd215-1a66-44be-af65-6a1c0318dbe2"
+}

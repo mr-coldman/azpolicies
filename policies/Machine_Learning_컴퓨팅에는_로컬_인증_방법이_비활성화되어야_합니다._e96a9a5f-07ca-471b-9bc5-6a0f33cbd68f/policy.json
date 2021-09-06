@@ -1,0 +1,47 @@
+{
+ "properties": {
+  "displayName": "Machine Learning 컴퓨팅에는 로컬 인증 방법이 비활성화되어야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "로컬 인증 방법을 사용하지 않도록 설정하면 Machine Learning 컴퓨팅에서 인증을 위해 독점적으로 Azure Active Directory ID가 필요하게 되어 보안이 향상됩니다. https://aka.ms/azure-ml-aad-policy에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Machine Learning"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.MachineLearningServices/workspaces/computes"
+     },
+     {
+      "field": "Microsoft.MachineLearningServices/workspaces/computes/disableLocalAuth",
+      "notEquals": true
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/e96a9a5f-07ca-471b-9bc5-6a0f33cbd68f",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "e96a9a5f-07ca-471b-9bc5-6a0f33cbd68f"
+}

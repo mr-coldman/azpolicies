@@ -1,0 +1,61 @@
+{
+ "properties": {
+  "displayName": "게스트 구성 할당에 프라이빗 엔드포인트를 사용해야 함",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "프라이빗 엔드포인트 연결은 가상 머신의 게스트 구성에 프라이빗 연결을 사용하도록 설정하여 보안 통신을 적용합니다. 가상 머신은 'EnablePrivateNetworkGC' 태그가 없으면 비준수 상태가 됩니다. 이 태그는 가상 머신의 게스트 구성에 프라이빗 연결을 통해 보안 통신을 적용합니다. 프라이빗 연결은 알려진 네트워크에서 오는 트래픽만으로 액세스를 제한하며 Azure 내의 다른 IP를 포함하여 다른 모든 IP 주소로부터 액세스를 방지합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Guest Configuration"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.GuestConfiguration/guestConfigurationAssignments"
+     },
+     {
+      "field": "id",
+      "contains": "Microsoft.Compute/virtualMachines"
+     },
+     {
+      "not": {
+       "anyof": [
+        {
+         "field": "[concat('tags[', 'EnablePrivateNeworkGC', ']')]",
+         "equals": "TRUE"
+        },
+        {
+         "field": "[concat('tags[', 'EnablePrivateNetworkGC', ']')]",
+         "equals": "TRUE"
+        }
+       ]
+      }
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/480d0f91-30af-4a76-9afb-f5710ac52b09",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "480d0f91-30af-4a76-9afb-f5710ac52b09"
+}

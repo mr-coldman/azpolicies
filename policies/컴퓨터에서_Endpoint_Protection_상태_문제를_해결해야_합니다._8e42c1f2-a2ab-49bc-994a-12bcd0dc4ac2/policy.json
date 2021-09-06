@@ -1,0 +1,57 @@
+{
+ "properties": {
+  "displayName": "컴퓨터에서 Endpoint Protection 상태 문제를 해결해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "가상 머신의 엔드포인트 보호 상태 문제를 해결하여 최신 위협 및 취약성으로부터 보호합니다. Azure Security Center에서 지원되는 엔드포인트 보호 솔루션은 https://docs.microsoft.com/azure/security-center/security-center-services?tabs=features-windows#supported-endpoint-protection-solutions에 설명되어 있습니다. 엔드포인트 보호 평가는 https://docs.microsoft.com/azure/security-center/security-center-endpoint-protection에 설명되어 있습니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Security Center"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "in": [
+       "Microsoft.Compute/virtualMachines",
+       "Microsoft.ClassicCompute/virtualMachines",
+       "Microsoft.HybridCompute/machines"
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Security/assessments",
+     "name": "37a3689a-818e-4a0e-82ac-b1392b9bb000",
+     "existenceCondition": {
+      "field": "Microsoft.Security/assessments/status.code",
+      "in": [
+       "NotApplicable",
+       "Healthy"
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/8e42c1f2-a2ab-49bc-994a-12bcd0dc4ac2",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "8e42c1f2-a2ab-49bc-994a-12bcd0dc4ac2"
+}

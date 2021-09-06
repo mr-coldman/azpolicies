@@ -1,0 +1,47 @@
+{
+ "properties": {
+  "displayName": "레거시 v2 API에 대한 액세스를 허용하는 Azure Media Services 계정은 차단되어야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Media Services 레거시 v2 API는 Azure Policy을 사용하여 관리할 수 없는 요청을 허용합니다. 2020-05-01 API 이상을 사용하여 만든 Media Services 리소스는 레거시 v2 API에 대한 액세스를 차단합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Media Services"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Media/mediaservices"
+     },
+     {
+      "field": "Microsoft.Media/mediaservices/encryption.type",
+      "exists": "false"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/ccf93279-9c91-4143-a841-8d1f21505455",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "ccf93279-9c91-4143-a841-8d1f21505455"
+}

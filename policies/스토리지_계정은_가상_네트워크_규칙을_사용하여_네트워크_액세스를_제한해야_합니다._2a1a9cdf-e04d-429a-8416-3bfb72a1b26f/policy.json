@@ -1,0 +1,57 @@
+{
+ "properties": {
+  "displayName": "스토리지 계정은 가상 네트워크 규칙을 사용하여 네트워크 액세스를 제한해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "기본 방법으로 IP 기반 필터링에 대신 가상 네트워크 규칙을 사용하여 잠재적인 위협으로부터 스토리지 계정을 보호합니다. IP 기반 필터링을 사용하지 않도록 설정하면 공용 IP에서 스토리지 계정에 액세스할 수 없습니다.",
+  "metadata": {
+   "version": "1.0.1",
+   "category": "Storage"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "감사 정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Storage/storageAccounts"
+     },
+     {
+      "anyOf": [
+       {
+        "field": "Microsoft.Storage/storageAccounts/networkAcls.defaultAction",
+        "notEquals": "Deny"
+       },
+       {
+        "count": {
+         "field": "Microsoft.Storage/storageAccounts/networkAcls.ipRules[*]"
+        },
+        "greaterOrEquals": 1
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/2a1a9cdf-e04d-429a-8416-3bfb72a1b26f",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "2a1a9cdf-e04d-429a-8416-3bfb72a1b26f"
+}

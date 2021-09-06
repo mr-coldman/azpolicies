@@ -1,0 +1,66 @@
+{
+ "properties": {
+  "displayName": "스토리지 계정 대상에 대해 SQL 감사가 있는 Synapse 작업 영역의 보존 기간을 90일 이상으로 구성해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "인시던트 조사를 위해 스토리지 계정 대상에 대해 Synapse 작업 영역 SQL 감사의 데이터 보존 기간을 90일 이상으로 설정하는 것이 좋습니다. 운영 중인 지역에 필요한 보존 규칙을 충족하고 있는지 확인하세요. 이 설정은 규정 표준을 준수하는 데 필요합니다.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "Synapse"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Synapse/workspaces"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Synapse/workspaces/auditingSettings",
+     "name": "default",
+     "existenceCondition": {
+      "anyOf": [
+       {
+        "allOf": [
+         {
+          "field": "Microsoft.Synapse/workspaces/auditingSettings/isAzureMonitorTargetEnabled",
+          "equals": true
+         },
+         {
+          "field": "Microsoft.Synapse/workspaces/auditingSettings/storageEndpoint",
+          "equals": ""
+         }
+        ]
+       },
+       {
+        "field": "Microsoft.Synapse/workspaces/auditingSettings/retentionDays",
+        "equals": 0
+       },
+       {
+        "field": "Microsoft.Synapse/workspaces/auditingSettings/retentionDays",
+        "greaterOrEquals": 90
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/529ea018-6afc-4ed4-95bd-7c9ee47b00bc",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "529ea018-6afc-4ed4-95bd-7c9ee47b00bc"
+}

@@ -1,0 +1,60 @@
+{
+ "properties": {
+  "displayName": "공용 네트워크 액세스를 사용하지 않도록 App Configuration 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "퍼블릭 인터넷을 통해 액세스할 수 없도록 App Configuration의 공용 네트워크 액세스를 사용하지 않도록 설정합니다. 이 구성을 사용하면 데이터 유출 위험으로부터 리소스를 보호할 수 있습니다. 대신 프라이빗 엔드포인트를 만들어 리소스 공개를 제한할 수 있습니다. https://aka.ms/appconfig/private-endpoint에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "App Configuration"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Modify",
+     "Disabled"
+    ],
+    "defaultValue": "Modify"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.AppConfiguration/configurationStores"
+     },
+     {
+      "field": "Microsoft.AppConfiguration/configurationStores/publicNetworkAccess",
+      "notEquals": "Disabled"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+     ],
+     "conflictEffect": "audit",
+     "operations": [
+      {
+       "condition": "[greater(requestContext().apiVersion, '2019-10-01')]",
+       "operation": "addOrReplace",
+       "field": "Microsoft.AppConfiguration/configurationStores/publicNetworkAccess",
+       "value": "Disabled"
+      }
+     ]
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/73290fa2-dfa7-4bbb-945d-a5e23b75df2c",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "73290fa2-dfa7-4bbb-945d-a5e23b75df2c"
+}

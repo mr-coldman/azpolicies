@@ -1,0 +1,57 @@
+{
+ "properties": {
+  "displayName": "Cognitive Services 계정은 고객 관리형 키로 데이터 암호화를 사용하도록 설정해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "고객 관리형 키는 규정 준수 표준을 충족하기 위해 일반적으로 필요합니다. 고객 관리형 키를 사용하면 사용자가 만들고 소유한 Azure Key Vault 키로 Cognitive Services에 저장된 데이터를 암호화할 수 있습니다. 사용자는 순환 및 관리를 비롯하여 키 수명 주기에 대한 모든 권한을 갖고 책임을 집니다. https://go.microsoft.com/fwlink/?linkid=2121321에서 고객 관리형 키 암호화에 관해 자세히 알아봅니다.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "Cognitive Services"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "이 효과는 정책 규칙이 일치하도록 평가될 때 발생하는 동작을 결정합니다."
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.CognitiveServices/accounts"
+     },
+     {
+      "field": "Microsoft.CognitiveServices/accounts/encryption.keySource",
+      "notEquals": "Microsoft.KeyVault"
+     },
+     {
+      "count": {
+       "field": "Microsoft.CognitiveServices/accounts/capabilities[*]",
+       "where": {
+        "field": "Microsoft.CognitiveServices/accounts/capabilities[*].name",
+        "equals": "CustomerManagedKey"
+       }
+      },
+      "greater": 0
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/67121cc7-ff39-4ab8-b7e3-95b84dab487d",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "67121cc7-ff39-4ab8-b7e3-95b84dab487d"
+}

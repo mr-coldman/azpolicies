@@ -1,0 +1,62 @@
+{
+ "properties": {
+  "displayName": "인증서는 지정된 통합 인증 기관에서 발급해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Microsoft.KeyVault.Data",
+  "description": "Digicert 또는 GlobalSign 같은 Key Vault에 인증서를 발급할 수 있는 Azure 통합 인증 기관을 지정하여 조직의 준수 요구 사항을 관리합니다.",
+  "metadata": {
+   "version": "2.0.1",
+   "category": "Key Vault"
+  },
+  "parameters": {
+   "allowedCAs": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "허용된 Azure Key Vault 지원 CA",
+     "description": "Azure Key Vault에서 지원하는 허용된 인증 기관의 목록입니다."
+    },
+    "allowedValues": [
+     "DigiCert",
+     "GlobalSign"
+    ],
+    "defaultValue": [
+     "DigiCert",
+     "GlobalSign"
+    ]
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "'감사'는 비준수 리소스를 만들도록 허용하지만 리소스에 비준수로 플래그 지정합니다. '거부'는 리소스 생성을 차단합니다. '사용 안 함'은 정책을 끕니다."
+    },
+    "allowedValues": [
+     "audit",
+     "deny",
+     "disabled"
+    ],
+    "defaultValue": "audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.KeyVault.Data/vaults/certificates"
+     },
+     {
+      "field": "Microsoft.KeyVault.Data/vaults/certificates/issuer.name",
+      "notIn": "[parameters('allowedCAs')]"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/8e826246-c976-48f6-b03e-619bb92b3d82",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "8e826246-c976-48f6-b03e-619bb92b3d82"
+}

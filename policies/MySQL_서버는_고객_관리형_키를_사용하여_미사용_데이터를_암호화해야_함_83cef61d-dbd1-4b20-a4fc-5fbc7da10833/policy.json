@@ -1,0 +1,57 @@
+{
+ "properties": {
+  "displayName": "MySQL 서버는 고객 관리형 키를 사용하여 미사용 데이터를 암호화해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "고객 관리형 키를 사용하여 MySQL 서버의 미사용 데이터 암호화를 관리합니다. 기본적으로 미사용 데이터는 서비스 관리형 키로 암호화되지만 고객 관리형 키는 규정 준수 표준을 충족하기 위해 일반적으로 필요합니다. 고객 관리형 키를 사용하면 사용자가 만들고 소유한 Azure Key Vault 키로 데이터를 암호화할 수 있습니다. 사용자는 순환 및 관리를 비롯하여 키 수명 주기에 대한 모든 권한을 갖고 책임을 집니다.",
+  "metadata": {
+   "version": "1.0.4",
+   "category": "SQL"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.DBforMySQL/servers"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.DBforMySQL/servers/keys",
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.DBforMySQL/servers/keys/serverKeyType",
+        "equals": "AzureKeyVault"
+       },
+       {
+        "field": "Microsoft.DBforMySQL/servers/keys/uri",
+        "notEquals": ""
+       },
+       {
+        "field": "Microsoft.DBforMySQL/servers/keys/uri",
+        "exists": "true"
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/83cef61d-dbd1-4b20-a4fc-5fbc7da10833",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "83cef61d-dbd1-4b20-a4fc-5fbc7da10833"
+}

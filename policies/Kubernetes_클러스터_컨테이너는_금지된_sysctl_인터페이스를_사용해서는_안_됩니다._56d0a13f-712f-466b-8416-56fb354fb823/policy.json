@@ -1,0 +1,87 @@
+{
+ "properties": {
+  "displayName": "Kubernetes 클러스터 컨테이너는 금지된 sysctl 인터페이스를 사용해서는 안 됩니다.",
+  "policyType": "BuiltIn",
+  "mode": "Microsoft.Kubernetes.Data",
+  "description": "이 정책은 컨테이너가 Kubernetes 클러스터에서 금지된 sysctl 인터페이스를 사용하지 않도록 합니다. 이 정책은 일반적으로 AKS(Azure Kubernetes Service)에 사용할 수 있으며, AKS Engine 및 Azure Arc 사용 Kubernetes의 미리 보기에 사용할 수 있습니다. 이 정책 사용에 대한 지침은 https://aka.ms/kubepolicydoc를 참조하세요.",
+  "metadata": {
+   "version": "4.0.0",
+   "category": "Kubernetes"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "'audit' allows a non-compliant resource to be created or updated, but flags it as non-compliant. 'deny' blocks the non-compliant resource creation or update. 'disabled' turns off the policy."
+    },
+    "allowedValues": [
+     "audit",
+     "deny",
+     "disabled"
+    ],
+    "defaultValue": "audit"
+   },
+   "excludedNamespaces": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "네임스페이스 제외",
+     "description": "정책 평가에서 제외할 Kubernetes 네임스페이스의 목록입니다."
+    },
+    "defaultValue": [
+     "kube-system",
+     "gatekeeper-system",
+     "azure-arc"
+    ]
+   },
+   "namespaces": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "네임스페이스 포함",
+     "description": "정책 평가에만 포함할 Kubernetes 네임스페이스의 목록입니다. 빈 목록은 정책이 모든 네임스페이스의 모든 리소스에 적용됨을 의미합니다."
+    },
+    "defaultValue": []
+   },
+   "labelSelector": {
+    "type": "Object",
+    "metadata": {
+     "displayName": "Kubernetes 레이블 선택기",
+     "description": "정책 평가를 위해 Kubernetes 리소스를 선택하는 레이블 쿼리입니다. 빈 레이블 선택기는 모든 Kubernetes 리소스와 일치합니다."
+    },
+    "defaultValue": {}
+   },
+   "forbiddenSysctls": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "금지된 sysctl",
+     "description": "*로 끝나는 일반 sysctl 이름 또는 sysctl 패턴 목록입니다. 문자열 *는 모든 sysctl을 찾습니다. 자세한 내용은 https://aka.ms/k8s-policy-sysctl-interfaces를 참조하세요."
+    }
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "in": [
+     "AKS Engine",
+     "Microsoft.Kubernetes/connectedClusters"
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "constraintTemplate": "https://store.policy.core.windows.net/kubernetes/forbidden-sysctl-interfaces/v1/template.yaml",
+     "constraint": "https://store.policy.core.windows.net/kubernetes/forbidden-sysctl-interfaces/v1/constraint.yaml",
+     "excludedNamespaces": "[parameters('excludedNamespaces')]",
+     "namespaces": "[parameters('namespaces')]",
+     "labelSelector": "[parameters('labelSelector')]",
+     "values": {
+      "forbiddenSysctls": "[parameters('forbiddenSysctls')]"
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/56d0a13f-712f-466b-8416-56fb354fb823",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "56d0a13f-712f-466b-8416-56fb354fb823"
+}

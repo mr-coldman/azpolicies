@@ -1,0 +1,66 @@
+{
+ "properties": {
+  "displayName": "Azure SQL Database에 대해 장기 지역 중복 백업을 사용하도록 설정해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "이 정책은 장기 지역 중복 백업이 사용하도록 설정되지 않은 모든 Azure SQL Database를 감사합니다.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "SQL"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Sql/servers/databases"
+     },
+     {
+      "field": "name",
+      "notEquals": "master"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Sql/servers/databases/backupLongTermRetentionPolicies",
+     "name": "default",
+     "existenceCondition": {
+      "anyOf": [
+       {
+        "field": "Microsoft.Sql/servers/databases/backupLongTermRetentionPolicies/weeklyRetention",
+        "notEquals": "PT0S"
+       },
+       {
+        "field": "Microsoft.Sql/servers/databases/backupLongTermRetentionPolicies/monthlyRetention",
+        "notEquals": "PT0S"
+       },
+       {
+        "field": "Microsoft.Sql/servers/databases/backupLongTermRetentionPolicies/yearlyRetention",
+        "notEquals": "PT0S"
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/d38fc420-0735-4ef3-ac11-c806f651a570",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "d38fc420-0735-4ef3-ac11-c806f651a570"
+}

@@ -1,0 +1,45 @@
+{
+ "properties": {
+  "displayName": "Azure Monitor Private Link 범위는 개인 링크를 사용해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Private Link를 사용하면 원본이나 대상에서 공용 IP 주소 없이 가상 네트워크를 Azure 서비스에 연결할 수 있습니다. Private Link 플랫폼은 Azure 백본 네트워크를 통해 소비자와 서비스 간의 연결을 처리합니다. 프라이빗 엔드포인트를 Azure 모니터 전용 링크 범위에 매핑하면 데이터 누출 위험을 줄일 수 있습니다. 자세한 내용은 https://docs.microsoft.com/azure/azure-monitor/logs/private-link-security에서 확인하세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Monitoring"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Insights/privateLinkScopes"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Insights/privateLinkScopes/privateEndpointConnections",
+     "existenceCondition": {
+      "field": "Microsoft.Insights/privateLinkScopes/privateEndpointConnections/privateLinkServiceConnectionState.status",
+      "equals": "Approved"
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/0fc55270-f8bf-4feb-b7b8-5e7e7eacc6a6",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "0fc55270-f8bf-4feb-b7b8-5e7e7eacc6a6"
+}

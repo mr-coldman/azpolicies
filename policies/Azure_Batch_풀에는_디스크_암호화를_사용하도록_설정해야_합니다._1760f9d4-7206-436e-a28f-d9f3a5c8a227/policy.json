@@ -1,0 +1,53 @@
+{
+ "properties": {
+  "displayName": "Azure Batch 풀에는 디스크 암호화를 사용하도록 설정해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "Azure Batch 디스크 암호화를 사용하면 Azure Batch 컴퓨팅 노드에서 데이터가 미사용 시 항상 암호화됩니다. https://docs.microsoft.com/azure/batch/disk-encryption에서 Batch의 디스크 암호화에 대해 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Batch"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled",
+     "Deny"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Batch/batchAccounts/pools"
+     },
+     {
+      "count": {
+       "field": "Microsoft.Batch/batchAccounts/pools/deploymentConfiguration.virtualMachineConfiguration.diskEncryptionConfiguration.targets[*]",
+       "where": {
+        "field": "Microsoft.Batch/batchAccounts/pools/deploymentConfiguration.virtualMachineConfiguration.diskEncryptionConfiguration.targets[*]",
+        "contains": "TemporaryDisk"
+       }
+      },
+      "less": 1
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/1760f9d4-7206-436e-a28f-d9f3a5c8a227",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "1760f9d4-7206-436e-a28f-d9f3a5c8a227"
+}

@@ -1,0 +1,55 @@
+{
+ "properties": {
+  "displayName": "[미리 보기]: 분산 추적을 사용하도록 설정되지 않은 Azure Spring Cloud 인스턴스 감사",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Spring Cloud의 분산 추적 도구는 애플리케이션의 마이크로 서비스 간에 복잡한 상호 연결의 디버깅 및 모니터링을 허용합니다. 분산 추적 도구는 사용하도록 설정해야 하며 정상 상태여야 합니다.",
+  "metadata": {
+   "version": "1.0.0-preview",
+   "category": "App Platform",
+   "preview": true
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.AppPlatform/Spring"
+     },
+     {
+      "anyOf": [
+       {
+        "field": "Microsoft.AppPlatform/Spring/trace.enabled",
+        "notEquals": "true"
+       },
+       {
+        "field": "Microsoft.AppPlatform/Spring/trace.state",
+        "notEquals": "Succeeded"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/0f2d8593-4667-4932-acca-6a9f187af109",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "0f2d8593-4667-4932-acca-6a9f187af109"
+}

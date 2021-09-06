@@ -1,0 +1,54 @@
+{
+ "properties": {
+  "displayName": "Kubernetes 서비스에서 RBAC(역할 기반 액세스 제어)를 사용해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "사용자가 수행할 수 있는 작업에 대한 세부적인 필터링을 제공하려면 RBAC(역할 기반 액세스 제어)를 사용하여 Kubernetes 서비스 클러스터에서 권한을 관리하고 관련 권한 부여 정책을 구성하세요.",
+  "metadata": {
+   "version": "1.0.2",
+   "category": "Security Center"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.ContainerService/managedClusters"
+     },
+     {
+      "anyOf": [
+       {
+        "field": "Microsoft.ContainerService/managedClusters/enableRBAC",
+        "exists": "false"
+       },
+       {
+        "field": "Microsoft.ContainerService/managedClusters/enableRBAC",
+        "equals": "false"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/ac4a19c2-fa67-49b4-8ae5-0b2e78c49457",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "ac4a19c2-fa67-49b4-8ae5-0b2e78c49457"
+}

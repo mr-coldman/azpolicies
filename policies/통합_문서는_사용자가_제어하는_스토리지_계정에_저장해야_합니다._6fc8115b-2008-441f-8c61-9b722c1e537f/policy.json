@@ -1,0 +1,47 @@
+{
+ "properties": {
+  "displayName": "통합 문서는 사용자가 제어하는 스토리지 계정에 저장해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "BYOS(Bring Your Own Storage)를 사용하면 통합 문서는 사용자가 제어하는 스토리지 계정으로 업로드됩니다. 즉, 미사용 암호화 정책, 수명 관리 정책, 네트워크 액세스를 제어하는 것입니다. 그러나 해당 스토리지 계정과 연결된 비용을 부담하게 됩니다. 자세한 내용은 https://aka.ms/workbooksByos를 참조하세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Monitoring"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "이 정책 실행을 감사, 거부 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "deny",
+     "audit",
+     "disabled"
+    ],
+    "defaultValue": "audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "microsoft.insights/workbooks"
+     },
+     {
+      "field": "microsoft.insights/workbooks/storageUri",
+      "exists": "false"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/6fc8115b-2008-441f-8c61-9b722c1e537f",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "6fc8115b-2008-441f-8c61-9b722c1e537f"
+}

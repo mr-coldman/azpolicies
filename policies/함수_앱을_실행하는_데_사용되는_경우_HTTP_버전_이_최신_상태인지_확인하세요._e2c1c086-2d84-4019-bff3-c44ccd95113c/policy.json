@@ -1,0 +1,58 @@
+{
+ "properties": {
+  "displayName": "함수 앱을 실행하는 데 사용되는 경우 'HTTP 버전'이 최신 상태인지 확인하세요.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "보안 결점으로 인해 또는 추가 기능을 포함하기 위해 HTTP에 대한 최신 버전이 주기적으로 릴리스됩니다. 최신 버전의 보안 수정 사항(있는 경우) 및/또는 새 기능을 활용하려면 웹앱의 최신 HTTP 버전을 사용하는 것이 좋습니다. 현재 이 정책은 Linux 웹앱에만 적용됩니다.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "App Service"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Web/sites"
+     },
+     {
+      "field": "kind",
+      "like": "functionapp*"
+     },
+     {
+      "field": "kind",
+      "contains": "linux"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Web/sites/config",
+     "name": "web",
+     "existenceCondition": {
+      "field": "Microsoft.Web/sites/config/web.http20Enabled",
+      "equals": "true"
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/e2c1c086-2d84-4019-bff3-c44ccd95113c",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "e2c1c086-2d84-4019-bff3-c44ccd95113c"
+}

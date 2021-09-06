@@ -1,0 +1,59 @@
+{
+ "properties": {
+  "displayName": "로컬 인증을 사용하지 않도록 컨테이너 레지스트리를 구성합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "컨테이너 레지스트리가 인증에 Azure Active Directory ID만 요구하도록 로컬 인증을 사용하지 않도록 설정합니다. 자세한 내용은 https://aka.ms/acr/authentication에서 확인하세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Container Registry"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Modify",
+     "Disabled"
+    ],
+    "defaultValue": "Modify"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.ContainerRegistry/registries"
+     },
+     {
+      "field": "Microsoft.ContainerRegistry/registries/adminUserEnabled",
+      "equals": true
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "conflictEffect": "audit",
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+     ],
+     "operations": [
+      {
+       "operation": "addOrReplace",
+       "field": "Microsoft.ContainerRegistry/registries/adminUserEnabled",
+       "value": false
+      }
+     ]
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/79fdfe03-ffcb-4e55-b4d0-b925b8241759",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "79fdfe03-ffcb-4e55-b4d0-b925b8241759"
+}

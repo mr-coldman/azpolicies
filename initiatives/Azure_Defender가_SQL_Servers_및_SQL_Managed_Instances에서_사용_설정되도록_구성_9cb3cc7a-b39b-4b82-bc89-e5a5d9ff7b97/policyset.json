@@ -1,0 +1,27 @@
+{
+ "properties": {
+  "displayName": "Azure Defender가 SQL Servers 및 SQL Managed Instances에서 사용 설정되도록 구성",
+  "policyType": "BuiltIn",
+  "description": "SQL Servers 및 SQL Managed Instances에서 Azure Defender를 사용하도록 설정하여 데이터베이스에 액세스하거나 악용하려는 비정상적이고 잠재적으로 유해한 시도를 나타내는 비정상적인 활동을 감지합니다.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "Security Center"
+  },
+  "parameters": {},
+  "policyDefinitions": [
+   {
+    "policyDefinitionReferenceId": "deployThreatDetectionOnSqlServers",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/36d49e87-48c4-4f2e-beed-ba4ed02b71f5",
+    "parameters": {}
+   },
+   {
+    "policyDefinitionReferenceId": "deployThreatDetectionOnSqlManagedInstances",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/c5a62eb0-c65a-4220-8a4d-f70dd4ca95dd",
+    "parameters": {}
+   }
+  ]
+ },
+ "id": "/providers/Microsoft.Authorization/policySetDefinitions/9cb3cc7a-b39b-4b82-bc89-e5a5d9ff7b97",
+ "type": "Microsoft.Authorization/policySetDefinitions",
+ "name": "9cb3cc7a-b39b-4b82-bc89-e5a5d9ff7b97"
+}

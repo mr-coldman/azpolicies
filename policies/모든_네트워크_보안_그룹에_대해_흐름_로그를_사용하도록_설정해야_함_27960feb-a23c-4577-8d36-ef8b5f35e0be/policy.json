@@ -1,0 +1,46 @@
+{
+ "properties": {
+  "displayName": "모든 네트워크 보안 그룹에 대해 흐름 로그를 사용하도록 설정해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "흐름 로그 리소스를 감사하여 흐름 로그 상태가 사용하도록 설정되어 있는지 확인합니다. 흐름 로그를 사용하면 네트워크 보안 그룹을 통해 흐르는 IP 트래픽에 대한 정보를 기록할 수 있습니다. 네트워크 흐름을 최적화하고 처리량을 모니터링하고 준수를 확인하고 침입을 탐지하는 데 사용할 수 있습니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Network"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allof": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Network/networkWatchers/flowLogs"
+     },
+     {
+      "field": "Microsoft.Network/networkWatchers/flowLogs/enabled",
+      "equals": false
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/27960feb-a23c-4577-8d36-ef8b5f35e0be",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "27960feb-a23c-4577-8d36-ef8b5f35e0be"
+}

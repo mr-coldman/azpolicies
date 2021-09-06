@@ -1,0 +1,272 @@
+{
+ "properties": {
+  "displayName": "[미리 보기]: Azure Defender의 확장을 설치하도록 Azure Arc 지원 Kubernetes 클러스터 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Defender의 Azure Arc 확장은 Arc 사용 Kubernetes 클러스터에 대해 위협 방지 기능을 제공합니다. 확장은 클러스터의 모든 노드에서 데이터를 수집하고 추가 분석을 위해 클라우드의 Azure Defender for Kubernetes 백 엔드로 보냅니다. https://docs.microsoft.com/azure/security-center/defender-for-kubernetes-azure-arc에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "2.0.0-preview",
+   "category": "Kubernetes",
+   "preview": true
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "DeployIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "DeployIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Kubernetes/connectedClusters"
+     },
+     {
+      "field": "Microsoft.Kubernetes/connectedClusters/connectivityStatus",
+      "equals": "connected"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.KubernetesConfiguration/extensions",
+     "deploymentScope": "subscription",
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.KubernetesConfiguration/extensions/extensionType",
+        "equals": "microsoft.azuredefender.kubernetes"
+       },
+       {
+        "field": "Microsoft.KubernetesConfiguration/extensions/provisioningState",
+        "equals": "Succeeded"
+       }
+      ]
+     },
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+      "/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"
+     ],
+     "deployment": {
+      "location": "westeurope",
+      "properties": {
+       "mode": "incremental",
+       "parameters": {
+        "clusterRegion": {
+         "value": "[field('location')]"
+        },
+        "clusterResourceId": {
+         "value": "[field('id')]"
+        }
+       },
+       "template": {
+        "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "clusterRegion": {
+          "type": "string"
+         },
+         "clusterResourceId": {
+          "type": "string"
+         }
+        },
+        "variables": {
+         "locationLongNameToShortMap": {
+          "australiacentral": "CAU",
+          "australiaeast": "EAU",
+          "australiasoutheast": "SEAU",
+          "brazilsouth": "CQ",
+          "canadacentral": "CCA",
+          "centralindia": "CIN",
+          "centralus": "CUS",
+          "eastasia": "EA",
+          "eastus": "EUS",
+          "eastus2": "EUS2",
+          "eastus2euap": "eus2p",
+          "germanywestcentral": "DEWC",
+          "francecentral": "PAR",
+          "japaneast": "EJP",
+          "koreacentral": "SE",
+          "northcentralus": "NCUS",
+          "northeurope": "NEU",
+          "norwayeast": "NOE",
+          "southafricanorth": "JNB",
+          "southcentralus": "SCUS",
+          "southeastasia": "SEA",
+          "swedencentral": "SEC",
+          "switzerlandnorth": "CHN",
+          "switzerlandwest": "CHW",
+          "uaenorth": "DXB",
+          "uksouth": "SUK",
+          "ukwest": "WUK",
+          "westcentralus": "WCUS",
+          "westeurope": "WEU",
+          "westus": "WUS",
+          "westus2": "WUS2",
+          "usgovvirginia": "USGV",
+          "usgovarizona": "USGA",
+          "usgovtexas": "USGT",
+          "chinaeast": "CNE",
+          "chinaeast2": "CNE2",
+          "chinawest": "CNW",
+          "chinawest2": "CNW2"
+         },
+         "locationCode": "[variables('locationLongNameToShortMap')[parameters('clusterRegion')]]",
+         "subscriptionId": "[subscription().subscriptionId]",
+         "defaultRGName": "[concat('DefaultResourceGroup-', variables('locationCode'))]",
+         "workspaceName": "[concat('DefaultWorkspace-', variables('subscriptionId'),'-', variables('locationCode'))]",
+         "deployDefaultAscResourceGroup": "[concat('deployDefaultAscResourceGroup-', uniqueString(deployment().name))]"
+        },
+        "resources": [
+         {
+          "type": "Microsoft.Resources/resourceGroups",
+          "name": "[variables('defaultRGName')]",
+          "apiVersion": "2019-05-01",
+          "location": "[parameters('clusterRegion')]"
+         },
+         {
+          "type": "Microsoft.Resources/deployments",
+          "name": "[variables('deployDefaultAscResourceGroup')]",
+          "apiVersion": "2020-06-01",
+          "resourceGroup": "[variables('defaultRGName')]",
+          "properties": {
+           "mode": "Incremental",
+           "expressionEvaluationOptions": {
+            "scope": "inner"
+           },
+           "parameters": {
+            "clusterRegion": {
+             "value": "[parameters('clusterRegion')]"
+            },
+            "workspaceName": {
+             "value": "[variables('workspaceName')]"
+            }
+           },
+           "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+             "clusterRegion": {
+              "type": "string"
+             },
+             "workspaceName": {
+              "type": "string"
+             }
+            },
+            "variables": {},
+            "resources": [
+             {
+              "type": "Microsoft.OperationalInsights/workspaces",
+              "name": "[parameters('workspaceName')]",
+              "apiVersion": "2015-11-01-preview",
+              "location": "[parameters('clusterRegion')]",
+              "properties": {
+               "sku": {
+                "name": "pernode"
+               },
+               "retentionInDays": 30,
+               "features": {
+                "searchVersion": 1
+               }
+              }
+             }
+            ]
+           }
+          },
+          "dependsOn": [
+           "[resourceId('Microsoft.Resources/resourceGroups', variables('defaultRGName'))]"
+          ]
+         },
+         {
+          "type": "Microsoft.Resources/deployments",
+          "name": "[Concat('arc-k8s-defender-extension', '-',  uniqueString(parameters('clusterResourceId')))]",
+          "apiVersion": "2020-10-01",
+          "subscriptionId": "[variables('subscriptionId')]",
+          "resourceGroup": "[split(parameters('clusterResourceId'),'/')[4]]",
+          "properties": {
+           "mode": "Incremental",
+           "expressionEvaluationOptions": {
+            "scope": "inner"
+           },
+           "parameters": {
+            "workspaceResourceId": {
+             "value": "[concat('/subscriptions/', variables('subscriptionId'), '/resourcegroups/', variables('defaultRGName'), '/providers/Microsoft.OperationalInsights/workspaces/', variables('workspaceName'))]"
+            },
+            "clusterResourceId": {
+             "value": "[parameters('clusterResourceId')]"
+            },
+            "clusterRegion": {
+             "value": "[parameters('clusterRegion')]"
+            }
+           },
+           "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+             "workspaceResourceId": {
+              "type": "string"
+             },
+             "clusterResourceId": {
+              "type": "string"
+             },
+             "clusterRegion": {
+              "type": "string"
+             }
+            },
+            "resources": [
+             {
+              "type": "Microsoft.KubernetesConfiguration/extensions",
+              "apiVersion": "2020-07-01-preview",
+              "name": "microsoft.azuredefender.kubernetes",
+              "location": "[parameters('clusterRegion')]",
+              "identity": {
+               "type": "systemassigned"
+              },
+              "properties": {
+               "extensionType": "microsoft.azuredefender.kubernetes",
+               "configurationSettings": {
+                "logAnalyticsWorkspaceResourceID": "[parameters('workspaceResourceId')]"
+               },
+               "configurationProtectedSettings": {
+                "omsagent.secret.wsid": "[reference(parameters('workspaceResourceId'), '2015-03-20').customerId]",
+                "omsagent.secret.key": "[listKeys(parameters('workspaceResourceId'), '2015-03-20').primarySharedKey]"
+               },
+               "autoUpgradeMinorVersion": true,
+               "releaseTrain": "Stable",
+               "scope": {
+                "Cluster": {
+                 "releaseNamespace": "azuredefender"
+                }
+               }
+              },
+              "scope": "[concat('Microsoft.Kubernetes/connectedClusters/', split(parameters('clusterResourceId'),'/')[8])]"
+             }
+            ]
+           }
+          },
+          "dependsOn": [
+           "[variables('deployDefaultAscResourceGroup')]"
+          ]
+         }
+        ]
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/708b60a6-d253-4fe0-9114-4be4c00f012c",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "708b60a6-d253-4fe0-9114-4be4c00f012c"
+}

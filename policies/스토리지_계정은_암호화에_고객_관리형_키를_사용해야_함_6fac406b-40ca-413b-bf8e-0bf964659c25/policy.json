@@ -1,0 +1,48 @@
+{
+ "properties": {
+  "displayName": "스토리지 계정은 암호화에 고객 관리형 키를 사용해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "고객 관리형 키를 사용하여 Blob 및 파일 스토리지 계정을 더욱 유연하게 보호하세요. 고객 관리형 키를 지정하면 데이터를 암호화하는 키에 대한 액세스를 보호하고 제어하는 데 해당 키가 사용됩니다. 고객 관리형 키를 사용하면 키 암호화 키의 순환을 제어하거나 암호화된 방식으로 데이터를 지우는 추가 기능이 제공됩니다.",
+  "metadata": {
+   "version": "1.0.3",
+   "category": "Storage"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Storage/storageAccounts"
+     },
+     {
+      "not": {
+       "field": "Microsoft.Storage/storageAccounts/encryption.keySource",
+       "equals": "Microsoft.Keyvault"
+      }
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/6fac406b-40ca-413b-bf8e-0bf964659c25",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "6fac406b-40ca-413b-bf8e-0bf964659c25"
+}

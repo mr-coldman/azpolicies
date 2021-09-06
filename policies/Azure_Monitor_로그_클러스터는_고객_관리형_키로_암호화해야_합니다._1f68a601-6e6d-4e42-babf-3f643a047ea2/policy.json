@@ -1,0 +1,77 @@
+{
+ "properties": {
+  "displayName": "Azure Monitor 로그 클러스터는 고객 관리형 키로 암호화해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "고객 관리형 키 암호화를 사용하여 Azure Monitor 로그 클러스터를 만듭니다. 기본적으로 로그 데이터는 서비스 관리형 키를 사용하여 암호화되지만, 고객 관리형 키는 주로 규정 준수를 충족하는 데 필요합니다. Azure Monitor의 고객 관리형 키를 사용하여 데이터 액세스를 보다 잘 제어할 수 있습니다. https://docs.microsoft.com/azure/azure-monitor/platform/customer-managed-keys의 내용을 참조하세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Monitoring"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "이 효과는 정책 규칙이 일치하도록 평가될 때 발생하는 동작을 결정합니다."
+    },
+    "allowedValues": [
+     "audit",
+     "deny",
+     "disabled"
+    ],
+    "defaultValue": "audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.OperationalInsights/clusters"
+     },
+     {
+      "anyOf": [
+       {
+        "anyOf": [
+         {
+          "field": "Microsoft.OperationalInsights/clusters/keyVaultProperties.keyVaultUri",
+          "equals": ""
+         },
+         {
+          "field": "Microsoft.OperationalInsights/clusters/keyVaultProperties.keyVaultUri",
+          "exists": "false"
+         }
+        ]
+       },
+       {
+        "anyOf": [
+         {
+          "field": "Microsoft.OperationalInsights/clusters/keyVaultProperties.keyName",
+          "equals": ""
+         },
+         {
+          "field": "Microsoft.OperationalInsights/clusters/keyVaultProperties.keyName",
+          "exists": "false"
+         }
+        ]
+       },
+       {
+        "not": {
+         "field": "Microsoft.OperationalInsights/clusters/keyVaultProperties.keyVersion",
+         "exists": "true"
+        }
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/1f68a601-6e6d-4e42-babf-3f643a047ea2",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "1f68a601-6e6d-4e42-babf-3f643a047ea2"
+}

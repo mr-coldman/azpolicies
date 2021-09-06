@@ -1,0 +1,277 @@
+{
+ "properties": {
+  "displayName": "Windows 머신이 '보안 옵션 - 네트워크 액세스'에 대한 요구 사항을 충족해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Windows 머신에서 익명 사용자의 액세스, 로컬 계정 및 레지스트리에 대한 원격 액세스를 포함하려면 '보안 옵션 - 네트워크 액세스' 범주에 지정된 그룹 정책 설정이 있어야 합니다. 이 정책을 사용하려면 게스트 구성 필수 구성 요소가 정책 할당 범위에 배포되었어야 합니다. 자세한 내용을 보려면 https://aka.ms/gcpol을 방문하세요.",
+  "metadata": {
+   "category": "Guest Configuration",
+   "version": "2.0.0",
+   "requiredProviders": [
+    "Microsoft.GuestConfiguration"
+   ],
+   "guestConfiguration": {
+    "name": "AzureBaseline_SecurityOptionsNetworkAccess",
+    "version": "1.*",
+    "configurationParameter": {
+     "NetworkAccessRemotelyAccessibleRegistryPaths": "Network access: Remotely accessible registry paths;ExpectedValue",
+     "NetworkAccessRemotelyAccessibleRegistryPathsAndSubpaths": "Network access: Remotely accessible registry paths and sub-paths;ExpectedValue",
+     "NetworkAccessSharesThatCanBeAccessedAnonymously": "Network access: Shares that can be accessed anonymously;ExpectedValue"
+    }
+   }
+  },
+  "parameters": {
+   "IncludeArcMachines": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Arc 연결된 서버 포함",
+     "description": "이 옵션을 선택하면 Arc 연결된 머신마다 매달 청구되는 것에 동의하게 됩니다."
+    },
+    "allowedValues": [
+     "true",
+     "false"
+    ],
+    "defaultValue": "false"
+   },
+   "NetworkAccessRemotelyAccessibleRegistryPaths": {
+    "type": "String",
+    "metadata": {
+     "displayName": "네트워크 액세스: 원격으로 액세스할 수 있는 레지스트리 경로",
+     "description": "'winreg' 레지스트리 키의 ACL(액세스 제어 목록)에 나열된 사용자 또는 그룹과 관계없이 네트워크에서 액세스할 수 있는 레지스트리 경로를 지정합니다."
+    },
+    "defaultValue": "System\\CurrentControlSet\\Control\\ProductOptions|#|System\\CurrentControlSet\\Control\\Server Applications|#|Software\\Microsoft\\Windows NT\\CurrentVersion"
+   },
+   "NetworkAccessRemotelyAccessibleRegistryPathsAndSubpaths": {
+    "type": "String",
+    "metadata": {
+     "displayName": "네트워크 액세스: 원격으로 액세스할 수 있는 레지스트리 경로 및 하위 경로",
+     "description": "'winreg' 레지스트리 키의 ACL(액세스 제어 목록)에 나열된 사용자 또는 그룹과 관계없이 네트워크에서 액세스할 수 있는 레지스트리 경로 및 하위 경로를 지정합니다."
+    },
+    "defaultValue": "System\\CurrentControlSet\\Control\\Print\\Printers|#|System\\CurrentControlSet\\Services\\Eventlog|#|Software\\Microsoft\\OLAP Server|#|Software\\Microsoft\\Windows NT\\CurrentVersion\\Print|#|Software\\Microsoft\\Windows NT\\CurrentVersion\\Windows|#|System\\CurrentControlSet\\Control\\ContentIndex|#|System\\CurrentControlSet\\Control\\Terminal Server|#|System\\CurrentControlSet\\Control\\Terminal Server\\UserConfig|#|System\\CurrentControlSet\\Control\\Terminal Server\\DefaultUserConfiguration|#|Software\\Microsoft\\Windows NT\\CurrentVersion\\Perflib|#|System\\CurrentControlSet\\Services\\SysmonLog"
+   },
+   "NetworkAccessSharesThatCanBeAccessedAnonymously": {
+    "type": "String",
+    "metadata": {
+     "displayName": "네트워크 액세스: 익명으로 액세스할 수 있는 공유",
+     "description": "익명 사용자가 액세스할 수 있는 네트워크 공유를 지정합니다. 모든 사용자가 서버의 공유 리소스에 액세스하려면 먼저 인증을 받아야 하므로 이 정책 설정의 기본 구성은 거의 효과가 없습니다."
+    },
+    "defaultValue": "0"
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "이 정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "anyOf": [
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/virtualMachines"
+       },
+       {
+        "anyOf": [
+         {
+          "field": "Microsoft.Compute/imagePublisher",
+          "in": [
+           "esri",
+           "incredibuild",
+           "MicrosoftDynamicsAX",
+           "MicrosoftSharepoint",
+           "MicrosoftVisualStudio",
+           "MicrosoftWindowsDesktop",
+           "MicrosoftWindowsServerHPCPack"
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "MicrosoftWindowsServer"
+           },
+           {
+            "field": "Microsoft.Compute/imageSKU",
+            "notLike": "2008*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "MicrosoftSQLServer"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "notLike": "SQL2008*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "microsoft-dsvm"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "equals": "dsvm-windows"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "microsoft-ads"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "in": [
+             "standard-data-science-vm",
+             "windows-data-science-vm"
+            ]
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "batch"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "equals": "rendering-windows2016"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "center-for-internet-security-inc"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "cis-windows-server-201*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "pivotal"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "bosh-windows-server*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "cloud-infrastructure-services"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "ad*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Compute/virtualMachines/osProfile.windowsConfiguration",
+              "exists": "true"
+             },
+             {
+              "field": "Microsoft.Compute/virtualMachines/storageProfile.osDisk.osType",
+              "like": "Windows*"
+             }
+            ]
+           },
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Compute/imageSKU",
+              "exists": "false"
+             },
+             {
+              "allOf": [
+               {
+                "field": "Microsoft.Compute/imageSKU",
+                "notLike": "2008*"
+               },
+               {
+                "field": "Microsoft.Compute/imageOffer",
+                "notLike": "SQL2008*"
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "allOf": [
+       {
+        "value": "[parameters('IncludeArcMachines')]",
+        "equals": "true"
+       },
+       {
+        "field": "type",
+        "equals": "Microsoft.HybridCompute/machines"
+       },
+       {
+        "field": "Microsoft.HybridCompute/imageOffer",
+        "like": "windows*"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.GuestConfiguration/guestConfigurationAssignments",
+     "name": "AzureBaseline_SecurityOptionsNetworkAccess",
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/complianceStatus",
+        "equals": "Compliant"
+       },
+       {
+        "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/parameterHash",
+        "equals": "[base64(concat('Network access: Remotely accessible registry paths;ExpectedValue', '=', parameters('NetworkAccessRemotelyAccessibleRegistryPaths'), ',', 'Network access: Remotely accessible registry paths and sub-paths;ExpectedValue', '=', parameters('NetworkAccessRemotelyAccessibleRegistryPathsAndSubpaths'), ',', 'Network access: Shares that can be accessed anonymously;ExpectedValue', '=', parameters('NetworkAccessSharesThatCanBeAccessedAnonymously')))]"
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/3ff60f98-7fa4-410a-9f7f-0b00f5afdbdd",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "3ff60f98-7fa4-410a-9f7f-0b00f5afdbdd"
+}

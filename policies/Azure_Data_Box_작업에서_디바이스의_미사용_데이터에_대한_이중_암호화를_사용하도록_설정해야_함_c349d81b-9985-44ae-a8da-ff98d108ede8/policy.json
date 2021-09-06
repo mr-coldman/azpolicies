@@ -1,0 +1,66 @@
+{
+ "properties": {
+  "displayName": "Azure Data Box 작업에서 디바이스의 미사용 데이터에 대한 이중 암호화를 사용하도록 설정해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "디바이스에서 미사용 데이터에 대한 소프트웨어 기반 암호화의 두 번째 계층을 사용합니다. 디바이스가 이미 미사용 데이터에 대한 AES(Advanced Encryption Standard) 256비트 암호화를 통해 보호되고 있습니다. 이 옵션은 데이터 암호화의 두 번째 계층을 추가합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Data Box"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책의 원하는 효과"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   },
+   "supportedSKUs": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "지원되는 SKU",
+     "description": "소프트웨어 기반 이중 암호화를 지원하는 SKU 목록"
+    },
+    "allowedValues": [
+     "DataBox",
+     "DataBoxHeavy"
+    ],
+    "defaultValue": [
+     "DataBox",
+     "DataBoxHeavy"
+    ]
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.DataBox/jobs"
+     },
+     {
+      "field": "Microsoft.Databox/jobs/sku.name",
+      "in": "[parameters('supportedSKUs')]"
+     },
+     {
+      "field": "Microsoft.DataBox/jobs/details.preferences.encryptionPreferences.doubleEncryption",
+      "notEquals": "Enabled"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/c349d81b-9985-44ae-a8da-ff98d108ede8",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "c349d81b-9985-44ae-a8da-ff98d108ede8"
+}

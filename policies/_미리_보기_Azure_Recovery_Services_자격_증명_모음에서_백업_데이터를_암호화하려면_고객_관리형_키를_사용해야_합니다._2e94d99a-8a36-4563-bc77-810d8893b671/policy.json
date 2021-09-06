@@ -1,0 +1,76 @@
+{
+ "properties": {
+  "displayName": "[미리 보기]: Azure Recovery Services 자격 증명 모음에서 백업 데이터를 암호화하려면 고객 관리형 키를 사용해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "고객 관리형 키를 사용하여 백업 데이터의 나머지에서 암호화를 관리합니다. 기본적으로 고객 데이터는 서비스 관리형 키로 암호화되지만, 규정 준수 표준을 충족하기 위해 고객 관리형 키가 일반적으로 필요합니다. 고객 관리형 키를 사용하면 사용자가 만들고 소유한 Azure Key Vault 키로 데이터를 암호화할 수 있습니다. 사용자는 순환 및 관리를 비롯하여 키 수명 주기에 대한 모든 권한을 갖고 책임을 집니다. https://aka.ms/AB-CmkEncryption에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0-preview",
+   "preview": true,
+   "category": "Backup"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정합니다."
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   },
+   "enableDoubleEncryption": {
+    "type": "Boolean",
+    "metadata": {
+     "displayName": "백업을 위해 Recovery Services 자격 증명 모음에서 이중 암호화를 사용하도록 설정해야 합니다.",
+     "description": "백업을 위해 Recovery Services 자격 증명 모음에 이중 암호화를 사용하도록 설정되어 있는지 확인합니다.  자세한 내용은 https://aka.ms/AB-InfraEncryption을 참조하세요."
+    },
+    "allowedValues": [
+     true,
+     false
+    ],
+    "defaultValue": false
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.RecoveryServices/vaults"
+     },
+     {
+      "anyOf": [
+       {
+        "field": "Microsoft.RecoveryServices/vaults/encryption.keyVaultProperties.keyUri",
+        "exists": "false"
+       },
+       {
+        "allOf": [
+         {
+          "value": "[parameters('enableDoubleEncryption')]",
+          "equals": true
+         },
+         {
+          "field": "Microsoft.RecoveryServices/vaults/encryption.infrastructureEncryption",
+          "notEquals": "Enabled"
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/2e94d99a-8a36-4563-bc77-810d8893b671",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "2e94d99a-8a36-4563-bc77-810d8893b671"
+}

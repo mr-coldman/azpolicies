@@ -1,0 +1,72 @@
+{
+ "properties": {
+  "displayName": "로그 수집 및 쿼리를 위해 공용 네트워크 액세스를 사용하지 않도록 Azure 애플리케이션 Insights 구성 요소 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "보안을 향상시키기 위해 공용 네트워크 액세스에서 구성 요소 로그 수집 및 쿼리를 비활성화합니다. 비공개 링크로 연결된 네트워크만 이 작업 영역에서 로그를 수집하고 쿼리할 수 있습니다. https://aka.ms/AzMonPrivateLink#configure-application-insights에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.1.0",
+   "category": "Monitoring"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Modify",
+     "Disabled"
+    ],
+    "defaultValue": "Modify"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Insights/components"
+     },
+     {
+      "anyOf": [
+       {
+        "field": "Microsoft.Insights/components/publicNetworkAccessForIngestion",
+        "notEquals": "Disabled"
+       },
+       {
+        "field": "Microsoft.Insights/components/publicNetworkAccessForQuery",
+        "notEquals": "Disabled"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "conflictEffect": "Audit",
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/ae349356-3a1b-4a5e-921d-050484c6347e"
+     ],
+     "operations": [
+      {
+       "operation": "addOrReplace",
+       "field": "Microsoft.Insights/components/publicNetworkAccessForIngestion",
+       "value": "Disabled"
+      },
+      {
+       "operation": "addOrReplace",
+       "field": "Microsoft.Insights/components/publicNetworkAccessForQuery",
+       "value": "Disabled"
+      }
+     ]
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/dddfa1af-dcd6-42f4-b5b0-e1db01e0b405",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "dddfa1af-dcd6-42f4-b5b0-e1db01e0b405"
+}
