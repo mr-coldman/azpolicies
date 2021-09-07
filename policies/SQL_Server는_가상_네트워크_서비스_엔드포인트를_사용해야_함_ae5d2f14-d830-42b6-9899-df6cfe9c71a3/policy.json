@@ -1,0 +1,45 @@
+{
+ "properties": {
+  "displayName": "SQL Server는 가상 네트워크 서비스 엔드포인트를 사용해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "이 정책은 가상 네트워크 서비스 엔드포인트를 사용하도록 구성되지 않은 모든 SQL Server를 감사합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Network"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Sql/servers"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Sql/servers/virtualNetworkRules",
+     "existenceCondition": {
+      "field": "Microsoft.Sql/servers/virtualNetworkRules/virtualNetworkSubnetId",
+      "exists": "true"
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/ae5d2f14-d830-42b6-9899-df6cfe9c71a3",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "ae5d2f14-d830-42b6-9899-df6cfe9c71a3"
+}

@@ -1,0 +1,47 @@
+{
+ "properties": {
+  "displayName": "Azure Synapse 작업 영역은 고객 관리형 키를 사용하여 미사용 데이터를 암호화해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "고객 관리형 키를 사용하여 Azure Synapse 작업 영역에 저장된 미사용 데이터 암호화를 제어합니다. 고객 관리형 키는 서비스 관리형 키로 수행된 기본 암호화 외에 두 번째 암호화 계층을 추가하여 이중 암호화를 제공합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Synapse"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Synapse/workspaces"
+     },
+     {
+      "field": "Microsoft.Synapse/workspaces/encryption.cmk.key.name",
+      "exists": false
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/f7d52b2d-e161-4dfa-a82b-55e564167385",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "f7d52b2d-e161-4dfa-a82b-55e564167385"
+}

@@ -1,0 +1,58 @@
+{
+ "properties": {
+  "displayName": "키는 만료 전 지정된 기간(일)보다 많은 일 수가 남아 있어야 함",
+  "policyType": "BuiltIn",
+  "mode": "Microsoft.KeyVault.Data",
+  "description": "키 만료 날짜가 다가오면 조직의 키 회전 지연으로 인해 중단이 발생할 수 있습니다. 오류에 반응할 충분한 시간을 제공하기 위해 키는 만료 전 지정된 기간(일)에 회전되어야 합니다.",
+  "metadata": {
+   "version": "1.0.1",
+   "category": "Key Vault"
+  },
+  "parameters": {
+   "minimumDaysBeforeExpiration": {
+    "type": "Integer",
+    "metadata": {
+     "displayName": "만료 전 최소 기간(일)",
+     "description": "만료 전에 키를 사용할 수 있는 최소 기간(일)을 지정합니다."
+    }
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "'감사'는 비준수 리소스를 만들도록 허용하지만 리소스에 비준수로 플래그 지정합니다. '거부'는 리소스 생성을 차단합니다. '사용 안 함'은 정책을 끕니다."
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.KeyVault.Data/vaults/keys"
+     },
+     {
+      "field": "Microsoft.KeyVault.Data/vaults/keys/attributes.expiresOn",
+      "exists": true
+     },
+     {
+      "field": "Microsoft.KeyVault.Data/vaults/keys/attributes.expiresOn",
+      "less": "[addDays(utcNow(), parameters('minimumDaysBeforeExpiration'))]"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/5ff38825-c5d8-47c5-b70e-069a21955146",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "5ff38825-c5d8-47c5-b70e-069a21955146"
+}

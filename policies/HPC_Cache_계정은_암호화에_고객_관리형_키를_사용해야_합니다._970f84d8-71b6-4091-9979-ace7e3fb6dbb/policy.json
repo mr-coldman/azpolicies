@@ -1,0 +1,59 @@
+{
+ "properties": {
+  "displayName": "HPC Cache 계정은 암호화에 고객 관리형 키를 사용해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "고객 관리형 키를 사용하여 Azure HPC Cache의 미사용 암호화를 관리합니다. 기본적으로 고객 데이터는 서비스 관리형 키로 암호화되지만 고객 관리형 키는 규정 준수 표준을 충족하기 위해 일반적으로 필요합니다. 고객 관리형 키를 사용하면 사용자가 만들고 소유한 Azure Key Vault 키로 데이터를 암호화할 수 있습니다. 사용자는 순환 및 관리를 비롯하여 키 수명 주기에 대한 모든 권한을 갖고 책임을 집니다.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "Storage"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled",
+     "Deny"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.StorageCache/caches"
+     },
+     {
+      "anyOf": [
+       {
+        "field": "identity.type",
+        "exists": false
+       },
+       {
+        "field": "Microsoft.StorageCache/caches/encryptionSettings.keyEncryptionKey.keyUrl",
+        "exists": false
+       },
+       {
+        "field": "Microsoft.StorageCache/caches/encryptionSettings.keyEncryptionKey.sourceVault.Id",
+        "exists": false
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/970f84d8-71b6-4091-9979-ace7e3fb6dbb",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "970f84d8-71b6-4091-9979-ace7e3fb6dbb"
+}

@@ -1,0 +1,81 @@
+{
+ "properties": {
+  "displayName": "[미리 보기]: 지원되는 Windows 가상 머신에 게스트 증명 확장을 설치해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "지원되는 가상 머신에 게스트 증명 확장을 설치하여 Azure Security Center가 부팅 무결성을 사전에 증명하고 모니터링할 수 있도록 합니다. 설치가 완료되면 원격 증명을 통해 부팅 무결성이 테스트됩니다. 이 평가는 신뢰할 수 있는 실행 지원 가상 머신에만 적용됩니다.",
+  "metadata": {
+   "category": "Security Center",
+   "version": "1.0.0-preview",
+   "preview": true
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Compute/virtualMachines"
+     },
+     {
+      "field": "Microsoft.Compute/virtualMachines/storageProfile.imageReference.offer",
+      "like": "windows*"
+     },
+     {
+      "field": "Microsoft.Compute/virtualMachines/securityProfile.uefiSettings",
+      "exists": "true"
+     },
+     {
+      "field": "Microsoft.Compute/virtualMachines/securityProfile.uefiSettings.secureBootEnabled",
+      "equals": "true"
+     },
+     {
+      "field": "Microsoft.Compute/virtualMachines/securityProfile.uefiSettings.vTpmEnabled",
+      "equals": "true"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Compute/virtualMachines/extensions",
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.Compute/virtualMachines/extensions/publisher",
+        "equals": "Microsoft.Azure.Security.WindowsAttestation"
+       },
+       {
+        "field": "Microsoft.Compute/virtualMachines/extensions/type",
+        "equals": "GuestAttestation"
+       },
+       {
+        "field": "Microsoft.Compute/virtualMachines/extensions/provisioningState",
+        "in": [
+         "Succeeded",
+         "Provisioning succeeded"
+        ]
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/1cb4d9c2-f88f-4069-bee0-dba239a57b09",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "1cb4d9c2-f88f-4069-bee0-dba239a57b09"
+}

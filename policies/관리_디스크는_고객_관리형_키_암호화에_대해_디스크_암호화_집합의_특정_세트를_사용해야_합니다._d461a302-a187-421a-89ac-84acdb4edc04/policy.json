@@ -1,0 +1,167 @@
+{
+ "properties": {
+  "displayName": "관리 디스크는 고객 관리형 키 암호화에 대해 디스크 암호화 집합의 특정 세트를 사용해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "관리 디스크에서 디스크 암호화 집합의 특정 세트를 사용하도록 요구하면 미사용 암호화에 사용되는 키를 제어할 수 있습니다. 허용된 암호화 집합을 선택할 수 있으며 디스크에 연결될 때 다른 모든 암호화 집합은 거부됩니다. https://aka.ms/disks-cmk에서 자세히 알아보세요.",
+  "metadata": {
+   "category": "Compute",
+   "version": "2.0.0"
+  },
+  "parameters": {
+   "allowedEncryptionSets": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "허용된 디스크 암호화 집합",
+     "description": "관리 디스크에 대해 허용되는 디스크 암호화 집합 목록입니다.",
+     "strongType": "Microsoft.Compute/diskEncryptionSets"
+    }
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "anyOf": [
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/disks"
+       },
+       {
+        "field": "Microsoft.Compute/disks/managedBy",
+        "exists": "False"
+       },
+       {
+        "field": "Microsoft.Compute/disks/encryption.diskEncryptionSetId",
+        "notIn": "[parameters('allowedEncryptionSets')]"
+       }
+      ]
+     },
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/virtualMachines"
+       },
+       {
+        "field": "Microsoft.Compute/virtualMachines/storageProfile.osDisk.managedDisk.diskEncryptionSet.id",
+        "notIn": "[parameters('allowedEncryptionSets')]"
+       }
+      ]
+     },
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/virtualMachineScaleSets"
+       },
+       {
+        "field": "Microsoft.Compute/virtualMachineScaleSets/virtualMachineProfile.storageProfile.osDisk.managedDisk.diskEncryptionSet.id",
+        "notIn": "[parameters('allowedEncryptionSets')]"
+       }
+      ]
+     },
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/virtualMachineScaleSets"
+       },
+       {
+        "count": {
+         "field": "Microsoft.Compute/virtualMachineScaleSets/virtualMachineProfile.storageProfile.dataDisks[*]"
+        },
+        "greater": 0
+       },
+       {
+        "not": {
+         "field": "Microsoft.Compute/virtualMachineScaleSets/virtualMachineProfile.storageProfile.dataDisks[*].managedDisk.diskEncryptionSet.id",
+         "in": "[parameters('allowedEncryptionSets')]"
+        }
+       }
+      ]
+     },
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/galleries/images/versions"
+       },
+       {
+        "not": {
+         "field": "Microsoft.Compute/galleries/images/versions/publishingProfile.targetRegions[*].encryption.osDiskImage.diskEncryptionSetId",
+         "in": "[parameters('allowedEncryptionSets')]"
+        }
+       }
+      ]
+     },
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/galleries/images/versions"
+       },
+       {
+        "value": "[length(field('Microsoft.Compute/galleries/images/versions/storageProfile.dataDiskImages[*]'))]",
+        "greater": 0
+       },
+       {
+        "not": {
+         "field": "Microsoft.Compute/galleries/images/versions/publishingProfile.targetRegions[*].encryption.dataDiskImages[*].diskEncryptionSetId",
+         "in": "[parameters('allowedEncryptionSets')]"
+        }
+       }
+      ]
+     },
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/images"
+       },
+       {
+        "field": "Microsoft.Compute/images/storageProfile.osDisk.diskEncryptionSet.id",
+        "notIn": "[parameters('allowedEncryptionSets')]"
+       }
+      ]
+     },
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/images"
+       },
+       {
+        "value": "[length(field('Microsoft.Compute/images/storageProfile.dataDisks[*]'))]",
+        "greater": 0
+       },
+       {
+        "field": "Microsoft.Compute/images/storageProfile.dataDisks[*].diskEncryptionSet.id",
+        "notIn": "[parameters('allowedEncryptionSets')]"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/d461a302-a187-421a-89ac-84acdb4edc04",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "d461a302-a187-421a-89ac-84acdb4edc04"
+}

@@ -1,0 +1,1169 @@
+{
+ "properties": {
+  "displayName": "[미리 보기]: MPAA(Motion Picture Association of America)",
+  "policyType": "BuiltIn",
+  "description": "이 이니셔티브에는 미국영화협회(MPAA: Motion Picture Association of America) 보안 및 지침 컨트롤의 하위 집합을 처리하는 감사 및 가상 머신 확장 배포 정책이 포함되어 있습니다. 이후 릴리스에서 정책이 더 추가될 예정입니다. 자세한 내용은 https://aka.ms/mpaa-blueprint를 참조하세요.",
+  "metadata": {
+   "version": "4.0.2-preview",
+   "category": "Regulatory Compliance",
+   "preview": true
+  },
+  "parameters": {
+   "IncludeArcMachines": {
+    "type": "String",
+    "metadata": {
+     "displayName": "게스트 구성 정책에 대해 Arc 연결된 서버 포함",
+     "description": "필요에 따라 게스트 구성 정책을 사용하여 Arc 연결된 서버 내의 설정을 감사하도록 선택합니다. 이 옵션을 선택하면 Arc 연결된 머신마다 매달 청구되는 것에 동의하게 됩니다."
+    },
+    "allowedValues": [
+     "true",
+     "false"
+    ],
+    "defaultValue": "false"
+   },
+   "certificateThumbprints": {
+    "type": "String",
+    "metadata": {
+     "displayName": "신뢰할 수 있는 루트에 있어야 하는 인증서 지문",
+     "description": "신뢰할 수 있는 루트 인증서 저장소(Cert:\\LocalMachine\\Root) 아래에 있어야 하는 인증서 지문을 세미콜론으로 구분한 목록입니다. 예: THUMBPRINT1;THUMBPRINT2;THUMBPRINT3"
+    }
+   },
+   "applicationName": {
+    "type": "String",
+    "metadata": {
+     "displayName": "VM에 설치할 애플리케이션 이름",
+     "description": "설치해야 하는 애플리케이션 이름의 세미콜론으로 구분된 목록입니다. 예: 'python; powershell'"
+    }
+   },
+   "storagePrefix": {
+    "type": "String",
+    "metadata": {
+     "displayName": "네트워크 보안 그룹에 대한 진단 설정을 배포하기 위한 지역별 스토리지 계정의 스토리지 계정 접두사",
+     "description": "이 접두사와 네트워크 보안 그룹 위치가 결합되어 스토리지 계정 이름이 구성됩니다."
+    }
+   },
+   "rgName": {
+    "type": "String",
+    "metadata": {
+     "displayName": "네트워크 보안 그룹에 대한 진단 설정을 배포하기 위한 스토리지 계정(있어야 함)의 리소스 그룹 이름",
+     "description": "스토리지 계정을 만들 리소스 그룹입니다. 이 리소스 그룹은 미리 존재해야 합니다.",
+     "strongType": "ExistingResourceGroups"
+    }
+   },
+   "diskEncryptionMonitoringEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "가상 머신은 Compute 및 Storage 리소스 간에 임시 디스크, 캐시 및 데이터 흐름을 암호화해야 합니다.",
+     "description": "VM 디스크 암호화에 대한 모니터링을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "previewMonitorUnencryptedSQLDatabaseInAzureSecurityCenterEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Azure Security Center에서 암호화되지 않은 SQL 데이터베이스 모니터링",
+     "description": "Azure Security Center에서 암호화되지 않은 SQL 데이터베이스 모니터링을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "metricName": {
+    "type": "String",
+    "metadata": {
+     "displayName": "배치 계정에서 경고 규칙을 구성해야 하는 메트릭 이름",
+     "description": "경고 규칙을 사용하도록 설정해야 하는 메트릭 이름"
+    }
+   },
+   "metricAlertsInBatchAccountPoolDeleteStartEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Bach 계정에서 메트릭 경고 규칙을 구성해야 합니다.",
+     "description": "필요한 메트릭을 사용하도록 설정할 배치 계정에 대해 메트릭 경고 규칙 모니터링을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "disableUnrestrictedNetworkToStorageAccountMonitoringEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "스토리지 계정에 대한 무제한 네트워크 액세스 감사",
+     "description": "스토리지 계정에 대한 네트워크 액세스 모니터링을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   },
+   "diagnosticsLogsInLogicAppsMonitoringEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Logic Apps의 리소스 로그를 사용하도록 설정해야 함",
+     "description": "Logic Apps 워크플로에서 리소스 로그 모니터링을 사용하거나 사용하지 않도록 설정합니다."
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "requiredRetentionDays": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Logic Apps 워크플로 리소스 로그의 필수 보존 기간(일)",
+     "description": "리소스 로그 필수 보존 기간(일)"
+    },
+    "defaultValue": "365"
+   },
+   "vmssOsVulnerabilitiesMonitoringEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Virtual Machine Scale Sets에서 보안 구성의 취약성을 수정해야 합니다.",
+     "description": "가상 머신 확장 집합 OS 취약성 모니터링을 사용 또는 사용 안 함 "
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "systemSettingsUseCertificateRulesOnWindowsExecutablesForSoftwareRestrictionPolicies": {
+    "type": "String",
+    "metadata": {
+     "displayName": "시스템 설정: 소프트웨어 제한 정책에 대한 Windows 실행 파일에 인증서 규칙 사용",
+     "description": "소프트웨어 제한 정책을 사용하도록 설정했으며 사용자 또는 프로세스가 .exe 파일 이름 확장명을 사용하여 소프트웨어를 실행하려고 할 때 디지털 인증서를 처리할지 여부를 지정합니다. 인증서 규칙(소프트웨어 제한 정책 규칙 유형)을 사용하거나 사용하지 않도록 설정합니다. 소프트웨어 제한 정책에 인증서 규칙을 적용하려면 이 정책 설정을 사용하도록 설정해야 합니다."
+    },
+    "defaultValue": "1"
+   },
+   "vulnerabilityAssessmentMonitoringEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "[사용되지 않음]: 취약성 평가 솔루션으로 취약성을 수정해야 합니다.",
+     "description": "취약성 평가 솔루션으로 VM 취약성 감지를 사용 또는 사용 안 함",
+     "deprecated": true
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "Disabled"
+   },
+   "serverVulnerabilityAssessmentEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "취약성 평가 솔루션을 가상 머신에서 사용하도록 설정해야 합니다.",
+     "description": "Azure Security Center 취약성 평가의 가상 머신 취약성 검색을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "usersOrGroupsThatMayAccessThisComputerFromTheNetwork": {
+    "type": "String",
+    "metadata": {
+     "displayName": "네트워크에서 이 컴퓨터에 액세스할 수 있는 사용자 또는 그룹",
+     "description": "컴퓨터에 연결하도록 허용되는 네트워크의 원격 사용자를 지정합니다. 원격 데스크톱 연결은 포함되지 않습니다."
+    },
+    "defaultValue": "Administrators, Authenticated Users"
+   },
+   "usersOrGroupsThatMayLogOnLocally": {
+    "type": "String",
+    "metadata": {
+     "displayName": "로컬로 로그온할 수 있는 사용자 또는 그룹",
+     "description": "컴퓨터에 대화형으로 로그온할 수 있는 사용자 또는 그룹을 지정합니다. 원격 데스크톱 연결 또는 IIS를 통해 로그온하려는 사용자에게 이 사용자 권한이 필요합니다."
+    },
+    "defaultValue": "Administrators"
+   },
+   "usersOrGroupsThatMayLogOnThroughRemoteDesktopServices": {
+    "type": "String",
+    "metadata": {
+     "displayName": "원격 데스크톱 서비스를 통해 로그온할 수 있는 사용자 또는 그룹",
+     "description": "터미널 서비스 클라이언트나 원격 데스크톱으로 로그온하거나 원격 지원을 위해 로그온하도록 허용되는 사용자 또는 그룹을 지정합니다."
+    },
+    "defaultValue": "Administrators, Remote Desktop Users"
+   },
+   "usersAndGroupsThatAreDeniedAccessToThisComputerFromTheNetwork": {
+    "type": "String",
+    "metadata": {
+     "displayName": "네트워크에서 액세스가 거부된 사용자 및 그룹",
+     "description": "네트워크에서 연결하는 것이 명시적으로 금지된 사용자 또는 그룹을 지정합니다."
+    },
+    "defaultValue": "Guests"
+   },
+   "usersOrGroupsThatMayManageAuditingAndSecurityLog": {
+    "type": "String",
+    "metadata": {
+     "displayName": "감사 및 보안 로그를 관리할 수 있는 사용자 또는 그룹",
+     "description": "파일 및 디렉터리의 감사 옵션을 변경하고 보안 로그를 지울 수 있는 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Administrators"
+   },
+   "usersOrGroupsThatMayBackUpFilesAndDirectories": {
+    "type": "String",
+    "metadata": {
+     "displayName": "파일 및 디렉터리를 백업할 수 있는 사용자 또는 그룹",
+     "description": "시스템을 백업하기 위한 파일 및 디렉터리 권한을 우회하도록 허용된 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Administrators, Backup Operators"
+   },
+   "usersOrGroupsThatMayChangeTheSystemTime": {
+    "type": "String",
+    "metadata": {
+     "displayName": "시스템 시간을 변경할 수 있는 사용자 또는 그룹",
+     "description": "컴퓨터 내부 시계의 시간과 날짜를 변경하도록 허용되는 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Administrators, LOCAL SERVICE"
+   },
+   "usersOrGroupsThatMayChangeTheTimeZone": {
+    "type": "String",
+    "metadata": {
+     "displayName": "표준 시간대를 변경할 수 있는 사용자 또는 그룹",
+     "description": "컴퓨터 표준 시간대를 변경하도록 허용되는 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Administrators, LOCAL SERVICE"
+   },
+   "usersOrGroupsThatMayCreateATokenObject": {
+    "type": "String",
+    "metadata": {
+     "displayName": "토큰 개체를 만들 수 있는 사용자 또는 그룹",
+     "description": "중요한 데이터에 액세스하기 위한 상승된 권한을 제공할 수 있는 액세스 토큰을 만들도록 허용되는 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "No One"
+   },
+   "usersAndGroupsThatAreDeniedLoggingOnAsABatchJob": {
+    "type": "String",
+    "metadata": {
+     "displayName": "일괄 작업으로서의 로그온이 거부된 사용자 및 그룹",
+     "description": "일괄 작업(예: 예약된 작업)으로 컴퓨터에 로그온하도록 명시적으로 허용되지 않는 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Guests"
+   },
+   "usersAndGroupsThatAreDeniedLoggingOnAsAService": {
+    "type": "String",
+    "metadata": {
+     "displayName": "서비스로서의 로그온이 거부된 사용자 및 그룹",
+     "description": "프로세스를 서비스로 등록하도록 명시적으로 허용되지 않는 서비스 계정을 지정합니다."
+    },
+    "defaultValue": "Guests"
+   },
+   "usersAndGroupsThatAreDeniedLocalLogon": {
+    "type": "String",
+    "metadata": {
+     "displayName": "로컬 로그온이 거부된 사용자 및 그룹",
+     "description": "컴퓨터에 로그온하도록 명시적으로 허용되지 않은 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Guests"
+   },
+   "usersAndGroupsThatAreDeniedLogOnThroughRemoteDesktopServices": {
+    "type": "String",
+    "metadata": {
+     "displayName": "원격 데스크톱 서비스를 통한 로그온이 거부된 사용자 및 그룹",
+     "description": "터미널 서비스/원격 데스크톱 클라이언트를 통해 컴퓨터에 로그온하도록 명시적으로 허용되지 않은 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Guests"
+   },
+   "userAndGroupsThatMayForceShutdownFromARemoteSystem": {
+    "type": "String",
+    "metadata": {
+     "displayName": "원격 시스템에서 강제로 종료할 수 있는 사용자 및 그룹",
+     "description": "네트워크의 원격 위치에서 컴퓨터를 종료하도록 허용되는 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Administrators"
+   },
+   "usersAndGroupsThatMayRestoreFilesAndDirectories": {
+    "type": "String",
+    "metadata": {
+     "displayName": "파일 및 디렉터리를 복원할 수 있는 사용자 및 그룹",
+     "description": "백업된 파일 및 디렉터리를 복원할 때 파일, 디렉터리, 레지스트리 및 기타 영구 개체 권한을 무시하도록 허용되는 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Administrators, Backup Operators"
+   },
+   "usersAndGroupsThatMayShutDownTheSystem": {
+    "type": "String",
+    "metadata": {
+     "displayName": "시스템을 종료할 수 있는 사용자 및 그룹",
+     "description": "사용자 환경의 컴퓨터에 로컬로 로그온하는 사용자 및 그룹 중에서 시스템 종료 명령을 사용하여 운영 체제를 종료하도록 허용되는 대상을 지정합니다."
+    },
+    "defaultValue": "Administrators"
+   },
+   "usersOrGroupsThatMayTakeOwnershipOfFilesOrOtherObjects": {
+    "type": "String",
+    "metadata": {
+     "displayName": "파일 또는 다른 개체의 소유권을 가져올 수 있는 사용자 또는 그룹",
+     "description": "파일, 폴더, 레지스트리 키, 프로세스 또는 스레드의 소유권이 허용되는 사용자 및 그룹을 지정합니다. 이 사용자 권한은 개체를 보호하기 위해 지정된 모든 권한을 무시하고 지정된 사용자에게 소유권을 제공합니다."
+    },
+    "defaultValue": "Administrators"
+   },
+   "systemUpdatesMonitoringEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "머신에 시스템 업데이트를 설치해야 합니다.",
+     "description": "시스템 업데이트 보고를 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "sqlServerAuditingRetentionDaysMonitoringEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "SQL Server는 감사 보존일이 90일보다 많게 구성되어야 합니다.",
+     "description": "감사 보존 기간이 90일 미만인 SQL Server 모니터링을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "windowsFirewallDomainUseProfileSettings": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽(도메인): 프로필 설정 사용",
+     "description": "고급 보안이 설정된 Windows 방화벽에서 도메인 프로필의 설정을 사용하여 네트워크 트래픽을 필터링할지 여부를 지정합니다. [해제]를 선택하면 고급 보안이 포함된 Windows 방화벽이 이 프로필에 대한 방화벽 규칙 또는 연결 보안 규칙을 사용하지 않습니다."
+    },
+    "defaultValue": "1"
+   },
+   "windowsFirewallDomainBehaviorForOutboundConnections": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽(도메인): 아웃바운드 연결에 대한 동작",
+     "description": "아웃바운드 방화벽 규칙과 일치하지 않는 도메인 프로필의 아웃바운드 연결 동작을 지정합니다. 기본값 0은 연결을 허용하고, 값 1은 연결을 차단하는 것을 의미합니다."
+    },
+    "defaultValue": "0"
+   },
+   "windowsFirewallDomainApplyLocalConnectionSecurityRules": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽(도메인): 로컬 연결 보안 규칙 적용",
+     "description": "로컬 관리자가 도메인 프로필에 대해 그룹 정책에서 구성한 연결 보안 규칙과 함께 적용되는 연결 보안 규칙을 만들 수 있는지 여부를 지정합니다."
+    },
+    "defaultValue": "1"
+   },
+   "windowsFirewallDomainApplyLocalFirewallRules": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽(도메인): 로컬 방화벽 규칙 적용",
+     "description": "로컬 관리자가 도메인 프로필에 대해 그룹 정책에서 구성한 방화벽 규칙과 함께 적용되는 로컬 방화벽 규칙을 만들 수 있는지 여부를 지정합니다."
+    },
+    "defaultValue": "1"
+   },
+   "windowsFirewallDomainDisplayNotifications": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽(도메인): 알림 표시",
+     "description": "도메인 프로필에 대해 프로그램이 인바운드 연결을 받을 수 없도록 차단되는 경우 고급 보안이 포함된 Windows 방화벽에서 사용자에 알림을 표시할지 여부를 지정합니다."
+    },
+    "defaultValue": "1"
+   },
+   "windowsFirewallPrivateUseProfileSettings": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽(프라이빗): 프로필 설정 사용",
+     "description": "고급 보안이 설정된 Windows 방화벽에서 프라이빗 프로필의 설정을 사용하여 네트워크 트래픽을 필터링할지 여부를 지정합니다. [해제]를 선택하면 고급 보안이 포함된 Windows 방화벽이 이 프로필에 대한 방화벽 규칙 또는 연결 보안 규칙을 사용하지 않습니다."
+    },
+    "defaultValue": "1"
+   },
+   "windowsFirewallPrivateBehaviorForOutboundConnections": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽(프라이빗): 아웃바운드 연결에 대한 동작",
+     "description": "아웃바운드 방화벽 규칙과 일치하지 않는 프라이빗 프로필의 아웃바운드 연결 동작을 지정합니다. 기본값 0은 연결을 허용하고, 값 1은 연결을 차단하는 것을 의미합니다."
+    },
+    "defaultValue": "0"
+   },
+   "windowsFirewallPrivateApplyLocalConnectionSecurityRules": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽(프라이빗): 로컬 연결 보안 규칙 적용",
+     "description": "로컬 관리자가 프라이빗 프로필에 대해 그룹 정책에서 구성한 연결 보안 규칙과 함께 적용되는 연결 보안 규칙을 만들 수 있는지 여부를 지정합니다."
+    },
+    "defaultValue": "1"
+   },
+   "windowsFirewallPrivateApplyLocalFirewallRules": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽(프라이빗): 로컬 방화벽 규칙 적용",
+     "description": "로컬 관리자가 프라이빗 프로필에 대해 그룹 정책에서 구성한 방화벽 규칙과 함께 적용되는 로컬 방화벽 규칙을 만들 수 있는지 여부를 지정합니다."
+    },
+    "defaultValue": "1"
+   },
+   "windowsFirewallPrivateDisplayNotifications": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽(프라이빗): 알림 표시",
+     "description": "프라이빗 프로필에 대해 프로그램이 인바운드 연결을 받을 수 없도록 차단되는 경우 고급 보안이 포함된 Windows 방화벽에서 사용자에게 알림을 표시할지 여부를 지정합니다."
+    },
+    "defaultValue": "1"
+   },
+   "windowsFirewallPublicUseProfileSettings": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽(퍼블릭): 프로필 설정 사용",
+     "description": "고급 보안이 설정된 Windows 방화벽에서 퍼블릭 프로필의 설정을 사용하여 네트워크 트래픽을 필터링할지 여부를 지정합니다. [해제]를 선택하면 고급 보안이 포함된 Windows 방화벽이 이 프로필에 대한 방화벽 규칙 또는 연결 보안 규칙을 사용하지 않습니다."
+    },
+    "defaultValue": "1"
+   },
+   "windowsFirewallPublicBehaviorForOutboundConnections": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽(퍼블릭): 아웃바운드 연결에 대한 동작",
+     "description": "아웃바운드 방화벽 규칙과 일치하지 않는 퍼블릭 프로필의 아웃바운드 연결 동작을 지정합니다. 기본값 0은 연결을 허용하고, 값 1은 연결을 차단하는 것을 의미합니다."
+    },
+    "defaultValue": "0"
+   },
+   "windowsFirewallPublicApplyLocalConnectionSecurityRules": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽(퍼블릭): 로컬 연결 보안 규칙 적용",
+     "description": "로컬 관리자가 퍼블릭 프로필에 대해 그룹 정책에서 구성한 연결 보안 규칙과 함께 적용되는 연결 보안 규칙을 만들 수 있는지 여부를 지정합니다."
+    },
+    "defaultValue": "1"
+   },
+   "windowsFirewallPublicApplyLocalFirewallRules": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽(퍼블릭): 로컬 방화벽 규칙 적용",
+     "description": "로컬 관리자가 퍼블릭 프로필에 대해 그룹 정책에서 구성한 방화벽 규칙과 함께 적용되는 로컬 방화벽 규칙을 만들 수 있는지 여부를 지정합니다."
+    },
+    "defaultValue": "1"
+   },
+   "windowsFirewallPublicDisplayNotifications": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽(퍼블릭): 알림 표시",
+     "description": "퍼블릭 프로필에 대해 프로그램이 인바운드 연결을 받을 수 없도록 차단되는 경우 고급 보안이 포함된 Windows 방화벽에서 사용자에 알림을 표시할지 여부를 지정합니다."
+    },
+    "defaultValue": "1"
+   },
+   "windowsFirewallDomainAllowUnicastResponse": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽: 도메인: 유니캐스트 응답 허용",
+     "description": "도메인 프로필에 대해 고급 보안이 포함된 Windows 방화벽에서 로컬 컴퓨터가 나가는 멀티캐스트 또는 브로드캐스트 메시지에 대한 유니캐스트 응답을 받도록 허용할지 여부를 지정합니다."
+    },
+    "defaultValue": "0"
+   },
+   "windowsFirewallPrivateAllowUnicastResponse": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽: 프라이빗: 유니캐스트 응답 허용",
+     "description": "프라이빗 프로필에 대해 고급 보안이 포함된 Windows 방화벽에서 로컬 컴퓨터가 나가는 멀티캐스트 또는 브로드캐스트 메시지에 대한 유니캐스트 응답을 받도록 허용할지 여부를 지정합니다."
+    },
+    "defaultValue": "0"
+   },
+   "windowsFirewallPublicAllowUnicastResponse": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Windows 방화벽: 퍼블릭: 유니캐스트 응답 허용",
+     "description": "퍼블릭 프로필에 대해 고급 보안이 포함된 Windows 방화벽에서 로컬 컴퓨터가 나가는 멀티캐스트 또는 브로드캐스트 메시지에 대한 유니캐스트 응답을 받도록 허용할지 여부를 지정합니다."
+    },
+    "defaultValue": "1"
+   },
+   "identityEnableMFAForWritePermissionsMonitoringEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "사용자의 구독에서 쓰기 권한이 있는 계정에 대해 MFA를 사용하도록 설정해야 함",
+     "description": "구독에서 쓰기 권한이 있는 계정에 대한 MFA 모니터링을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "namespaceAuthorizationRulesInServiceBusMonitoringEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Service Bus 네임스페이스에서 RootManageSharedAccessKey를 제외한 모든 권한 부여 규칙을 제거해야 합니다.",
+     "description": "서비스 버스 네임스페이스 권한 부여 규칙의 모니터링을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   },
+   "kubernetesServiceRbacEnabledMonitoringEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Kubernetes 서비스에서 RBAC(역할 기반 액세스 제어)를 사용해야 합니다.",
+     "description": "RBAC를 사용하지 않고 Kubernetes 서비스 모니터링을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   },
+   "diagnosticsLogsInSearchServiceMonitoringEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Search 서비스의 리소스 로그를 사용하도록 설정해야 함",
+     "description": "Azure Search 서비스에서 리소스 로그 모니터링을 사용하거나 사용하지 않도록 설정합니다."
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "microsoftNetworkClientDigitallySignCommunicationsAlways": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Microsoft 네트워크 클라이언트: 통신에 디지털 서명(항상)",
+     "description": "SMB 클라이언트 구성 요소에 패킷 서명이 필요한지 여부를 지정합니다."
+    },
+    "defaultValue": "1"
+   },
+   "microsoftNetworkClientSendUnencryptedPasswordToThirdpartySMBServers": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Microsoft 네트워크 클라이언트: 암호화되지 않은 암호를 타사 SMB 서버로 보내기",
+     "description": "SMB 리디렉터가 인증 동안 암호 암호화를 지원하지 않는 타사 SMB 서버로 일반 텍스트 암호를 보낼지 여부를 지정합니다. 이 정책 설정을 사용하도록 설정해야 하는 강력한 비즈니스 사례가 없으면 이 정책을 사용하지 않도록 설정하는 것이 좋습니다."
+    },
+    "defaultValue": "0"
+   },
+   "microsoftNetworkServerAmountOfIdleTimeRequiredBeforeSuspendingSession": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Microsoft 네트워크 서버: 세션을 중단하기 전에 필요한 유휴 시간",
+     "description": "비활성으로 인해 세션이 일시 중단되기 전에 SMB 세션에서 경과되어야 하는 연속 유휴 시간을 지정합니다. 값 형식은 포함 범위를 나타내는 쉼표로 구분된 두 정수입니다."
+    },
+    "defaultValue": "1,15"
+   },
+   "microsoftNetworkServerDigitallySignCommunicationsAlways": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Microsoft 네트워크 서버: 통신에 디지털 서명(항상)",
+     "description": "SMB 서버 구성 요소에 패킷 서명이 필요한지 여부를 지정합니다."
+    },
+    "defaultValue": "1"
+   },
+   "microsoftNetworkServerDisconnectClientsWhenLogonHoursExpire": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Microsoft 네트워크 서버: 로그온 시간이 만료되면 클라이언트 연결 끊기",
+     "description": "사용자 계정의 유효한 로그온 시간 이외의 시간 동안 로컬 컴퓨터에 연결된 사용자의 연결을 끊을지 여부를 지정합니다. 이 설정은 SMB(서버 메시지 블록) 구성 요소에 영향을 줍니다. 이 정책 설정을 사용하도록 설정하는 경우 '네트워크 보안: 로그온 시간이 만료되면 강제로 로그오프'도 사용하도록 설정해야 합니다."
+    },
+    "defaultValue": "1"
+   },
+   "disableIPForwardingMonitoringEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "가상 머신에서 IP 전달을 사용하지 않도록 설정해야 합니다.",
+     "description": "가상 머신에서 IP 전달 모니터링을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "threatDetectionTypesOnManagedInstanceMonitoringEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "[사용되지 않음]: SQL Managed Instance Advanced Data Security 설정에서 Advanced Threat Protection 유형을 '모두'로 설정해야 합니다.",
+     "description": "SQL Managed Instance에서 모든 Advanced Threat Protection 유형을 사용하도록 설정하는 것이 좋습니다. 모든 유형을 사용하도록 설정하면 SQL 삽입, 데이터베이스 취약성 및 기타 비정상적인 활동을 방지할 수 있습니다.",
+     "deprecated": true
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "Disabled"
+   },
+   "certificateStorePath": {
+    "type": "String",
+    "metadata": {
+     "displayName": "만료를 확인할 인증서를 포함하는 인증서 저장소 경로",
+     "description": "만료 날짜를 검사할 인증서가 포함된 인증서 저장소 경로입니다. 기본값이 루트 인증서 저장소 경로인 'Cert:'이므로, 머신의 모든 인증서가 검사됩니다. 다른 경로 예: 'Cert:\\LocalMachine', 'Cert:\\LocalMachine\\TrustedPublisher', 'Cert:\\CurrentUser'"
+    },
+    "defaultValue": "Cert:"
+   },
+   "expirationLimitInDays": {
+    "type": "String",
+    "metadata": {
+     "displayName": "지정된 인증서 저장소 경로에서 만료되는 인증서의 만료 제한(일)",
+     "description": "만료되는 인증서를 검사하는 기간(일)을 나타내는 정수입니다. 예를 들어 이 값이 30인 경우 다음 30일 이내에 만료되는 모든 인증서로 인해 이 정책이 비준수 상태가 됩니다."
+    },
+    "defaultValue": "30"
+   },
+   "certificateThumbprintsToInclude": {
+    "type": "String",
+    "metadata": {
+     "displayName": "지정된 인증서 저장소 경로에서 만료된 인증서를 확인하는 동안 포함할 인증서 지문",
+     "description": "지정된 경로 아래에서 검사할 세미콜론으로 구분된 인증서 지문 목록입니다. 값이 지정되지 않은 경우 인증서 저장소 경로 아래의 모든 인증서가 검사됩니다. 값이 지정된 경우 지정된 지문이 있는 인증서 외에 인증서는 검사되지 않습니다. 예: THUMBPRINT1;THUMBPRINT2;THUMBPRINT3"
+    },
+    "defaultValue": ""
+   },
+   "certificateThumbprintsToExclude": {
+    "type": "String",
+    "metadata": {
+     "displayName": "지정된 인증서 저장소 경로에서 만료된 인증서를 확인하는 동안 제외할 인증서 지문",
+     "description": "만료된 인증서를 확인하는 동안 무시할 세미콜론으로 구분된 인증서 지문 목록입니다. 예: THUMBPRINT1;THUMBPRINT2;THUMBPRINT3"
+    },
+    "defaultValue": ""
+   },
+   "includeExpiredCertificates": {
+    "type": "String",
+    "metadata": {
+     "displayName": "지정된 인증서 저장소 경로에서 만료된 인증서를 확인하는 동안 이미 만료된 인증서를 포함함",
+     "description": "'true' 또는 'false'여야 합니다. true는 이미 만료된 찾은 인증서도 이 정책을 비준수 상태로 만듦을 나타냅니다. false는 만료된 인증서가 지정된 인증서 저장소 경로에서 무시됨을 나타냅니다."
+    },
+    "allowedValues": [
+     "true",
+     "false"
+    ],
+    "defaultValue": "false"
+   },
+   "recoveryConsoleAllowFloppyCopyAndAccessToAllDrivesAndAllFolders": {
+    "type": "String",
+    "metadata": {
+     "displayName": "복구 콘솔: 모든 드라이브 및 폴더에 플로피 복사 및 액세스 허용",
+     "description": "복구 콘솔 SET 명령을 사용하도록 지정하여 복구 콘솔 환경 변수를 설정할 수 있도록 할지 여부를 지정합니다."
+    },
+    "defaultValue": "0"
+   },
+   "accountsGuestAccountStatus": {
+    "type": "String",
+    "metadata": {
+     "displayName": "계정: 게스트 계정 상태",
+     "description": "로컬 게스트 계정을 사용하지 않도록 설정할지 여부를 지정합니다."
+    },
+    "defaultValue": "0"
+   },
+   "networkAccessRemotelyAccessibleRegistryPaths": {
+    "type": "String",
+    "metadata": {
+     "displayName": "네트워크 액세스: 원격으로 액세스할 수 있는 레지스트리 경로",
+     "description": "'winreg' 레지스트리 키의 ACL(액세스 제어 목록)에 나열된 사용자 또는 그룹과 관계없이 네트워크에서 액세스할 수 있는 레지스트리 경로를 지정합니다."
+    },
+    "defaultValue": "System\\CurrentControlSet\\Control\\ProductOptions|#|System\\CurrentControlSet\\Control\\Server Applications|#|Software\\Microsoft\\Windows NT\\CurrentVersion"
+   },
+   "networkAccessRemotelyAccessibleRegistryPathsAndSubpaths": {
+    "type": "String",
+    "metadata": {
+     "displayName": "네트워크 액세스: 원격으로 액세스할 수 있는 레지스트리 경로 및 하위 경로",
+     "description": "'winreg' 레지스트리 키의 ACL(액세스 제어 목록)에 나열된 사용자 또는 그룹과 관계없이 네트워크에서 액세스할 수 있는 레지스트리 경로 및 하위 경로를 지정합니다."
+    },
+    "defaultValue": "System\\CurrentControlSet\\Control\\Print\\Printers|#|System\\CurrentControlSet\\Services\\Eventlog|#|Software\\Microsoft\\OLAP Server|#|Software\\Microsoft\\Windows NT\\CurrentVersion\\Print|#|Software\\Microsoft\\Windows NT\\CurrentVersion\\Windows|#|System\\CurrentControlSet\\Control\\ContentIndex|#|System\\CurrentControlSet\\Control\\Terminal Server|#|System\\CurrentControlSet\\Control\\Terminal Server\\UserConfig|#|System\\CurrentControlSet\\Control\\Terminal Server\\DefaultUserConfiguration|#|Software\\Microsoft\\Windows NT\\CurrentVersion\\Perflib|#|System\\CurrentControlSet\\Services\\SysmonLog"
+   },
+   "networkAccessSharesThatCanBeAccessedAnonymously": {
+    "type": "String",
+    "metadata": {
+     "displayName": "네트워크 액세스: 익명으로 액세스할 수 있는 공유",
+     "description": "익명 사용자가 액세스할 수 있는 네트워크 공유를 지정합니다. 모든 사용자가 서버의 공유 리소스에 액세스하려면 먼저 인증을 받아야 하므로 이 정책 설정의 기본 구성은 거의 효과가 없습니다."
+    },
+    "defaultValue": "0"
+   },
+   "externalAccountsWithOwnerPermissionsShouldBeRemovedFromYourSubscriptionEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "소유자 권한이 있는 외부 계정을 구독에서 제거해야 합니다.",
+     "description": "구독에서 소유자 권한이 있는 외부 계정 모니터링을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "sqlDbVulnerabilityAssesmentMonitoringEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "SQL 데이터베이스는 발견한 취약성을 해결해야 합니다.",
+     "description": "취약성 평가 검사 결과 및 데이터베이스 취약성을 해결하는 방법에 대한 권장 사항의 모니터링을 사용하거나 사용하지 않도록 설정합니다."
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyDefinitions": [
+   {
+    "policyDefinitionReferenceId": "diskEncryptionMonitoring",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/0961003e-5a0a-4549-abde-af6a37f2724d",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('diskEncryptionMonitoringEffect')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "auditWindowsCertificateInTrustedRoot",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/934345e1-4dfb-4c70-90d7-41990dc9608b",
+    "parameters": {
+     "IncludeArcMachines": {
+      "value": "[parameters('IncludeArcMachines')]"
+     },
+     "certificateThumbprints": {
+      "value": "[parameters('CertificateThumbprints')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "previewMonitorUnencryptedSQLDatabaseInAzureSecurityCenter",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/17k78e20-9358-41c9-923c-fb736d382a12",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('previewMonitorUnencryptedSQLDatabaseInAzureSecurityCenterEffect')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "previewAuditWindowsVMsThatDoNotRestrictTheMinimumPasswordLengthTo14Characters",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a2d0e922-65d0-40c4-8f87-ea6da2d307a2",
+    "parameters": {
+     "IncludeArcMachines": {
+      "value": "[parameters('IncludeArcMachines')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "metricAlertsInBatchAccountPoolDeleteStart",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/26ee67a2-f81a-4ba8-b9ce-8550bd5ee1a7",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('metricAlertsInBatchAccountPoolDeleteStartEffect')]"
+     },
+     "metricName": {
+      "value": "[parameters('MetricName')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "deploydefaultMicrosoftIaaSAntimalwareextensionforWindowsServer",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/2835b622-407b-4114-9198-6f7064cbe0dc",
+    "parameters": {}
+   },
+   {
+    "policyDefinitionReferenceId": "Prerequisite_AddSystemIdentityWhenNone",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/3cf2ab00-13f1-4d0c-8971-2ac904541a7e"
+   },
+   {
+    "policyDefinitionReferenceId": "Prerequisite_AddSystemIdentityWhenUser",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/497dff13-db2a-4c0f-8603-28fa3b331ab6"
+   },
+   {
+    "policyDefinitionReferenceId": "Prerequisite_DeployExtensionWindows",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/385f5831-96d4-41db-9a3c-cd3af78aaae6"
+   },
+   {
+    "policyDefinitionReferenceId": "Prerequisite_DeployExtensionLinux",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/331e8ea8-378a-410f-a2e5-ae22f38bb0da"
+   },
+   {
+    "policyDefinitionReferenceId": "disableUnrestrictedNetworkToStorageAccountMonitoring",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/34c877ad-507e-4c82-993e-3452a6e0ad3c",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('disableUnrestrictedNetworkToStorageAccountMonitoringEffect')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "diagnosticsLogsInLogicAppsMonitoring",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/34f95f76-5386-4de7-b824-0d8478470c9d",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('diagnosticsLogsInLogicAppsMonitoringEffect')]"
+     },
+     "requiredRetentionDays": {
+      "value": "[parameters('RequiredRetentionDays')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "deployThreatDetectionOnSqlServers",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/36d49e87-48c4-4f2e-beed-ba4ed02b71f5",
+    "parameters": {}
+   },
+   {
+    "policyDefinitionReferenceId": "vmssOsVulnerabilitiesMonitoring",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/3c735d8a-a4ba-4a3a-b7cf-db7754cf57f4",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('vmssOsVulnerabilitiesMonitoringEffect')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "AzureBaselineSecurityOptionsSystemsettings",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/12017595-5a75-4bb1-9d97-4c2c939ea3c3",
+    "parameters": {
+     "IncludeArcMachines": {
+      "value": "[parameters('IncludeArcMachines')]"
+     },
+     "systemSettingsUseCertificateRulesOnWindowsExecutablesForSoftwareRestrictionPolicies": {
+      "value": "[parameters('SystemSettingsUseCertificateRulesOnWindowsExecutablesForSoftwareRestrictionPolicies')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "InstalledApplicationLinux",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/d3b823c9-e0fc-4453-9fb2-8213b7338523",
+    "parameters": {
+     "IncludeArcMachines": {
+      "value": "[parameters('IncludeArcMachines')]"
+     },
+     "applicationName": {
+      "value": "[parameters('ApplicationName')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "serverVulnerabilityAssessment",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/501541f7-f7e7-4cd6-868c-4190fdad3ac9",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('serverVulnerabilityAssessmentEffect')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "AzureBaselineUserRightsAssignment",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/e068b215-0026-4354-b347-8fb2766f73a2",
+    "parameters": {
+     "IncludeArcMachines": {
+      "value": "[parameters('IncludeArcMachines')]"
+     },
+     "usersOrGroupsThatMayAccessThisComputerFromTheNetwork": {
+      "value": "[parameters('UsersOrGroupsThatMayAccessThisComputerFromTheNetwork')]"
+     },
+     "usersOrGroupsThatMayLogOnLocally": {
+      "value": "[parameters('UsersOrGroupsThatMayLogOnLocally')]"
+     },
+     "usersOrGroupsThatMayLogOnThroughRemoteDesktopServices": {
+      "value": "[parameters('UsersOrGroupsThatMayLogOnThroughRemoteDesktopServices')]"
+     },
+     "usersAndGroupsThatAreDeniedAccessToThisComputerFromTheNetwork": {
+      "value": "[parameters('UsersAndGroupsThatAreDeniedAccessToThisComputerFromTheNetwork')]"
+     },
+     "usersOrGroupsThatMayManageAuditingAndSecurityLog": {
+      "value": "[parameters('UsersOrGroupsThatMayManageAuditingAndSecurityLog')]"
+     },
+     "usersOrGroupsThatMayBackUpFilesAndDirectories": {
+      "value": "[parameters('UsersOrGroupsThatMayBackUpFilesAndDirectories')]"
+     },
+     "usersOrGroupsThatMayChangeTheSystemTime": {
+      "value": "[parameters('UsersOrGroupsThatMayChangeTheSystemTime')]"
+     },
+     "usersOrGroupsThatMayChangeTheTimeZone": {
+      "value": "[parameters('UsersOrGroupsThatMayChangeTheTimeZone')]"
+     },
+     "usersOrGroupsThatMayCreateATokenObject": {
+      "value": "[parameters('UsersOrGroupsThatMayCreateATokenObject')]"
+     },
+     "usersAndGroupsThatAreDeniedLoggingOnAsABatchJob": {
+      "value": "[parameters('UsersAndGroupsThatAreDeniedLoggingOnAsABatchJob')]"
+     },
+     "usersAndGroupsThatAreDeniedLoggingOnAsAService": {
+      "value": "[parameters('UsersAndGroupsThatAreDeniedLoggingOnAsAService')]"
+     },
+     "usersAndGroupsThatAreDeniedLocalLogon": {
+      "value": "[parameters('UsersAndGroupsThatAreDeniedLocalLogon')]"
+     },
+     "usersAndGroupsThatAreDeniedLogOnThroughRemoteDesktopServices": {
+      "value": "[parameters('UsersAndGroupsThatAreDeniedLogOnThroughRemoteDesktopServices')]"
+     },
+     "userAndGroupsThatMayForceShutdownFromARemoteSystem": {
+      "value": "[parameters('UserAndGroupsThatMayForceShutdownFromARemoteSystem')]"
+     },
+     "usersAndGroupsThatMayRestoreFilesAndDirectories": {
+      "value": "[parameters('UsersAndGroupsThatMayRestoreFilesAndDirectories')]"
+     },
+     "usersAndGroupsThatMayShutDownTheSystem": {
+      "value": "[parameters('UsersAndGroupsThatMayShutDownTheSystem')]"
+     },
+     "usersOrGroupsThatMayTakeOwnershipOfFilesOrOtherObjects": {
+      "value": "[parameters('UsersOrGroupsThatMayTakeOwnershipOfFilesOrOtherObjects')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "systemUpdatesMonitoring",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/86b3d65f-7626-441e-b690-81a8b71cff60",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('systemUpdatesMonitoringEffect')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "disableIPForwardingForNetworkInterfaces",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/88c0b9da-ce96-4b03-9635-f29a937e2900",
+    "parameters": {}
+   },
+   {
+    "policyDefinitionReferenceId": "sqlServerAuditingRetentionDaysMonitoring",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/89099bee-89e0-4b26-a5f4-165451757743",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('sqlServerAuditingRetentionDaysMonitoringEffect')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "AzureBaselineWindowsFirewallProperties",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/35d9882c-993d-44e6-87d2-db66ce21b636",
+    "parameters": {
+     "IncludeArcMachines": {
+      "value": "[parameters('IncludeArcMachines')]"
+     },
+     "windowsFirewallDomainUseProfileSettings": {
+      "value": "[parameters('WindowsFirewallDomainUseProfileSettings')]"
+     },
+     "windowsFirewallDomainBehaviorForOutboundConnections": {
+      "value": "[parameters('WindowsFirewallDomainBehaviorForOutboundConnections')]"
+     },
+     "windowsFirewallDomainApplyLocalConnectionSecurityRules": {
+      "value": "[parameters('WindowsFirewallDomainApplyLocalConnectionSecurityRules')]"
+     },
+     "windowsFirewallDomainApplyLocalFirewallRules": {
+      "value": "[parameters('WindowsFirewallDomainApplyLocalFirewallRules')]"
+     },
+     "windowsFirewallDomainDisplayNotifications": {
+      "value": "[parameters('WindowsFirewallDomainDisplayNotifications')]"
+     },
+     "windowsFirewallPrivateUseProfileSettings": {
+      "value": "[parameters('WindowsFirewallPrivateUseProfileSettings')]"
+     },
+     "windowsFirewallPrivateBehaviorForOutboundConnections": {
+      "value": "[parameters('WindowsFirewallPrivateBehaviorForOutboundConnections')]"
+     },
+     "windowsFirewallPrivateApplyLocalConnectionSecurityRules": {
+      "value": "[parameters('WindowsFirewallPrivateApplyLocalConnectionSecurityRules')]"
+     },
+     "windowsFirewallPrivateApplyLocalFirewallRules": {
+      "value": "[parameters('WindowsFirewallPrivateApplyLocalFirewallRules')]"
+     },
+     "windowsFirewallPrivateDisplayNotifications": {
+      "value": "[parameters('WindowsFirewallPrivateDisplayNotifications')]"
+     },
+     "windowsFirewallPublicUseProfileSettings": {
+      "value": "[parameters('WindowsFirewallPublicUseProfileSettings')]"
+     },
+     "windowsFirewallPublicBehaviorForOutboundConnections": {
+      "value": "[parameters('WindowsFirewallPublicBehaviorForOutboundConnections')]"
+     },
+     "windowsFirewallPublicApplyLocalConnectionSecurityRules": {
+      "value": "[parameters('WindowsFirewallPublicApplyLocalConnectionSecurityRules')]"
+     },
+     "windowsFirewallPublicApplyLocalFirewallRules": {
+      "value": "[parameters('WindowsFirewallPublicApplyLocalFirewallRules')]"
+     },
+     "windowsFirewallPublicDisplayNotifications": {
+      "value": "[parameters('WindowsFirewallPublicDisplayNotifications')]"
+     },
+     "windowsFirewallDomainAllowUnicastResponse": {
+      "value": "[parameters('WindowsFirewallDomainAllowUnicastResponse')]"
+     },
+     "windowsFirewallPrivateAllowUnicastResponse": {
+      "value": "[parameters('WindowsFirewallPrivateAllowUnicastResponse')]"
+     },
+     "windowsFirewallPublicAllowUnicastResponse": {
+      "value": "[parameters('WindowsFirewallPublicAllowUnicastResponse')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "identityEnableMFAForWritePermissionsMonitoring",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/9297c21d-2ed6-4474-b48f-163f75654ce3",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('identityEnableMFAForWritePermissionsMonitoringEffect')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "namespaceAuthorizationRulesInServiceBusMonitoring",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a1817ec0-a368-432a-8057-8371e17ac6ee",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('namespaceAuthorizationRulesInServiceBusMonitoringEffect')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "kubernetesServiceRbacEnabledMonitoring",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ac4a19c2-fa67-49b4-8ae5-0b2e78c49457",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('kubernetesServiceRbacEnabledMonitoringEffect')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "diagnosticsLogsInSearchServiceMonitoring",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b4330a05-a843-4bc8-bf9a-cacce50c67f4",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('diagnosticsLogsInSearchServiceMonitoringEffect')]"
+     },
+     "requiredRetentionDays": {
+      "value": "[parameters('RequiredRetentionDays')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "AzureBaselineSecurityOptionsMicrosoftNetworkClient",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/d6c69680-54f0-4349-af10-94dd05f4225e",
+    "parameters": {
+     "IncludeArcMachines": {
+      "value": "[parameters('IncludeArcMachines')]"
+     },
+     "microsoftNetworkClientDigitallySignCommunicationsAlways": {
+      "value": "[parameters('MicrosoftNetworkClientDigitallySignCommunicationsAlways')]"
+     },
+     "microsoftNetworkClientSendUnencryptedPasswordToThirdpartySMBServers": {
+      "value": "[parameters('MicrosoftNetworkClientSendUnencryptedPasswordToThirdpartySMBServers')]"
+     },
+     "microsoftNetworkServerAmountOfIdleTimeRequiredBeforeSuspendingSession": {
+      "value": "[parameters('MicrosoftNetworkServerAmountOfIdleTimeRequiredBeforeSuspendingSession')]"
+     },
+     "microsoftNetworkServerDigitallySignCommunicationsAlways": {
+      "value": "[parameters('MicrosoftNetworkServerDigitallySignCommunicationsAlways')]"
+     },
+     "microsoftNetworkServerDisconnectClientsWhenLogonHoursExpire": {
+      "value": "[parameters('MicrosoftNetworkServerDisconnectClientsWhenLogonHoursExpire')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "disableIPForwardingMonitoring",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/bd352bd5-2853-4985-bf0d-73806b4a5744",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('disableIPForwardingMonitoringEffect')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "CertificateExpiration",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/1417908b-4bff-46ee-a2a6-4acc899320ab",
+    "parameters": {
+     "IncludeArcMachines": {
+      "value": "[parameters('IncludeArcMachines')]"
+     },
+     "certificateStorePath": {
+      "value": "[parameters('CertificateStorePath')]"
+     },
+     "expirationLimitInDays": {
+      "value": "[parameters('ExpirationLimitInDays')]"
+     },
+     "certificateThumbprintsToInclude": {
+      "value": "[parameters('CertificateThumbprintsToInclude')]"
+     },
+     "certificateThumbprintsToExclude": {
+      "value": "[parameters('CertificateThumbprintsToExclude')]"
+     },
+     "includeExpiredCertificates": {
+      "value": "[parameters('IncludeExpiredCertificates')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "deployDiagnosticSettingsforNetworkSecurityGroups",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/c9c29499-c1d1-4195-99bd-2ec9e3a9dc89",
+    "parameters": {
+     "storagePrefix": {
+      "value": "[parameters('StoragePrefix')]"
+     },
+     "rgName": {
+      "value": "[parameters('RgName')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "AzureBaselineSecurityOptionsRecoveryconsole",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/f71be03e-e25b-4d0f-b8bc-9b3e309b66c0",
+    "parameters": {
+     "IncludeArcMachines": {
+      "value": "[parameters('IncludeArcMachines')]"
+     },
+     "recoveryConsoleAllowFloppyCopyAndAccessToAllDrivesAndAllFolders": {
+      "value": "[parameters('RecoveryConsoleAllowFloppyCopyAndAccessToAllDrivesAndAllFolders')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "AzureBaselineSecurityOptionsAccounts",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ee984370-154a-4ee8-9726-19d900e56fc0",
+    "parameters": {
+     "IncludeArcMachines": {
+      "value": "[parameters('IncludeArcMachines')]"
+     },
+     "accountsGuestAccountStatus": {
+      "value": "[parameters('AccountsGuestAccountStatus')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "previewAuditLinuxVmAllowingRemoteConnectionsFromAccountsWithNoPasswords",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ea53dbee-c6c9-4f0e-9f9e-de0039b78023",
+    "parameters": {
+     "IncludeArcMachines": {
+      "value": "[parameters('IncludeArcMachines')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "AzureBaselineSecurityOptionsNetworkAccess",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/3ff60f98-7fa4-410a-9f7f-0b00f5afdbdd",
+    "parameters": {
+     "IncludeArcMachines": {
+      "value": "[parameters('IncludeArcMachines')]"
+     },
+     "networkAccessRemotelyAccessibleRegistryPaths": {
+      "value": "[parameters('NetworkAccessRemotelyAccessibleRegistryPaths')]"
+     },
+     "networkAccessRemotelyAccessibleRegistryPathsAndSubpaths": {
+      "value": "[parameters('NetworkAccessRemotelyAccessibleRegistryPathsAndSubpaths')]"
+     },
+     "networkAccessSharesThatCanBeAccessedAnonymously": {
+      "value": "[parameters('NetworkAccessSharesThatCanBeAccessedAnonymously')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "externalAccountsWithOwnerPermissionsShouldBeRemovedFromYourSubscription",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/f8456c1c-aa66-4dfb-861a-25d127b775c9",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('externalAccountsWithOwnerPermissionsShouldBeRemovedFromYourSubscriptionEffect')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "sqlDbVulnerabilityAssesmentMonitoring",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/feedbf84-6b99-488c-acc2-71c829aa5ffc",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('sqlDbVulnerabilityAssesmentMonitoringEffect')]"
+     }
+    }
+   }
+  ]
+ },
+ "id": "/providers/Microsoft.Authorization/policySetDefinitions/92646f03-e39d-47a9-9e24-58d60ef49af8",
+ "type": "Microsoft.Authorization/policySetDefinitions",
+ "name": "92646f03-e39d-47a9-9e24-58d60ef49af8"
+}

@@ -1,0 +1,126 @@
+{
+ "properties": {
+  "displayName": "Kubernetes 서비스를 취약하지 않은 Kubernetes 버전으로 업그레이드해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Kubernetes 서비스 클러스터를 최신 Kubernetes 버전으로 업그레이드하여 현재 Kubernetes 버전의 알려진 취약성으로부터 보호하세요. Kubernetes 버전 1.11.9 이상, 1.12.7 이상, 1.13.5 이상 및 1.14.0 이상에서 CVE-2019-9946 취약성이 패치되었습니다.",
+  "metadata": {
+   "version": "1.0.2",
+   "category": "Security Center"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.ContainerService/managedClusters"
+     },
+     {
+      "anyOf": [
+       {
+        "field": "Microsoft.ContainerService/managedClusters/kubernetesVersion",
+        "in": [
+         "1.13.4",
+         "1.13.3",
+         "1.13.2",
+         "1.13.1",
+         "1.13.0"
+        ]
+       },
+       {
+        "field": "Microsoft.ContainerService/managedClusters/kubernetesVersion",
+        "in": [
+         "1.12.6",
+         "1.12.5",
+         "1.12.4",
+         "1.12.3",
+         "1.12.2",
+         "1.12.1",
+         "1.12.0"
+        ]
+       },
+       {
+        "field": "Microsoft.ContainerService/managedClusters/kubernetesVersion",
+        "in": [
+         "1.11.8",
+         "1.11.7",
+         "1.11.6",
+         "1.11.5",
+         "1.11.4",
+         "1.11.3",
+         "1.11.2",
+         "1.11.1",
+         "1.11.0"
+        ]
+       },
+       {
+        "field": "Microsoft.ContainerService/managedClusters/kubernetesVersion",
+        "Like": "1.10.*"
+       },
+       {
+        "field": "Microsoft.ContainerService/managedClusters/kubernetesVersion",
+        "Like": "1.9.*"
+       },
+       {
+        "field": "Microsoft.ContainerService/managedClusters/kubernetesVersion",
+        "Like": "1.8.*"
+       },
+       {
+        "field": "Microsoft.ContainerService/managedClusters/kubernetesVersion",
+        "Like": "1.7.*"
+       },
+       {
+        "field": "Microsoft.ContainerService/managedClusters/kubernetesVersion",
+        "Like": "1.6.*"
+       },
+       {
+        "field": "Microsoft.ContainerService/managedClusters/kubernetesVersion",
+        "Like": "1.5.*"
+       },
+       {
+        "field": "Microsoft.ContainerService/managedClusters/kubernetesVersion",
+        "Like": "1.4.*"
+       },
+       {
+        "field": "Microsoft.ContainerService/managedClusters/kubernetesVersion",
+        "Like": "1.3.*"
+       },
+       {
+        "field": "Microsoft.ContainerService/managedClusters/kubernetesVersion",
+        "Like": "1.2.*"
+       },
+       {
+        "field": "Microsoft.ContainerService/managedClusters/kubernetesVersion",
+        "Like": "1.1.*"
+       },
+       {
+        "field": "Microsoft.ContainerService/managedClusters/kubernetesVersion",
+        "Like": "1.0.*"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/fb893a29-21bb-418c-a157-e99480ec364c",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "fb893a29-21bb-418c-a157-e99480ec364c"
+}

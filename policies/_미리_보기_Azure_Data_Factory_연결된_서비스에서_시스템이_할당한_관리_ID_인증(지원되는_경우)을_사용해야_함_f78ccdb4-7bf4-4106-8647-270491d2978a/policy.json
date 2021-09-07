@@ -1,0 +1,86 @@
+{
+ "properties": {
+  "displayName": "[미리 보기]: Azure Data Factory 연결된 서비스에서 시스템이 할당한 관리 ID 인증(지원되는 경우)을 사용해야 함",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "연결된 서비스를 통해 데이터 저장소와 통신할 때 시스템이 할당한 관리 ID를 사용하면 암호나 연결 문자열과 같은 덜 안전한 자격 증명을 사용할 수 없게 됩니다.",
+  "metadata": {
+   "version": "1.0.0-preview",
+   "category": "Data Factory",
+   "preview": true
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.DataFactory/factories/linkedservices"
+     },
+     {
+      "field": "Microsoft.DataFactory/factories/linkedservices/type",
+      "in": [
+       "AzureSqlDatabase",
+       "AzureSqlMI",
+       "AzureSqlDW",
+       "AzureBlobFS",
+       "AdlsGen2CosmosStructuredStream",
+       "AzureDataLakeStore",
+       "AzureDataLakeStoreCosmosStructuredStream",
+       "AzureBlobStorage",
+       "AzureDatabricks"
+      ]
+     },
+     {
+      "anyOf": [
+       {
+        "field": "Microsoft.DataFactory/factories/linkedservices/typeProperties.connectionString",
+        "contains": "User ID="
+       },
+       {
+        "field": "Microsoft.DataFactory/factories/linkedservices/typeProperties.connectionString",
+        "contains": "AccountKey="
+       },
+       {
+        "field": "Microsoft.DataFactory/factories/linkedservices/AzureSqlDW.typeProperties.servicePrincipalKey",
+        "exists": "true"
+       },
+       {
+        "field": "Microsoft.DataFactory/factories/linkedservices/AzureStorage.typeProperties.accountKey",
+        "exists": "true"
+       },
+       {
+        "field": "Microsoft.DataFactory/factories/linkedservices/AzureStorage.typeProperties.sasUri",
+        "exists": "true"
+       },
+       {
+        "field": "Microsoft.DataFactory/factories/linkedservices/Hubspot.typeProperties.accessToken",
+        "exists": "true"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/f78ccdb4-7bf4-4106-8647-270491d2978a",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "f78ccdb4-7bf4-4106-8647-270491d2978a"
+}

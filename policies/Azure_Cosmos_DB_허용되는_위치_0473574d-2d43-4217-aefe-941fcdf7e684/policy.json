@@ -1,0 +1,61 @@
+{
+ "properties": {
+  "displayName": "Azure Cosmos DB 허용되는 위치",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "이 정책을 사용하면 조직이 Azure Cosmos DB 리소스 배포 시 지정할 수 있는 위치를 제한할 수 있습니다. 지리적 준수 요구 사항을 적용하는 데 사용합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Cosmos DB"
+  },
+  "parameters": {
+   "listOfAllowedLocations": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "허용 되는 위치",
+     "description": "Azure Cosmos DB 리소스를 배포할 때 지정할 수 있는 위치 목록입니다.",
+     "strongType": "location"
+    }
+   },
+   "policyEffect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "정책 효과",
+     "description": "정책의 원하는 효과입니다."
+    },
+    "allowedValues": [
+     "deny",
+     "audit",
+     "disabled"
+    ],
+    "defaultValue": "deny"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.DocumentDB/databaseAccounts"
+     },
+     {
+      "count": {
+       "field": "Microsoft.DocumentDB/databaseAccounts/Locations[*]",
+       "where": {
+        "value": "[replace(toLower(first(field('Microsoft.DocumentDB/databaseAccounts/Locations[*].locationName'))), ' ', '')]",
+        "in": "[parameters('listOfAllowedLocations')]"
+       }
+      },
+      "notEquals": "[length(field('Microsoft.DocumentDB/databaseAccounts/Locations[*]'))]"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('policyEffect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/0473574d-2d43-4217-aefe-941fcdf7e684",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "0473574d-2d43-4217-aefe-941fcdf7e684"
+}

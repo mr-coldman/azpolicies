@@ -1,0 +1,94 @@
+{
+ "properties": {
+  "displayName": "[미리 보기]: 모든 인터넷 트래픽은 배포된 Azure Firewall을 통해 라우팅되어야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "Azure Security Center에서 차세대 방화벽으로 보호되지 않는 일부 서브넷을 발견했습니다. Azure Firewall 또는 지원되는 차세대 방화벽으로 해당 서브넷에 대한 액세스를 제한하여 잠재적인 위협으로부터 보호하세요.",
+  "metadata": {
+   "version": "3.0.0-preview",
+   "category": "Network",
+   "preview": true
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "모든 인터넷 트래픽의 배포된 Azure Firewall을 통한 라우팅을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Network/virtualNetworks"
+     },
+     {
+      "count": {
+       "field": "Microsoft.Network/virtualNetworks/subnets[*]",
+       "where": {
+        "allOf": [
+         {
+          "count": {
+           "field": "Microsoft.Network/virtualNetworks/subnets[*].ipConfigurations[*]",
+           "where": {
+            "value": "[empty(field('Microsoft.Network/virtualNetworks/subnets[*].ipConfigurations[*].id'))]",
+            "equals": false
+           }
+          },
+          "greaterOrEquals": 2
+         },
+         {
+          "field": "Microsoft.Network/virtualNetworks/subnets[*].routeTable",
+          "exists": false
+         },
+         {
+          "not": {
+           "anyOf": [
+            {
+             "field": "Microsoft.Network/virtualNetworks/subnets[*].name",
+             "equals": "AzureBastionSubnet"
+            },
+            {
+             "field": "Microsoft.Network/virtualNetworks/subnets[*].name",
+             "equals": "GatewaySubnet"
+            }
+           ]
+          }
+         }
+        ]
+       }
+      },
+      "greater": 0
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Network/azureFirewalls",
+     "existenceCondition": {
+      "count": {
+       "field": "Microsoft.Network/azureFirewalls/ipConfigurations[*]",
+       "where": {
+        "field": "Microsoft.Network/azureFirewalls/ipConfigurations[*].subnet.id",
+        "like": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/*/providers/Microsoft.Network/virtualNetworks/', first(split(field('fullName'), '/')), '/subnets/AzureFirewallSubnet')]"
+       }
+      },
+      "equals": 1
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/fc5e4038-4584-4632-8c85-c0448d374b2c",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "fc5e4038-4584-4632-8c85-c0448d374b2c"
+}

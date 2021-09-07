@@ -1,0 +1,117 @@
+{
+ "properties": {
+  "displayName": "Azure Arc 사용 Linux 서버에서 종속성 에이전트 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "종속성 에이전트 가상 컴퓨터 확장을 설치하여 Arc 사용 서버를 통해 Azure에 연결된 서버 및 컴퓨터에서 VM 인사이트를 사용하도록 설정합니다. VM 인사이트는 종속성 에이전트를 사용하여 네트워크 메트릭과 컴퓨터 및 외부 프로세스 종속성에서 실행 중인 프로세스에 대한 검색된 데이터를 수집합니다. 자세한 정보 - https://aka.ms/vminsightsdocs.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "Monitoring"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "DeployIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "DeployIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.HybridCompute/machines"
+     },
+     {
+      "field": "Microsoft.HybridCompute/machines/osName",
+      "equals": "linux"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.HybridCompute/machines/extensions",
+     "roleDefinitionIds": [
+      "/providers/Microsoft.Authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"
+     ],
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.HybridCompute/machines/extensions/type",
+        "equals": "DependencyAgentLinux"
+       },
+       {
+        "field": "Microsoft.HybridCompute/machines/extensions/publisher",
+        "equals": "Microsoft.Azure.Monitoring.DependencyAgent"
+       },
+       {
+        "field": "Microsoft.HybridCompute/machines/extensions/provisioningState",
+        "equals": "Succeeded"
+       }
+      ]
+     },
+     "deployment": {
+      "properties": {
+       "mode": "incremental",
+       "template": {
+        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "vmName": {
+          "type": "string"
+         },
+         "location": {
+          "type": "string"
+         }
+        },
+        "variables": {
+         "vmExtensionName": "DependencyAgentLinux",
+         "vmExtensionPublisher": "Microsoft.Azure.Monitoring.DependencyAgent",
+         "vmExtensionType": "DependencyAgentLinux"
+        },
+        "resources": [
+         {
+          "name": "[concat(parameters('vmName'), '/', variables('vmExtensionName'))]",
+          "type": "Microsoft.HybridCompute/machines/extensions",
+          "location": "[parameters('location')]",
+          "apiVersion": "2019-12-12",
+          "properties": {
+           "publisher": "[variables('vmExtensionPublisher')]",
+           "type": "[variables('vmExtensionType')]",
+           "settings": {}
+          }
+         }
+        ],
+        "outputs": {
+         "policy": {
+          "type": "string",
+          "value": "[concat('Enabled DA extension for VM', ': ', parameters('vmName'))]"
+         }
+        }
+       },
+       "parameters": {
+        "vmName": {
+         "value": "[field('name')]"
+        },
+        "location": {
+         "value": "[field('location')]"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/deacecc0-9f84-44d2-bb82-46f32d766d43",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "deacecc0-9f84-44d2-bb82-46f32d766d43"
+}

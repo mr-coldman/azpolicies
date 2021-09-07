@@ -1,0 +1,116 @@
+{
+ "properties": {
+  "displayName": "Virtual Machine Scale Sets의 리소스 로그를 사용하도록 설정해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "인시던트 또는 손상이 발생하는 경우 조사가 필요할 때 활동 내역을 다시 만들 수 있도록 로그를 사용하도록 설정하는 것이 좋습니다.",
+  "metadata": {
+   "version": "2.0.1",
+   "category": "Compute"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "includeAKSClusters": {
+    "type": "Boolean",
+    "metadata": {
+     "displayName": "AKS 클러스터 포함",
+     "description": "리소스 로그 확장에 AKS 클러스터를 포함할지 여부 - True 또는 False"
+    },
+    "defaultValue": false
+   }
+  },
+  "policyRule": {
+   "if": {
+    "anyOf": [
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/virtualMachineScaleSets"
+       },
+       {
+        "value": "[parameters('includeAKSClusters')]",
+        "equals": true
+       }
+      ]
+     },
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/virtualMachineScaleSets"
+       },
+       {
+        "value": "[parameters('includeAKSClusters')]",
+        "equals": false
+       },
+       {
+        "field": "Microsoft.Compute/imagePublisher",
+        "notEquals": "microsoft-aks"
+       },
+       {
+        "field": "Microsoft.Compute/imageOffer",
+        "notEquals": "aks"
+       },
+       {
+        "field": "Microsoft.Compute/imageSKU",
+        "notLike": "aks*"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Compute/virtualMachineScaleSets/extensions",
+     "existenceCondition": {
+      "anyOf": [
+       {
+        "allOf": [
+         {
+          "field": "Microsoft.Compute/virtualMachineScaleSets/extensions/type",
+          "equals": "IaaSDiagnostics"
+         },
+         {
+          "field": "Microsoft.Compute/virtualMachineScaleSets/extensions/publisher",
+          "equals": "Microsoft.Azure.Diagnostics"
+         }
+        ]
+       },
+       {
+        "allOf": [
+         {
+          "field": "Microsoft.Compute/virtualMachineScaleSets/extensions/type",
+          "equals": "LinuxDiagnostic"
+         },
+         {
+          "field": "Microsoft.Compute/virtualMachineScaleSets/extensions/publisher",
+          "in": [
+           "Microsoft.OSTCExtensions",
+           "Microsoft.Azure.Diagnostics"
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/7c1b1214-f927-48bf-8882-84f0af6588b1",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "7c1b1214-f927-48bf-8882-84f0af6588b1"
+}

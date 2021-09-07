@@ -1,0 +1,58 @@
+{
+ "properties": {
+  "displayName": "Azure Stack Edge 디바이스는 이중 암호화를 사용해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "디바이스의 미사용 데이터를 보호하려면 해당 데이터가 이중 암호화되어 있고, 데이터에 대한 액세스가 제어되며, 디바이스가 비활성화된 후 데이터 디스크에서 데이터가 안전하게 지워지는지 확인합니다. 이중 암호화는 2개의 암호화 계층 즉, 데이터 볼륨에 대한 BitLocker XTS-AES 256비트 암호화와 하드 드라이브의 기본 제공 암호화를 사용하는 것입니다. 특정 Stack Edge 디바이스에 대한 보안 개요 설명서에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Azure Stack Edge"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책의 원하는 효과입니다."
+    },
+    "allowedValues": [
+     "audit",
+     "deny",
+     "disabled"
+    ],
+    "defaultValue": "audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.DataBoxEdge/DataBoxEdgeDevices"
+     },
+     {
+      "field": "Microsoft.DataboxEdge/DataBoxEdgeDevices/sku.name",
+      "notIn": [
+       "TEA_1Node",
+       "TEA_1Node_UPS",
+       "TEA_1Node_Heater",
+       "TEA_1Node_UPS_Heater",
+       "TEA_4Node_Heater",
+       "TEA_4Node_UPS_Heater",
+       "TMA",
+       "EdgePR_Base",
+       "EdgePR_Base_UPS",
+       "EdgeMR_Mini"
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/b4ac1030-89c5-4697-8e00-28b5ba6a8811",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "b4ac1030-89c5-4697-8e00-28b5ba6a8811"
+}

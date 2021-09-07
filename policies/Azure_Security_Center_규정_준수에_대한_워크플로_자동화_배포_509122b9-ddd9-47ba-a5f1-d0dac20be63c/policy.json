@@ -1,0 +1,439 @@
+{
+ "properties": {
+  "displayName": "Azure Security Center 규정 준수에 대한 워크플로 자동화 배포",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "Azure Security Center 규정 준수 자동화를 사용하도록 설정합니다. 이 정책은 할당된 범위에 대한 조건 및 트리거를 사용하여 워크플로 자동화를 배포합니다. 새로 만든 구독에 이 정책을 배포하려면 [규정 준수] 탭을 열고 관련 비규격 할당을 선택한 후 수정 작업을 만듭니다.",
+  "metadata": {
+   "version": "4.0.0",
+   "category": "Security Center",
+   "preview ": true
+  },
+  "parameters": {
+   "automationName": {
+    "type": "String",
+    "metadata": {
+     "displayName": "자동화 이름",
+     "description": "자동화 이름입니다."
+    }
+   },
+   "resourceGroupName": {
+    "type": "String",
+    "metadata": {
+     "displayName": "리소스 그룹 이름",
+     "description": "워크플로 자동화가 생성되는 리소스 그룹 이름입니다. 존재하지 않는 리소스 그룹의 이름을 입력하면 구독에서 만들어집니다."
+    }
+   },
+   "resourceGroupLocation": {
+    "type": "String",
+    "metadata": {
+     "displayName": "리소스 그룹 위치",
+     "description": "리소스 그룹과 워크플로 자동화가 생성되는 위치입니다.",
+     "strongType": "location"
+    }
+   },
+   "createResourceGroup": {
+    "type": "Boolean",
+    "metadata": {
+     "displayName": "리소스 그룹 만들기",
+     "description": "범위에 리소스 그룹이 없으면 새 리소스 그룹이 생성됩니다. 리소스 그룹이 존재하고 이 플래그가 'true'로 설정되면 정책이 리소스 그룹을 다시 배포합니다. 이렇게 하면 리소스 그룹의 모든 Azure 태그가 다시 설정됩니다."
+    },
+    "allowedValues": [
+     true,
+     false
+    ],
+    "defaultValue": true
+   },
+   "regulatoryComplianceStandards": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "규정 준수 표준 이름",
+     "description": "모든 규정 준수 표준을 보려면 비워 둡니다. 특정 규정 준수 표준을 보려면 세미콜론(';')으로 구분된 표준 이름 목록을 입력합니다. 규정 준수 표준 이름은 규정 준수 표준 API(https://docs.microsoft.com/rest/api/securitycenter/regulatorycompliancestandards) 또는 Azure Resource Graph Explorer를 통해 사용할 수 있습니다. securityresources 및 microsoft.security/regulatorycompliancestandards를 선택합니다."
+    },
+    "defaultValue": []
+   },
+   "regulatoryComplianceControlStates": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "규정 준수 컨트롤 상태",
+     "description": "규정 준수 컨트롤 상태를 결정합니다."
+    },
+    "allowedValues": [
+     "Failed",
+     "Passed",
+     "Skipped",
+     "Unsupported"
+    ],
+    "defaultValue": [
+     "Failed",
+     "Passed",
+     "Skipped",
+     "Unsupported"
+    ]
+   },
+   "logicAppResourceId": {
+    "type": "String",
+    "metadata": {
+     "displayName": "논리 앱",
+     "description": "트리거되는 논리 앱입니다.",
+     "strongType": "Microsoft.Logic/workflows",
+     "assignPermissions": true
+    }
+   },
+   "logicAppTrigger": {
+    "type": "String",
+    "metadata": {
+     "displayName": "논리 앱 트리거",
+     "description": "트리거되는 논리 앱의 트리거 커넥터입니다. 가능한 값: '수동(수신 HTTP 요청)', 'Azure Security Center 규정 준수 평가가 만들어지거나 트리거된 경우'."
+    },
+    "allowedValues": [
+     "Manual (Incoming HTTP request)",
+     "When an Azure Security Center regulatory compliance assessment is created or triggered"
+    ]
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Resources/subscriptions"
+   },
+   "then": {
+    "effect": "deployIfNotExists",
+    "details": {
+     "type": "Microsoft.Security/automations",
+     "name": "[parameters('automationName')]",
+     "existenceScope": "resourcegroup",
+     "ResourceGroupName": "[parameters('resourceGroupName')]",
+     "deploymentScope": "subscription",
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+     ],
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.Security/automations/isEnabled",
+        "equals": true
+       },
+       {
+        "anyOf": [
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Security/automations/sources[*].ruleSets",
+            "exists": false
+           },
+           {
+            "value": "[length(parameters('regulatoryComplianceStandards'))]",
+            "equals": 0
+           },
+           {
+            "value": "[length(parameters('regulatoryComplianceControlStates'))]",
+            "equals": 4
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "value": "[length(parameters('regulatoryComplianceStandards'))]",
+            "equals": 0
+           },
+           {
+            "value": "[length(parameters('regulatoryComplianceControlStates'))]",
+            "less": 4
+           },
+           {
+            "field": "Microsoft.Security/automations/sources[*].ruleSets[*].rules[*].expectedValue",
+            "in": "[parameters('regulatoryComplianceControlStates')]"
+           },
+           {
+            "count": {
+             "value": "[parameters('regulatoryComplianceControlStates')]",
+             "name": "regulatoryComplianceControlState",
+             "where": {
+              "count": {
+               "field": "Microsoft.Security/automations/sources[*].ruleSets[*].rules[*]",
+               "where": {
+                "allOf": [
+                 {
+                  "field": "Microsoft.Security/automations/sources[*].ruleSets[*].rules[*].propertyJPath",
+                  "equals": "properties.state"
+                 },
+                 {
+                  "field": "Microsoft.Security/automations/sources[*].ruleSets[*].rules[*].expectedValue",
+                  "equals": "[current('regulatoryComplianceControlState')]"
+                 }
+                ]
+               }
+              },
+              "equals": 1
+             }
+            },
+            "equals": "[length(parameters('regulatoryComplianceControlStates'))]"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "value": "[length(parameters('regulatoryComplianceStandards'))]",
+            "notEquals": 0
+           },
+           {
+            "value": "[length(parameters('regulatoryComplianceControlStates'))]",
+            "equals": 4
+           },
+           {
+            "field": "Microsoft.Security/automations/sources[*].ruleSets[*].rules[*].expectedValue",
+            "in": "[parameters('regulatoryComplianceStandards')]"
+           },
+           {
+            "count": {
+             "value": "[parameters('regulatoryComplianceStandards')]",
+             "name": "regulatoryComplianceStandard",
+             "where": {
+              "count": {
+               "field": "Microsoft.Security/automations/sources[*].ruleSets[*].rules[*]",
+               "where": {
+                "allOf": [
+                 {
+                  "field": "Microsoft.Security/automations/sources[*].ruleSets[*].rules[*].propertyJPath",
+                  "equals": "id"
+                 },
+                 {
+                  "field": "Microsoft.Security/automations/sources[*].ruleSets[*].rules[*].expectedValue",
+                  "equals": "[current('regulatoryComplianceStandard')]"
+                 }
+                ]
+               }
+              },
+              "equals": 1
+             }
+            },
+            "equals": "[length(parameters('regulatoryComplianceStandards'))]"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "value": "[length(parameters('regulatoryComplianceStandards'))]",
+            "notEquals": 0
+           },
+           {
+            "value": "[length(parameters('regulatoryComplianceControlStates'))]",
+            "notEquals": 4
+           },
+           {
+            "field": "Microsoft.Security/automations/sources[*].ruleSets[*].rules[*].expectedValue",
+            "in": "[union(parameters('regulatoryComplianceStandards'),parameters('regulatoryComplianceControlStates'))]"
+           },
+           {
+            "count": {
+             "field": "Microsoft.Security/automations/sources[*].ruleSets[*].rules[*]"
+            },
+            "equals": "[mul(2,mul(length(parameters('regulatoryComplianceStandards')),length(parameters('regulatoryComplianceControlStates'))))]"
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     "deployment": {
+      "location": "westeurope",
+      "properties": {
+       "mode": "incremental",
+       "template": {
+        "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "automationName": {
+          "type": "string"
+         },
+         "resourceGroupName": {
+          "type": "string"
+         },
+         "resourceGroupLocation": {
+          "type": "string"
+         },
+         "createResourceGroup": {
+          "type": "bool"
+         },
+         "regulatoryComplianceStandards": {
+          "type": "array"
+         },
+         "regulatoryComplianceControlStates": {
+          "type": "array"
+         },
+         "logicAppResourceId": {
+          "type": "string"
+         },
+         "logicAppTrigger": {
+          "type": "string"
+         },
+         "guidValue": {
+          "type": "string",
+          "defaultValue": "[newGuid()]"
+         }
+        },
+        "variables": {
+         "scopeDescription": "scope for subscription {0}",
+         "regulatoryComplianceStandardsLength": "[length(parameters('regulatoryComplianceStandards'))]",
+         "regulatoryComplianceControlStatesLength": "[length(parameters('regulatoryComplianceControlStates'))]",
+         "regulatoryComplianceStandardsLengthIfEmpty": "[if(equals(variables('regulatoryComplianceStandardsLength'), 0), 1, variables('regulatoryComplianceStandardsLength'))]",
+         "regulatoryComplianceControlStatesLengthIfEmpty": "[if(equals(variables('regulatoryComplianceControlStatesLength'), 0), 1, variables('regulatoryComplianceControlStatesLength'))]",
+         "stateMap": {
+          "Failed": "failed",
+          "Passed": "passed",
+          "Skipped": "skipped",
+          "Unsupported": "unsupported"
+         },
+         "triggerMap": {
+          "Manual (Incoming HTTP request)": "manual",
+          "When an Azure Security Center regulatory compliance assessment is created or triggered": "When_a_Security_Center_Regulatory_Compliance_Assessment_is_created_or_triggered"
+         },
+         "doesAllStatesSelected": "[if(equals(length(parameters('regulatoryComplianceControlStates')),length(variables('stateMap'))),bool('true'),bool('false'))]",
+         "doesAllStandardsSelected": "[if(equals(variables('regulatoryComplianceStandardsLength'),0),bool('true'),bool('false'))]",
+         "allRegulatoryComplianceRuleSets": [],
+         "customStandardsOrCustomStateRuleSets": {
+          "copy": [
+           {
+            "name": "customStandardsOrCustomStateRuleSetsArr",
+            "count": "[if(not(variables('doesAllStandardsSelected')),variables('regulatoryComplianceStandardsLength'),if(not(variables('doesAllStatesSelected')),variables('regulatoryComplianceControlStatesLength'),1))]",
+            "input": {
+             "rules": [
+              {
+               "propertyJPath": "[if(not(variables('doesAllStandardsSelected')),'id',if(not(variables('doesAllStatesSelected')),'properties.state',json('null')))]",
+               "propertyType": "string",
+               "expectedValue": "[if(not(variables('doesAllStandardsSelected')),parameters('regulatoryComplianceStandards')[copyIndex('customStandardsOrCustomStateRuleSetsArr')],if(not(variables('doesAllStatesSelected')),parameters('regulatoryComplianceControlStates')[copyIndex('customStandardsOrCustomStateRuleSetsArr')],json('null')))]",
+               "operator": "[if(not(variables('doesAllStandardsSelected')),'Contains',if(not(variables('doesAllStatesSelected')),'Equals',json('null')))]"
+              }
+             ]
+            }
+           }
+          ]
+         },
+         "customStandardsAndCustomStateRuleSets": {
+          "copy": [
+           {
+            "name": "customStandardsAndCustomStateRuleSetsArr",
+            "count": "[if(and(not(variables('doesAllStandardsSelected')),not(variables('doesAllStatesSelected'))),mul(variables('regulatoryComplianceStandardsLength'),variables('regulatoryComplianceControlStatesLength')),1)]",
+            "input": {
+             "rules": [
+              {
+               "propertyJPath": "id",
+               "propertyType": "string",
+               "expectedValue": "[if(not(variables('doesAllStandardsSelected')),parameters('regulatoryComplianceStandards')[mod(div(copyIndex('customStandardsAndCustomStateRuleSetsArr'), variables('regulatoryComplianceControlStatesLength')), variables('regulatoryComplianceStandardsLength'))],json('null'))]",
+               "operator": "Contains"
+              },
+              {
+               "propertyJPath": "properties.state",
+               "propertyType": "string",
+               "expectedValue": "[if(not(variables('doesAllStatesSelected')),parameters('regulatoryComplianceControlStates')[mod(copyIndex('customStandardsAndCustomStateRuleSetsArr'), variables('regulatoryComplianceControlStatesLength'))],json('null'))]",
+               "operator": "Equals"
+              }
+             ]
+            }
+           }
+          ]
+         },
+         "sourceRuleSets": "[if(and(variables('doesAllStandardsSelected'),variables('doesAllStatesSelected')),variables('allRegulatoryComplianceRuleSets'),if(and(not(variables('doesAllStandardsSelected')),not(variables('doesAllStatesSelected'))),variables('customStandardsAndCustomStateRuleSets').customStandardsAndCustomStateRuleSetsArr,variables('customStandardsOrCustomStateRuleSets').customStandardsOrCustomStateRuleSetsArr))]"
+        },
+        "resources": [
+         {
+          "condition": "[parameters('createResourceGroup')]",
+          "name": "[parameters('resourceGroupName')]",
+          "type": "Microsoft.Resources/resourceGroups",
+          "apiVersion": "2019-10-01",
+          "location": "[parameters('resourceGroupLocation')]"
+         },
+         {
+          "type": "Microsoft.Resources/deployments",
+          "apiVersion": "2019-10-01",
+          "name": "[concat('nestedAutomationDeployment', '_', parameters('guidValue'))]",
+          "resourceGroup": "[parameters('resourceGroupName')]",
+          "dependsOn": [
+           "[resourceId('Microsoft.Resources/resourceGroups/', parameters('resourceGroupName'))]"
+          ],
+          "properties": {
+           "mode": "Incremental",
+           "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {},
+            "variables": {},
+            "resources": [
+             {
+              "tags": {},
+              "apiVersion": "2019-01-01-preview",
+              "location": "[parameters('resourceGroupLocation')]",
+              "name": "[parameters('automationName')]",
+              "type": "Microsoft.Security/automations",
+              "dependsOn": [],
+              "properties": {
+               "description": "Workflow Automation for Azure Security Center recommendations via policy",
+               "isEnabled": true,
+               "scopes": [
+                {
+                 "description": "[replace(variables('scopeDescription'),'{0}', subscription().subscriptionId)]",
+                 "scopePath": "[subscription().id]"
+                }
+               ],
+               "sources": [
+                {
+                 "eventSource": "RegulatoryComplianceAssessment",
+                 "ruleSets": "[variables('sourceRuleSets')]"
+                }
+               ],
+               "actions": [
+                {
+                 "actionType": "LogicApp",
+                 "logicAppResourceId": "[parameters('logicAppResourceId')]",
+                 "uri": "[listCallbackUrl(concat(parameters('logicAppResourceId'), '/triggers/', variables('triggerMap')[parameters('logicAppTrigger')]),'2016-06-01').value]"
+                }
+               ]
+              }
+             }
+            ]
+           }
+          }
+         }
+        ]
+       },
+       "parameters": {
+        "automationName": {
+         "value": "[parameters('automationName')]"
+        },
+        "resourceGroupName": {
+         "value": "[parameters('resourceGroupName')]"
+        },
+        "resourceGroupLocation": {
+         "value": "[parameters('resourceGroupLocation')]"
+        },
+        "createResourceGroup": {
+         "value": "[parameters('createResourceGroup')]"
+        },
+        "regulatoryComplianceStandards": {
+         "value": "[parameters('regulatoryComplianceStandards')]"
+        },
+        "regulatoryComplianceControlStates": {
+         "value": "[parameters('regulatoryComplianceControlStates')]"
+        },
+        "logicAppResourceId": {
+         "value": "[parameters('logicAppResourceId')]"
+        },
+        "logicAppTrigger": {
+         "value": "[parameters('logicAppTrigger')]"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/509122b9-ddd9-47ba-a5f1-d0dac20be63c",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "509122b9-ddd9-47ba-a5f1-d0dac20be63c"
+}

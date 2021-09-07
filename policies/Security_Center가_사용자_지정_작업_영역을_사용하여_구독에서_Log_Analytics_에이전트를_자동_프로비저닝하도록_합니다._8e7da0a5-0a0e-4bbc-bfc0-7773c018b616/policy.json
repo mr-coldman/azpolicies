@@ -1,0 +1,97 @@
+{
+ "properties": {
+  "displayName": "Security Center가 사용자 지정 작업 영역을 사용하여 구독에서 Log Analytics 에이전트를 자동 프로비저닝하도록 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "Security Center에서 사용자 지정 작업 영역을 사용하여 보안 데이터를 모니터링하고 수집하기 위해 구독에 Log Analytics 에이전트를 자동 프로비저닝할 수 있습니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Security Center"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "DeployIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "DeployIfNotExists"
+   },
+   "logAnalytics": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Log Analytics 작업 영역",
+     "description": "사용자 지정 작업 영역을 사용하여 보안 데이터를 모니터링하고 수집하기 위해 구독에 Log Analytics 에이전트를 자동 프로비저닝합니다.",
+     "strongType": "omsWorkspace"
+    }
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Resources/subscriptions"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Security/autoProvisioningSettings",
+     "deploymentScope": "Subscription",
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+     ],
+     "existenceCondition": {
+      "field": "Microsoft.Security/autoProvisioningSettings/autoProvision",
+      "equals": "On"
+     },
+     "deployment": {
+      "location": "westus",
+      "properties": {
+       "mode": "incremental",
+       "parameters": {
+        "logAnalytics": {
+         "value": "[parameters('logAnalytics')]"
+        }
+       },
+       "template": {
+        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "logAnalytics": {
+          "type": "string"
+         }
+        },
+        "variables": {},
+        "resources": [
+         {
+          "type": "Microsoft.Security/autoProvisioningSettings",
+          "name": "default",
+          "apiVersion": "2017-08-01-preview",
+          "properties": {
+           "autoProvision": "On"
+          }
+         },
+         {
+          "type": "Microsoft.Security/workspaceSettings",
+          "apiVersion": "2017-08-01-preview",
+          "name": "default",
+          "properties": {
+           "workspaceId": "[parameters('logAnalytics')]",
+           "scope": "[subscription().id]"
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/8e7da0a5-0a0e-4bbc-bfc0-7773c018b616",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "8e7da0a5-0a0e-4bbc-bfc0-7773c018b616"
+}

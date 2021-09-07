@@ -1,0 +1,204 @@
+{
+ "properties": {
+  "displayName": "Private Link 연결을 사용하도록 스토리지 계정 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "프라이빗 엔드포인트는 원본 또는 대상에서 공용 IP 주소 없이 Azure 서비스에 가상 네트워크를 연결합니다. 프라이빗 엔드포인트를 스토리지 계정에 매핑하면 데이터 유출 위험이 감소합니다. https://aka.ms/azureprivatelinkoverview에서 Private Link에 관해 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Storage"
+  },
+  "parameters": {
+   "privateEndpointSubnetId": {
+    "type": "String",
+    "metadata": {
+     "displayName": "프라이빗 엔드포인트 서브넷 ID",
+     "description": "프라이빗 엔드포인트 연결이 연결되어야 하는 subnetId",
+     "strongType": "Microsoft.Network/virtualNetworks/subnets"
+    }
+   },
+   "targetSubResource": {
+    "type": "String",
+    "metadata": {
+     "displayName": "대상 하위 리소스",
+     "description": "프라이빗 엔드포인트가 액세스할 수 있는 위에서 선택한 리소스의 하위 리소스 종류"
+    },
+    "allowedValues": [
+     "blob",
+     "blob_secondary",
+     "table",
+     "table_secondary",
+     "queue",
+     "queue_secondary",
+     "file",
+     "web",
+     "web_secondary",
+     "dfs",
+     "dfs_secondary"
+    ],
+    "defaultValue": "blob"
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "DeployIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "DeployIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Storage/storageAccounts"
+     },
+     {
+      "field": "kind",
+      "in": [
+       "StorageV2",
+       "BlobStorage",
+       "BlockBlobStorage",
+       "FileStorage"
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Storage/storageAccounts/privateEndpointConnections",
+     "existenceCondition": {
+      "field": "Microsoft.Storage/storageAccounts/privateEndpointConnections/privateLinkServiceConnectionState.status",
+      "equals": "Approved"
+     },
+     "roleDefinitionIds": [
+      "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7",
+      "/providers/Microsoft.Authorization/roleDefinitions/17d1049b-9a84-46fb-8f53-869881c3d3ab"
+     ],
+     "deployment": {
+      "properties": {
+       "mode": "incremental",
+       "parameters": {
+        "name": {
+         "value": "[field('name')]"
+        },
+        "serviceId": {
+         "value": "[field('id')]"
+        },
+        "privateEndpointSubnetId": {
+         "value": "[parameters('privateEndpointSubnetId')]"
+        },
+        "targetSubResource": {
+         "value": "[parameters('targetSubResource')]"
+        }
+       },
+       "template": {
+        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "name": {
+          "type": "string"
+         },
+         "serviceId": {
+          "type": "string"
+         },
+         "privateEndpointSubnetId": {
+          "type": "string"
+         },
+         "targetSubResource": {
+          "type": "string"
+         }
+        },
+        "variables": {
+         "privateEndpointName": "[concat('pe-',substring(parameters('name'),0,min(length(parameters('name')),50)),'-',uniquestring(deployment().name))]"
+        },
+        "resources": [
+         {
+          "type": "Microsoft.Resources/deployments",
+          "name": "[variables('privateEndpointName')]",
+          "apiVersion": "2020-06-01",
+          "properties": {
+           "mode": "Incremental",
+           "expressionEvaluationOptions": {
+            "scope": "inner"
+           },
+           "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+             "serviceId": {
+              "type": "string"
+             },
+             "privateEndpointSubnetId": {
+              "type": "string"
+             },
+             "targetSubResource": {
+              "type": "string"
+             },
+             "subnetLocation": {
+              "type": "string"
+             }
+            },
+            "variables": {
+             "privateEndpointName": "[deployment().name]"
+            },
+            "resources": [
+             {
+              "name": "[variables('privateEndpointName')]",
+              "type": "Microsoft.Network/privateEndpoints",
+              "apiVersion": "2020-07-01",
+              "location": "[parameters('subnetLocation')]",
+              "tags": {},
+              "properties": {
+               "subnet": {
+                "id": "[parameters('privateEndpointSubnetId')]"
+               },
+               "privateLinkServiceConnections": [
+                {
+                 "name": "[variables('privateEndpointName')]",
+                 "properties": {
+                  "privateLinkServiceId": "[parameters('serviceId')]",
+                  "groupIds": "[array(parameters('targetSubResource'))]",
+                  "requestMessage": "autoapprove"
+                 }
+                }
+               ],
+               "manualPrivateLinkServiceConnections": []
+              }
+             }
+            ]
+           },
+           "parameters": {
+            "serviceId": {
+             "value": "[parameters('serviceId')]"
+            },
+            "privateEndpointSubnetId": {
+             "value": "[parameters('privateEndpointSubnetId')]"
+            },
+            "targetSubResource": {
+             "value": "[parameters('targetSubResource')]"
+            },
+            "subnetLocation": {
+             "value": "[reference(first(take(split(parameters('privateEndpointSubnetId'),'/subnets'),1)),'2020-07-01','Full').location]"
+            }
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/9f766f00-8d11-464e-80e1-4091d7874074",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "9f766f00-8d11-464e-80e1-4091d7874074"
+}

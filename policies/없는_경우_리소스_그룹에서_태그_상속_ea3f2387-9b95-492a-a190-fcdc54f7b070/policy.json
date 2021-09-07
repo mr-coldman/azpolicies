@@ -1,0 +1,53 @@
+{
+ "properties": {
+  "displayName": "없는 경우 리소스 그룹에서 태그 상속",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "이 태그가 없는 리소스를 만들거나 업데이트할 때 부모 리소스 그룹의 해당 값과 함께 지정된 태그를 추가합니다. 수정 작업을 트리거하여 기존 리소스를 수정할 수 있습니다. 태그가 다른 값과 함께 존재하는 경우 변경되지 않습니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Tags"
+  },
+  "parameters": {
+   "tagName": {
+    "type": "String",
+    "metadata": {
+     "displayName": "태그 이름",
+     "description": "태그의 이름(예: 'environment')"
+    }
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "[concat('tags[', parameters('tagName'), ']')]",
+      "exists": "false"
+     },
+     {
+      "value": "[resourceGroup().tags[parameters('tagName')]]",
+      "notEquals": ""
+     }
+    ]
+   },
+   "then": {
+    "effect": "modify",
+    "details": {
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+     ],
+     "operations": [
+      {
+       "operation": "add",
+       "field": "[concat('tags[', parameters('tagName'), ']')]",
+       "value": "[resourceGroup().tags[parameters('tagName')]]"
+      }
+     ]
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/ea3f2387-9b95-492a-a190-fcdc54f7b070",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "ea3f2387-9b95-492a-a190-fcdc54f7b070"
+}

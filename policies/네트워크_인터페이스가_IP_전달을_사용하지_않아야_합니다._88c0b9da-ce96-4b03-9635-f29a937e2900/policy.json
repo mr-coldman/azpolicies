@@ -1,0 +1,33 @@
+{
+ "properties": {
+  "displayName": "네트워크 인터페이스가 IP 전달을 사용하지 않아야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "이 정책은 IP 전달을 사용하도록 설정된 네트워크 인터페이스를 거부합니다. IP 전달을 설정하면 네트워크 인터페이스의 원본 및 대상에 대한 Azure 확인을 사용할 수 없습니다. 이는 네트워크 보안 팀에서 검토해야 합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Network"
+  },
+  "parameters": {},
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Network/networkInterfaces"
+     },
+     {
+      "field": "Microsoft.Network/networkInterfaces/enableIpForwarding",
+      "equals": "true"
+     }
+    ]
+   },
+   "then": {
+    "effect": "deny"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/88c0b9da-ce96-4b03-9635-f29a937e2900",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "88c0b9da-ce96-4b03-9635-f29a937e2900"
+}

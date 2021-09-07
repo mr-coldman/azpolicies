@@ -1,0 +1,277 @@
+{
+ "properties": {
+  "displayName": "Windows 머신이 '관리 템플릿 - 네트워크'에 대한 요구 사항을 충족해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Windows 머신에서 게스트 로그온, 동시 연결, 네트워크 브리지, ICS 및 멀티캐스트 이름을 확인하려면 '관리 템플릿 - 네트워크' 범주에 지정된 그룹 정책 설정이 있어야 합니다. 이 정책을 사용하려면 게스트 구성 필수 구성 요소가 정책 할당 범위에 배포되었어야 합니다. 자세한 내용을 보려면 https://aka.ms/gcpol을 방문하세요.",
+  "metadata": {
+   "category": "Guest Configuration",
+   "version": "2.0.0",
+   "requiredProviders": [
+    "Microsoft.GuestConfiguration"
+   ],
+   "guestConfiguration": {
+    "name": "AzureBaseline_AdministrativeTemplatesNetwork",
+    "version": "1.*",
+    "configurationParameter": {
+     "EnableInsecureGuestLogons": "Enable insecure guest logons;ExpectedValue",
+     "AllowSimultaneousConnectionsToTheInternetOrAWindowsDomain": "Minimize the number of simultaneous connections to the Internet or a Windows Domain;ExpectedValue",
+     "TurnOffMulticastNameResolution": "Turn off multicast name resolution;ExpectedValue"
+    }
+   }
+  },
+  "parameters": {
+   "IncludeArcMachines": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Arc 연결된 서버 포함",
+     "description": "이 옵션을 선택하면 Arc 연결된 머신마다 매달 청구되는 것에 동의하게 됩니다."
+    },
+    "allowedValues": [
+     "true",
+     "false"
+    ],
+    "defaultValue": "false"
+   },
+   "EnableInsecureGuestLogons": {
+    "type": "String",
+    "metadata": {
+     "displayName": "안전하지 않은 게스트 로그온 사용",
+     "description": "SMB 클라이언트가 SMB 서버에 대해 안전하지 않은 게스트 로그온을 허용할지 여부를 지정합니다."
+    },
+    "defaultValue": "0"
+   },
+   "AllowSimultaneousConnectionsToTheInternetOrAWindowsDomain": {
+    "type": "String",
+    "metadata": {
+     "displayName": "인터넷 또는 Windows 도메인에 대한 동시 연결 허용",
+     "description": "컴퓨터가 도메인 기반 네트워크 및 비도메인 기반 네트워크에 동시에 연결할 수 없도록 할 것인지 여부를 지정합니다. 값 0은 동시 연결을 허용하고, 값 1은 동시 연결을 차단합니다."
+    },
+    "defaultValue": "1"
+   },
+   "TurnOffMulticastNameResolution": {
+    "type": "String",
+    "metadata": {
+     "displayName": "멀티캐스트 이름 확인 해제",
+     "description": "단일 서브넷의 로컬 서브넷 링크에서 멀티캐스트를 사용하여 전송하는 보조 이름 확인 프로토콜 LLMNR을 사용하도록 설정할지 여부를 지정합니다."
+    },
+    "defaultValue": "1"
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "이 정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "anyOf": [
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/virtualMachines"
+       },
+       {
+        "anyOf": [
+         {
+          "field": "Microsoft.Compute/imagePublisher",
+          "in": [
+           "esri",
+           "incredibuild",
+           "MicrosoftDynamicsAX",
+           "MicrosoftSharepoint",
+           "MicrosoftVisualStudio",
+           "MicrosoftWindowsDesktop",
+           "MicrosoftWindowsServerHPCPack"
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "MicrosoftWindowsServer"
+           },
+           {
+            "field": "Microsoft.Compute/imageSKU",
+            "notLike": "2008*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "MicrosoftSQLServer"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "notLike": "SQL2008*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "microsoft-dsvm"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "equals": "dsvm-windows"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "microsoft-ads"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "in": [
+             "standard-data-science-vm",
+             "windows-data-science-vm"
+            ]
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "batch"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "equals": "rendering-windows2016"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "center-for-internet-security-inc"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "cis-windows-server-201*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "pivotal"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "bosh-windows-server*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "cloud-infrastructure-services"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "ad*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Compute/virtualMachines/osProfile.windowsConfiguration",
+              "exists": "true"
+             },
+             {
+              "field": "Microsoft.Compute/virtualMachines/storageProfile.osDisk.osType",
+              "like": "Windows*"
+             }
+            ]
+           },
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Compute/imageSKU",
+              "exists": "false"
+             },
+             {
+              "allOf": [
+               {
+                "field": "Microsoft.Compute/imageSKU",
+                "notLike": "2008*"
+               },
+               {
+                "field": "Microsoft.Compute/imageOffer",
+                "notLike": "SQL2008*"
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "allOf": [
+       {
+        "value": "[parameters('IncludeArcMachines')]",
+        "equals": "true"
+       },
+       {
+        "field": "type",
+        "equals": "Microsoft.HybridCompute/machines"
+       },
+       {
+        "field": "Microsoft.HybridCompute/imageOffer",
+        "like": "windows*"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.GuestConfiguration/guestConfigurationAssignments",
+     "name": "AzureBaseline_AdministrativeTemplatesNetwork",
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/complianceStatus",
+        "equals": "Compliant"
+       },
+       {
+        "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/parameterHash",
+        "equals": "[base64(concat('Enable insecure guest logons;ExpectedValue', '=', parameters('EnableInsecureGuestLogons'), ',', 'Minimize the number of simultaneous connections to the Internet or a Windows Domain;ExpectedValue', '=', parameters('AllowSimultaneousConnectionsToTheInternetOrAWindowsDomain'), ',', 'Turn off multicast name resolution;ExpectedValue', '=', parameters('TurnOffMulticastNameResolution')))]"
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/67e010c1-640d-438e-a3a5-feaccb533a98",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "67e010c1-640d-438e-a3a5-feaccb533a98"
+}

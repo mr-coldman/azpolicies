@@ -1,0 +1,50 @@
+{
+ "properties": {
+  "displayName": "API 앱에서 '클라이언트 인증서(들어오는 클라이언트 인증서)'가 '켜기'로 설정되어 있는지 확인하세요.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "클라이언트 인증서를 사용하면 앱이 들어오는 요청에 대해 인증서를 요청할 수 있습니다. 유효한 인증서가 있는 클라이언트만 앱에 연결할 수 있습니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "App Service"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Web/sites"
+     },
+     {
+      "field": "kind",
+      "like": "*api"
+     },
+     {
+      "field": "Microsoft.Web/sites/clientCertEnabled",
+      "equals": "false"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/0c192fe8-9cbb-4516-85b3-0ade8bd03886",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "0c192fe8-9cbb-4516-85b3-0ade8bd03886"
+}

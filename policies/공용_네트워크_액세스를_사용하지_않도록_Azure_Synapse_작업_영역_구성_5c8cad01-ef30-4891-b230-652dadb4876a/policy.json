@@ -1,0 +1,59 @@
+{
+ "properties": {
+  "displayName": "공용 네트워크 액세스를 사용하지 않도록 Azure Synapse 작업 영역 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Synapse 작업 영역에 공용 네트워크 액세스를 사용하지 않도록 설정하여 퍼블릭 인터넷을 통해 액세스할 수 없도록 합니다. 이렇게 하면 데이터 유출 위험이 감소합니다. https://docs.microsoft.com/azure/synapse-analytics/security/connectivity-settings에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Synapse"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Modify",
+     "Disabled"
+    ],
+    "defaultValue": "Modify"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Synapse/workspaces"
+     },
+     {
+      "field": "Microsoft.Synapse/workspaces/publicNetworkAccess",
+      "notEquals": "Disabled"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "conflictEffect": "audit",
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+     ],
+     "operations": [
+      {
+       "operation": "addOrReplace",
+       "field": "Microsoft.Synapse/workspaces/publicNetworkAccess",
+       "value": "Disabled"
+      }
+     ]
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/5c8cad01-ef30-4891-b230-652dadb4876a",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "5c8cad01-ef30-4891-b230-652dadb4876a"
+}

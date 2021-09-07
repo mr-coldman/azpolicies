@@ -1,0 +1,42 @@
+{
+ "properties": {
+  "displayName": "리소스 그룹이 허용된 위치",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "이 정책을 사용하면 조직이 리소스 그룹을 만들 수 있는 위치를 제한할 수 있습니다. 지리적 준수 요구 사항을 적용하는 데 사용합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "General"
+  },
+  "parameters": {
+   "listOfAllowedLocations": {
+    "type": "Array",
+    "metadata": {
+     "description": "리소스 그룹을 만들 수 있는 위치 목록입니다.",
+     "strongType": "location",
+     "displayName": "허용 되는 위치"
+    }
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+     },
+     {
+      "field": "location",
+      "notIn": "[parameters('listOfAllowedLocations')]"
+     }
+    ]
+   },
+   "then": {
+    "effect": "deny"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/e765b5de-1225-4ba3-bd56-1ac6695af988",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "e765b5de-1225-4ba3-bd56-1ac6695af988"
+}

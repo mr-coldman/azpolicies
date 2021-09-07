@@ -1,0 +1,60 @@
+{
+ "properties": {
+  "displayName": "공용 네트워크 액세스를 사용하지 않도록 Azure Cache for Redis 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Cache for Redis 리소스에 공용 네트워크 액세스를 사용하지 않도록 설정하여 퍼블릭 인터넷을 통해 액세스할 수 없도록 합니다. 이렇게 하면 데이터 유출 위험으로부터 캐시를 보호할 수 있습니다.",
+  "metadata": {
+   "category": "Cache",
+   "version": "1.0.0"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Modify",
+     "Disabled"
+    ],
+    "defaultValue": "Modify"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Cache/Redis"
+     },
+     {
+      "field": "Microsoft.Cache/Redis/publicNetworkAccess",
+      "notEquals": "Disabled"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "conflictEffect": "audit",
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/e0f68234-74aa-48ed-b826-c38b57376e17"
+     ],
+     "operations": [
+      {
+       "condition": "[greaterOrEquals(requestContext().apiVersion, '2020-06-01')]",
+       "operation": "addOrReplace",
+       "field": "Microsoft.Cache/Redis/publicNetworkAccess",
+       "value": "Disabled"
+      }
+     ]
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/30b3dfa5-a70d-4c8e-bed6-0083858f663d",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "30b3dfa5-a70d-4c8e-bed6-0083858f663d"
+}

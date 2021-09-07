@@ -1,0 +1,74 @@
+{
+ "properties": {
+  "displayName": "스토리지 계정 대상에 대해 감사가 있는 SQL 서버의 보존 기간을 90일 이상으로 구성해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "인시던트 조사를 위해 스토리지 계정 대상에 대해 SQL Server 감사의 데이터 보존 기간을 90일 이상으로 설정하는 것이 좋습니다. 운영 중인 지역에 필요한 보존 규칙을 충족하고 있는지 확인하세요. 이 설정은 규정 표준을 준수하는 데 필요합니다.",
+  "metadata": {
+   "version": "3.0.0",
+   "category": "SQL"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Sql/servers"
+     },
+     {
+      "field": "kind",
+      "notContains": "analytics"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Sql/servers/auditingSettings",
+     "name": "default",
+     "existenceCondition": {
+      "anyOf": [
+       {
+        "allOf": [
+         {
+          "field": "Microsoft.Sql/servers/auditingSettings/isAzureMonitorTargetEnabled",
+          "equals": true
+         },
+         {
+          "field": "Microsoft.Sql/servers/auditingSettings/storageEndpoint",
+          "equals": ""
+         }
+        ]
+       },
+       {
+        "field": "Microsoft.Sql/servers/auditingSettings/retentionDays",
+        "equals": 0
+       },
+       {
+        "field": "Microsoft.Sql/servers/auditingSettings/retentionDays",
+        "greaterOrEquals": 90
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/89099bee-89e0-4b26-a5f4-165451757743",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "89099bee-89e0-4b26-a5f4-165451757743"
+}

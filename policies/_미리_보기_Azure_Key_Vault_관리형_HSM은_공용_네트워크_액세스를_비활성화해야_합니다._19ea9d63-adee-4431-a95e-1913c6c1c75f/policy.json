@@ -1,0 +1,52 @@
+{
+ "properties": {
+  "displayName": "[미리 보기]: Azure Key Vault 관리형 HSM은 공용 네트워크 액세스를 비활성화해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Key Vault 관리형 HSM에 공용 네트워크 액세스를 사용하지 않도록 설정하여 퍼블릭 인터넷을 통해 액세스할 수 없도록 합니다. 이렇게 하면 데이터 유출 위험이 감소합니다. https://docs.microsoft.com/azure/key-vault/managed-hsm/private-link#allow-trusted-services-to-access-managed-hsm에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0-preview",
+   "category": "Key Vault",
+   "preview": true
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.KeyVault/managedHSMs"
+     },
+     {
+      "field": "Microsoft.KeyVault/managedHSMs/createMode",
+      "notEquals": "recover"
+     },
+     {
+      "field": "Microsoft.KeyVault/managedHSMs/networkAcls.defaultAction",
+      "notEquals": "Deny"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/19ea9d63-adee-4431-a95e-1913c6c1c75f",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "19ea9d63-adee-4431-a95e-1913c6c1c75f"
+}

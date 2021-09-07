@@ -1,0 +1,167 @@
+{
+ "properties": {
+  "displayName": "[미리 보기]: 백업용 프라이빗 DNS 영역을 사용하도록 Recovery Services 자격 증명 모음 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "프라이빗 DNS 영역을 사용하여 프라이빗 엔드포인트에 대한 DNS 확인을 재정의합니다. 프라이빗 DNS 영역을 가상 네트워크에 연결하여 Recovery Services 자격 증명 모음을 확인합니다. https://aka.ms/AB-PrivateEndpoints에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.1-preview",
+   "preview": true,
+   "category": "Backup"
+  },
+  "parameters": {
+   "privateDnsZone-Backup": {
+    "type": "String",
+    "metadata": {
+     "displayName": "백업에 대한 프라이빗 DNS 영역 ID",
+     "description": "Azure Backup 서비스에 대해 DNS를 개인 IP로 확인하는 데 필요한 프라이빗 DNS 영역 ID를 지정합니다.",
+     "strongType": "Microsoft.Network/privateDnsZones",
+     "assignPermissions": true
+    }
+   },
+   "privateDnsZone-Blob": {
+    "type": "String",
+    "metadata": {
+     "displayName": "BLOB에 대한 프라이빗 DNS 영역 ID",
+     "description": "Azure BLOB 서비스에 대해 DNS를 개인 IP로 확인하는 데 필요한 프라이빗 DNS 영역 ID를 지정합니다.",
+     "strongType": "Microsoft.Network/privateDnsZones",
+     "assignPermissions": true
+    }
+   },
+   "privateDnsZone-Queue": {
+    "type": "String",
+    "metadata": {
+     "displayName": "큐에 대한 프라이빗 DNS 영역 ID",
+     "description": "Azure 큐 서비스에 대해 DNS를 개인 IP로 확인하는 데 필요한 프라이빗 DNS 영역 ID를 지정합니다.",
+     "strongType": "Microsoft.Network/privateDnsZones",
+     "assignPermissions": true
+    }
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정합니다."
+    },
+    "allowedValues": [
+     "DeployIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "DeployIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Network/privateEndpoints"
+     },
+     {
+      "count": {
+       "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*]",
+       "where": {
+        "allOf": [
+         {
+          "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].privateLinkServiceId",
+          "contains": "Microsoft.RecoveryServices/vaults"
+         },
+         {
+          "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].groupIds[*]",
+          "equals": "AzureBackup"
+         }
+        ]
+       }
+      },
+      "greaterOrEquals": 1
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+     "roleDefinitionIds": [
+      "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
+     ],
+     "deployment": {
+      "properties": {
+       "mode": "incremental",
+       "template": {
+        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "privateDnsZone-Backup": {
+          "type": "string"
+         },
+         "privateDnsZone-Blob": {
+          "type": "string"
+         },
+         "privateDnsZone-Queue": {
+          "type": "string"
+         },
+         "privateEndpointName": {
+          "type": "string"
+         },
+         "location": {
+          "type": "string"
+         }
+        },
+        "resources": [
+         {
+          "name": "[concat(parameters('privateEndpointName'), '/deployedByPolicy')]",
+          "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+          "apiVersion": "2020-03-01",
+          "location": "[parameters('location')]",
+          "properties": {
+           "privateDnsZoneConfigs": [
+            {
+             "name": "privateDnsZone-Backup",
+             "properties": {
+              "privateDnsZoneId": "[parameters('privateDnsZone-Backup')]"
+             }
+            },
+            {
+             "name": "privateDnsZone-Blob",
+             "properties": {
+              "privateDnsZoneId": "[parameters('privateDnsZone-Blob')]"
+             }
+            },
+            {
+             "name": "privateDnsZone-Queue",
+             "properties": {
+              "privateDnsZoneId": "[parameters('privateDnsZone-Queue')]"
+             }
+            }
+           ]
+          }
+         }
+        ]
+       },
+       "parameters": {
+        "privateDnsZone-Backup": {
+         "value": "[parameters('privateDnsZone-Backup')]"
+        },
+        "privateDnsZone-Blob": {
+         "value": "[parameters('privateDnsZone-Blob')]"
+        },
+        "privateDnsZone-Queue": {
+         "value": "[parameters('privateDnsZone-Queue')]"
+        },
+        "privateEndpointName": {
+         "value": "[field('name')]"
+        },
+        "location": {
+         "value": "[field('location')]"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/af783da1-4ad1-42be-800d-d19c70038820",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "af783da1-4ad1-42be-800d-d19c70038820"
+}

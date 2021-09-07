@@ -1,0 +1,45 @@
+{
+ "properties": {
+  "displayName": "스토리지 계정은 Private Link를 사용해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Private Link를 사용하면 원본 또는 대상에서 공용 IP 주소 없이 Azure 서비스에 가상 네트워크를 연결할 수 있습니다. Private Link 플랫폼은 Azure 백본 네트워크를 통해 소비자와 서비스 간의 연결을 처리합니다. 프라이빗 엔드포인트를 스토리지 계정에 매핑하면 데이터 유출 위험이 감소합니다. https://aka.ms/azureprivatelinkoverview에서 Private Link에 관해 자세히 알아보세요.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "Storage"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Storage/storageAccounts"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Storage/storageAccounts/privateEndpointConnections",
+     "existenceCondition": {
+      "field": "Microsoft.Storage/storageAccounts/privateEndpointConnections/privateLinkServiceConnectionState.status",
+      "equals": "Approved"
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/6edd7eda-6dd8-40f7-810d-67160c639cd9",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "6edd7eda-6dd8-40f7-810d-67160c639cd9"
+}

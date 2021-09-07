@@ -1,0 +1,55 @@
+{
+ "properties": {
+  "displayName": "컨테이너 레지스트리에서 내보내기를 사용하지 않도록 설정해야 합니다",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "내보내기를 사용하지 않도록 설정하면 레지스트리의 데이터가 데이터플레인('docker pull')을 통해서만 액세스되어 보안이 향상됩니다. 데이터는 'acr import' 또는 'acr transfer'를 통해 레지스트리 밖으로 이동할 수 없습니다. 내보내기를 사용하지 않도록 설정하려면 공용 네트워크 액세스를 사용하지 않도록 설정해야 합니다. 자세한 정보는 https://aka.ms/acr/export-policy를 참조하세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Container Registry"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.ContainerRegistry/registries"
+     },
+     {
+      "anyOf": [
+       {
+        "field": "Microsoft.ContainerRegistry/registries/policies.exportPolicy.status",
+        "notEquals": "Disabled"
+       },
+       {
+        "field": "Microsoft.ContainerRegistry/registries/publicNetworkAccess",
+        "notEquals": "Disabled"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/524b0254-c285-4903-bee6-bb8126cde579",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "524b0254-c285-4903-bee6-bb8126cde579"
+}

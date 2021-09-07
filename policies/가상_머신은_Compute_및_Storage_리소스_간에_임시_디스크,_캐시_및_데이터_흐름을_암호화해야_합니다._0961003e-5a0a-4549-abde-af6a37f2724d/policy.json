@@ -1,0 +1,52 @@
+{
+ "properties": {
+  "displayName": "가상 머신은 Compute 및 Storage 리소스 간에 임시 디스크, 캐시 및 데이터 흐름을 암호화해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "디스크 암호화가 사용하도록 설정되지 않은 가상 머신은 Azure Security Center에서 권장 사항으로 모니터링됩니다.",
+  "metadata": {
+   "version": "2.0.1",
+   "category": "Security Center"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "in": [
+     "Microsoft.ClassicCompute/virtualMachines",
+     "Microsoft.Compute/virtualMachines"
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Security/assessments",
+     "name": "d57a4221-a804-52ca-3dea-768284f06bb7",
+     "existenceCondition": {
+      "field": "Microsoft.Security/assessments/status.code",
+      "in": [
+       "NotApplicable",
+       "Healthy"
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/0961003e-5a0a-4549-abde-af6a37f2724d",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "0961003e-5a0a-4549-abde-af6a37f2724d"
+}

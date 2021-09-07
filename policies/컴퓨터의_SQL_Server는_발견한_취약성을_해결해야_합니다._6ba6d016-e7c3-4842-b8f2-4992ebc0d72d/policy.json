@@ -1,0 +1,52 @@
+{
+ "properties": {
+  "displayName": "컴퓨터의 SQL Server는 발견한 취약성을 해결해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "SQL 취약성 평가는 데이터베이스에서 보안 취약성을 검사하고 잘못된 구성, 과도한 권한, 보호되지 않는 중요한 데이터 등 모범 사례와의 편차를 노출합니다. 발견된 취약성을 해결하면 데이터베이스 보안 태세를 크게 개선할 수 있습니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Security Center"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "in": [
+     "Microsoft.Compute/virtualMachines",
+     "Microsoft.HybridCompute/machines"
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Security/assessments",
+     "name": "f97aa83c-9b63-4f9a-99f6-b22c4398f936",
+     "existenceCondition": {
+      "field": "Microsoft.Security/assessments/status.code",
+      "in": [
+       "NotApplicable",
+       "Healthy"
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/6ba6d016-e7c3-4842-b8f2-4992ebc0d72d",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "6ba6d016-e7c3-4842-b8f2-4992ebc0d72d"
+}

@@ -1,0 +1,59 @@
+{
+ "properties": {
+  "displayName": "Cognitive Services 계정은 고객 소유 스토리지를 사용해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "고객 소유 스토리지를 사용하여 Cognitive Services에 저장된 미사용 데이터를 제어합니다. 고객 소유 스토리지에 대해 자세히 알아보려면 https://aka.ms/cogsvc-cmk를 방문하세요.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "Cognitive Services"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "이 효과는 정책 규칙이 일치하도록 평가될 때 발생하는 동작을 결정합니다."
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.CognitiveServices/accounts"
+     },
+     {
+      "count": {
+       "field": "Microsoft.CognitiveServices/accounts/userOwnedStorage[*]"
+      },
+      "less": 1
+     },
+     {
+      "count": {
+       "field": "Microsoft.CognitiveServices/accounts/capabilities[*]",
+       "where": {
+        "field": "Microsoft.CognitiveServices/accounts/capabilities[*].name",
+        "equals": "CustomerManagedStorage"
+       }
+      },
+      "greater": 0
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/46aa9b05-0e60-4eae-a88b-1e9d374fa515",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "46aa9b05-0e60-4eae-a88b-1e9d374fa515"
+}

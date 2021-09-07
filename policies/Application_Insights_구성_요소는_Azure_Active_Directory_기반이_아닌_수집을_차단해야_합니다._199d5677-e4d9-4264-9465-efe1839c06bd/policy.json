@@ -1,0 +1,47 @@
+{
+ "properties": {
+  "displayName": "Application Insights 구성 요소는 Azure Active Directory 기반이 아닌 수집을 차단해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Active Directory 인증이 필요하도록 로그 수집을 적용하면 공격자가 인증하지 않은 로그를 방지하여 잘못된 상태, 잘못된 경고 및 잘못된 로그가 시스템에 저장될 수 있습니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Monitoring"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Deny",
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Insights/components"
+     },
+     {
+      "field": "Microsoft.Insights/components/DisableLocalAuth",
+      "notEquals": "true"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/199d5677-e4d9-4264-9465-efe1839c06bd",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "199d5677-e4d9-4264-9465-efe1839c06bd"
+}

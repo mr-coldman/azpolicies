@@ -1,0 +1,415 @@
+{
+ "properties": {
+  "displayName": "배포 - Log Analytics 작업 영역에 대한 SQL Database의 진단 설정 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "SQL Database의 진단 설정을 배포하여 해당 진단 설정이 없는 SQL Database가 만들어지거나 업데이트될 때 리소스 로그를 Log Analytics 작업 영역으로 스트림합니다.",
+  "metadata": {
+   "version": "1.0.1",
+   "category": "SQL"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "DeployIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "DeployIfNotExists"
+   },
+   "diagnosticsSettingNameToUse": {
+    "type": "String",
+    "metadata": {
+     "displayName": "설정 이름",
+     "description": "진단 설정의 이름입니다."
+    },
+    "defaultValue": "SQLDatabaseDiagnosticsLogsToWorkspace"
+   },
+   "logAnalytics": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Log Analytics 작업 영역",
+     "description": "드롭다운 목록에서 Log Analytics 작업 영역 선택",
+     "strongType": "omsWorkspace",
+     "assignPermissions": true
+    }
+   },
+   "QueryStoreRuntimeStatisticsEnabled": {
+    "type": "String",
+    "metadata": {
+     "displayName": "QueryStoreRuntimeStatistics - 사용",
+     "description": "Log Analytics 작업 영역으로 QueryStoreRuntimeStatistics 로그를 스트림할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "True"
+   },
+   "QueryStoreWaitStatisticsEnabled": {
+    "type": "String",
+    "metadata": {
+     "displayName": "QueryStoreWaitStatistics - 사용",
+     "description": "Log Analytics 작업 영역으로 QueryStoreWaitStatistics 로그를 스트림할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "True"
+   },
+   "ErrorsEnabled": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Errors - 사용",
+     "description": "Log Analytics 작업 영역으로 Errors 로그를 스트림할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "True"
+   },
+   "DatabaseWaitStatisticsEnabled": {
+    "type": "String",
+    "metadata": {
+     "displayName": "DatabaseWaitStatistics - 사용",
+     "description": "Log Analytics 작업 영역으로 DatabaseWaitStatistics 로그를 스트림할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "True"
+   },
+   "BlocksEnabled": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Blocks - 사용",
+     "description": "Log Analytics 작업 영역으로 Blocks 로그를 스트림할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "True"
+   },
+   "SQLInsightsEnabled": {
+    "type": "String",
+    "metadata": {
+     "displayName": "SQLInsights - 사용",
+     "description": "Log Analytics 작업 영역으로 SQLInsights 로그를 스트림할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "True"
+   },
+   "SQLSecurityAuditEventsEnabled": {
+    "type": "String",
+    "metadata": {
+     "displayName": "SQLSecurityAuditEvents - 사용",
+     "description": "Log Analytics 작업 영역으로 SQLSecurityAuditEvents 로그를 스트림할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "True"
+   },
+   "TimeoutsEnabled": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Timeouts - 사용",
+     "description": "Log Analytics 작업 영역으로 Timeouts 로그를 스트림할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "True"
+   },
+   "AutomaticTuningEnabled": {
+    "type": "String",
+    "metadata": {
+     "displayName": "AutomaticTuning - 사용",
+     "description": "Log Analytics 작업 영역으로 AutomaticTuning 로그를 스트림할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "True"
+   },
+   "DeadlocksEnabled": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Deadlocks - 사용",
+     "description": "Log Analytics 작업 영역으로 Deadlocks 로그를 스트림할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "True"
+   },
+   "Basic": {
+    "type": "String",
+    "metadata": {
+     "displayName": "기본(메트릭) - 사용",
+     "description": "Log Analytics 작업 영역으로 기본 메트릭을 스트림할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "True"
+   },
+   "InstanceAndAppAdvanced": {
+    "type": "String",
+    "metadata": {
+     "displayName": "InstanceAndAppAdvanced(메트릭) - 사용",
+     "description": "Log Analytics 작업 영역으로 InstanceAndAppAdvanced 메트릭을 스트림할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "True"
+   },
+   "WorkloadManagement": {
+    "type": "String",
+    "metadata": {
+     "displayName": "WorkloadManagement(메트릭) - 사용",
+     "description": "Log Analytics 작업 영역으로 WorkloadManagement 메트릭을 스트림할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "True"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Sql/servers/databases"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Insights/diagnosticSettings",
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+      "/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"
+     ],
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+        "equals": "True"
+       },
+       {
+        "field": "Microsoft.Insights/diagnosticSettings/metrics.enabled",
+        "equals": "True"
+       },
+       {
+        "field": "Microsoft.Insights/diagnosticSettings/workspaceId",
+        "matchInsensitively": "[parameters('logAnalytics')]"
+       }
+      ]
+     },
+     "deployment": {
+      "properties": {
+       "mode": "incremental",
+       "template": {
+        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "diagnosticsSettingNameToUse": {
+          "type": "string"
+         },
+         "resourceName": {
+          "type": "string"
+         },
+         "logAnalytics": {
+          "type": "string"
+         },
+         "location": {
+          "type": "string"
+         },
+         "Basic": {
+          "type": "string"
+         },
+         "InstanceAndAppAdvanced": {
+          "type": "string"
+         },
+         "WorkloadManagement": {
+          "type": "string"
+         },
+         "QueryStoreRuntimeStatisticsEnabled": {
+          "type": "string"
+         },
+         "QueryStoreWaitStatisticsEnabled": {
+          "type": "string"
+         },
+         "ErrorsEnabled": {
+          "type": "string"
+         },
+         "DatabaseWaitStatisticsEnabled": {
+          "type": "string"
+         },
+         "BlocksEnabled": {
+          "type": "string"
+         },
+         "SQLInsightsEnabled": {
+          "type": "string"
+         },
+         "SQLSecurityAuditEventsEnabled": {
+          "type": "string"
+         },
+         "TimeoutsEnabled": {
+          "type": "string"
+         },
+         "AutomaticTuningEnabled": {
+          "type": "string"
+         },
+         "DeadlocksEnabled": {
+          "type": "string"
+         }
+        },
+        "variables": {},
+        "resources": [
+         {
+          "type": "Microsoft.Sql/servers/databases/providers/diagnosticSettings",
+          "apiVersion": "2017-05-01-preview",
+          "name": "[concat(parameters('resourceName'), '/', 'Microsoft.Insights/', parameters('diagnosticsSettingNameToUse'))]",
+          "location": "[parameters('location')]",
+          "dependsOn": [],
+          "properties": {
+           "workspaceId": "[parameters('logAnalytics')]",
+           "metrics": [
+            {
+             "category": "Basic",
+             "enabled": "[parameters('Basic')]"
+            },
+            {
+             "category": "InstanceAndAppAdvanced",
+             "enabled": "[parameters('InstanceAndAppAdvanced')]"
+            },
+            {
+             "category": "WorkloadManagement",
+             "enabled": "[parameters('WorkloadManagement')]"
+            }
+           ],
+           "logs": [
+            {
+             "category": "SQLInsights",
+             "enabled": "[parameters('SQLInsightsEnabled')]"
+            },
+            {
+             "category": "AutomaticTuning",
+             "enabled": "[parameters('AutomaticTuningEnabled')]"
+            },
+            {
+             "category": "QueryStoreRuntimeStatistics",
+             "enabled": "[parameters('QueryStoreRuntimeStatisticsEnabled')]"
+            },
+            {
+             "category": "QueryStoreWaitStatistics",
+             "enabled": "[parameters('QueryStoreWaitStatisticsEnabled')]"
+            },
+            {
+             "category": "Errors",
+             "enabled": "[parameters('ErrorsEnabled')]"
+            },
+            {
+             "category": "DatabaseWaitStatistics",
+             "enabled": "[parameters('DatabaseWaitStatisticsEnabled')]"
+            },
+            {
+             "category": "Timeouts",
+             "enabled": "[parameters('TimeoutsEnabled')]"
+            },
+            {
+             "category": "Blocks",
+             "enabled": "[parameters('BlocksEnabled')]"
+            },
+            {
+             "category": "Deadlocks",
+             "enabled": "[parameters('DeadlocksEnabled')]"
+            }
+           ]
+          }
+         }
+        ],
+        "outputs": {}
+       },
+       "parameters": {
+        "Basic": {
+         "value": "[parameters('Basic')]"
+        },
+        "InstanceAndAppAdvanced": {
+         "value": "[parameters('InstanceAndAppAdvanced')]"
+        },
+        "diagnosticsSettingNameToUse": {
+         "value": "[parameters('diagnosticsSettingNameToUse')]"
+        },
+        "WorkloadManagement": {
+         "value": "[parameters('WorkloadManagement')]"
+        },
+        "logAnalytics": {
+         "value": "[parameters('logAnalytics')]"
+        },
+        "location": {
+         "value": "[field('location')]"
+        },
+        "resourceName": {
+         "value": "[field('fullName')]"
+        },
+        "QueryStoreRuntimeStatisticsEnabled": {
+         "value": "[parameters('QueryStoreRuntimeStatisticsEnabled')]"
+        },
+        "QueryStoreWaitStatisticsEnabled": {
+         "value": "[parameters('QueryStoreWaitStatisticsEnabled')]"
+        },
+        "ErrorsEnabled": {
+         "value": "[parameters('ErrorsEnabled')]"
+        },
+        "DatabaseWaitStatisticsEnabled": {
+         "value": "[parameters('DatabaseWaitStatisticsEnabled')]"
+        },
+        "BlocksEnabled": {
+         "value": "[parameters('BlocksEnabled')]"
+        },
+        "SQLInsightsEnabled": {
+         "value": "[parameters('SQLInsightsEnabled')]"
+        },
+        "SQLSecurityAuditEventsEnabled": {
+         "value": "[parameters('SQLSecurityAuditEventsEnabled')]"
+        },
+        "TimeoutsEnabled": {
+         "value": "[parameters('TimeoutsEnabled')]"
+        },
+        "AutomaticTuningEnabled": {
+         "value": "[parameters('AutomaticTuningEnabled')]"
+        },
+        "DeadlocksEnabled": {
+         "value": "[parameters('DeadlocksEnabled')]"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/b79fa14e-238a-4c2d-b376-442ce508fc84",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "b79fa14e-238a-4c2d-b376-442ce508fc84"
+}

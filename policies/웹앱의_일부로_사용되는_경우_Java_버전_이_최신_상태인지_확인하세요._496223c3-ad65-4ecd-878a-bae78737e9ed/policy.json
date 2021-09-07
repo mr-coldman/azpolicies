@@ -1,0 +1,74 @@
+{
+ "properties": {
+  "displayName": "웹앱의 일부로 사용되는 경우 'Java 버전'이 최신 상태인지 확인하세요.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "보안 결점으로 인해 또는 추가 기능을 포함하기 위해 Java 소프트웨어에 대한 최신 버전이 주기적으로 릴리스됩니다. 최신 버전의 보안 수정 사항(있는 경우) 및/또는 새 기능을 활용하려면 웹앱의 최신 Java 버전을 사용하는 것이 좋습니다. 현재 이 정책은 Linux 웹앱에만 적용됩니다.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "App Service"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "JavaLatestVersion": {
+    "type": "String",
+    "metadata": {
+     "displayName": "최신 Java 버전",
+     "description": "App Services에 대해 지원되는 최신 Java 버전"
+    },
+    "defaultValue": "11"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Web/sites"
+     },
+     {
+      "field": "kind",
+      "like": "app*"
+     },
+     {
+      "field": "kind",
+      "contains": "linux"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Web/sites/config",
+     "name": "web",
+     "existenceCondition": {
+      "anyOf": [
+       {
+        "field": "Microsoft.Web/sites/config/web.linuxFxVersion",
+        "notContains": "JAVA"
+       },
+       {
+        "field": "Microsoft.Web/sites/config/web.linuxFxVersion",
+        "like": "[concat('*', parameters('JavaLatestVersion'))]"
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/496223c3-ad65-4ecd-878a-bae78737e9ed",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "496223c3-ad65-4ecd-878a-bae78737e9ed"
+}

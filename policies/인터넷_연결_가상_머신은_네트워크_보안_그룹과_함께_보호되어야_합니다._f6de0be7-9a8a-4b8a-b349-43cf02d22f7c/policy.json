@@ -1,0 +1,52 @@
+{
+ "properties": {
+  "displayName": "인터넷 연결 가상 머신은 네트워크 보안 그룹과 함께 보호되어야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "NSG(네트워크 보안 그룹)로 액세스를 제한하여 잠재적인 위협으로부터 가상 머신을 보호하세요. https://aka.ms/nsg-doc에서 NSG를 통한 트래픽 제어에 대해 자세히 알아보세요.",
+  "metadata": {
+   "version": "3.0.0",
+   "category": "Security Center"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "in": [
+     "Microsoft.Compute/virtualMachines",
+     "Microsoft.ClassicCompute/virtualMachines"
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Security/assessments",
+     "name": "483f12ed-ae23-447e-a2de-a67a10db4353",
+     "existenceCondition": {
+      "field": "Microsoft.Security/assessments/status.code",
+      "in": [
+       "NotApplicable",
+       "Healthy"
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/f6de0be7-9a8a-4b8a-b349-43cf02d22f7c",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "f6de0be7-9a8a-4b8a-b349-43cf02d22f7c"
+}

@@ -1,0 +1,72 @@
+{
+ "properties": {
+  "displayName": "App Service Environment는 가장 강력한 TLS 암호 그룹을 사용하여 구성해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "App Service Environment가 올바르게 작동하기 위해 필요한 가장 강력하고 가장 최소한의 암호 제품군은 TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 및 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256입니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "App Service"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "kind",
+      "like": "ASE*"
+     },
+     {
+      "field": "type",
+      "equals": "Microsoft.Web/hostingEnvironments"
+     },
+     {
+      "count": {
+       "field": "Microsoft.Web/HostingEnvironments/clusterSettings[*]",
+       "where": {
+        "allOf": [
+         {
+          "field": "Microsoft.Web/HostingEnvironments/clusterSettings[*].name",
+          "contains": "FrontEndSSLCipherSuiteOrder"
+         },
+         {
+          "field": "Microsoft.Web/HostingEnvironments/clusterSettings[*].value",
+          "contains": "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
+         },
+         {
+          "field": "Microsoft.Web/HostingEnvironments/clusterSettings[*].value",
+          "contains": "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
+         },
+         {
+          "value": "[less(length(field('Microsoft.Web/HostingEnvironments/clusterSettings[*].value')), 80)]",
+          "equals": "true"
+         }
+        ]
+       }
+      },
+      "less": 1
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/817dcf37-e83d-4999-a472-644eada2ea1e",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "817dcf37-e83d-4999-a472-644eada2ea1e"
+}

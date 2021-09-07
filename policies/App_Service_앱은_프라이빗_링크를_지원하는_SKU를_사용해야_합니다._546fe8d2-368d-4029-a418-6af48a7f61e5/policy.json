@@ -1,0 +1,54 @@
+{
+ "properties": {
+  "displayName": "App Service 앱은 프라이빗 링크를 지원하는 SKU를 사용해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "지원되는 SKU를 통해 Azure Private Link를 사용하면 원본 또는 대상에서 공용 IP 주소 없이 Azure 서비스에 가상 네트워크를 연결할 수 있습니다. Private Link 플랫폼은 Azure 백본 네트워크를 통해 소비자와 서비스 간의 연결을 처리합니다. 프라이빗 엔드포인트를 앱에 매핑하면 데이터 유출 위험이 감소합니다. https://aka.ms/private-link에서 프라이빗 링크에 관해 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "App Service"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Web/serverFarms"
+     },
+     {
+      "field": "Microsoft.Web/serverFarms/sku.family",
+      "notIn": [
+       "Pv2",
+       "Pv3",
+       "EP",
+       "P",
+       "I",
+       "Iv2"
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/546fe8d2-368d-4029-a418-6af48a7f61e5",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "546fe8d2-368d-4029-a418-6af48a7f61e5"
+}

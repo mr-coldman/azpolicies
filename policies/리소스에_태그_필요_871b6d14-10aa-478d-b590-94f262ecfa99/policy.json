@@ -1,0 +1,33 @@
+{
+ "properties": {
+  "displayName": "리소스에 태그 필요",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "태그 사용을 적용합니다. 리소스 그룹에는 적용하지 않습니다.",
+  "metadata": {
+   "version": "1.0.1",
+   "category": "Tags"
+  },
+  "parameters": {
+   "tagName": {
+    "type": "String",
+    "metadata": {
+     "displayName": "태그 이름",
+     "description": "태그의 이름(예: 'environment')"
+    }
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "[concat('tags[', parameters('tagName'), ']')]",
+    "exists": "false"
+   },
+   "then": {
+    "effect": "deny"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/871b6d14-10aa-478d-b590-94f262ecfa99",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "871b6d14-10aa-478d-b590-94f262ecfa99"
+}

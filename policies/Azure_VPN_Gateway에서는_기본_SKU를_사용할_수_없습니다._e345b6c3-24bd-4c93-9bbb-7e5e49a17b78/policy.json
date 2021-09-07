@@ -1,0 +1,50 @@
+{
+ "properties": {
+  "displayName": "Azure VPN Gateway에서는 '기본' SKU를 사용할 수 없습니다.",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "이 정책은 VPN Gateway가 '기본' SKU를 사용하지 않음을 보장합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Network"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Network/virtualNetworkGateways"
+     },
+     {
+      "field": "Microsoft.Network/virtualNetworkGateways/gatewayType",
+      "equals": "Vpn"
+     },
+     {
+      "field": "Microsoft.Network/virtualNetworkGateways/sku.tier",
+      "equals": "Basic"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/e345b6c3-24bd-4c93-9bbb-7e5e49a17b78",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "e345b6c3-24bd-4c93-9bbb-7e5e49a17b78"
+}
