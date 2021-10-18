@@ -1,0 +1,60 @@
+{
+ "properties": {
+  "displayName": "로컬 인증을 사용하지 않도록 Azure Event Grid 파트너 네임스페이스 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Event Grid 파트너 네임스페이스가 인증을 위해 Azure Active Directory ID만을 요구하도록 로컬 인증 방법을 비활성화합니다. https://aka.ms/aeg-disablelocalauth에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Event Grid"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Modify",
+     "Disabled"
+    ],
+    "defaultValue": "Modify"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.EventGrid/partnerNamespaces"
+     },
+     {
+      "field": "Microsoft.EventGrid/partnerNamespaces/disableLocalAuth",
+      "notEquals": true
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "conflictEffect": "audit",
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/1e241071-0855-49ea-94dc-649edcd759de"
+     ],
+     "operations": [
+      {
+       "condition": "[greaterOrEquals(requestContext().apiVersion, '2021-06-01-preview')]",
+       "operation": "addOrReplace",
+       "field": "Microsoft.EventGrid/partnerNamespaces/disableLocalAuth",
+       "value": true
+      }
+     ]
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/2dd0e8b9-4289-4bb0-b813-1883298e9924",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "2dd0e8b9-4289-4bb0-b813-1883298e9924"
+}

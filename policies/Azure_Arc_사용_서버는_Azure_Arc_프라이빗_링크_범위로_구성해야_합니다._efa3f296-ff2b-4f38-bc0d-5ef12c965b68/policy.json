@@ -1,0 +1,47 @@
+{
+ "properties": {
+  "displayName": "Azure Arc 사용 서버는 Azure Arc 프라이빗 링크 범위로 구성해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Private Link를 사용하면 원본 또는 대상에서 공용 IP 주소 없이 Azure 서비스에 가상 네트워크를 연결할 수 있습니다. Private Link 플랫폼은 Azure 백본 네트워크를 통해 소비자와 서비스 간의 연결을 처리합니다. Azure Arc 사용 서버를 개인 엔드포인트로 구성된 Azure Arc 프라이빗 링크 범위에 매핑하면 데이터 유출 위험이 줄어듭니다. https://aka.ms/arc/privatelink에서 프라이빗 링크에 관해 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Azure Arc"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.HybridCompute/machines"
+     },
+     {
+      "field": "Microsoft.HybridCompute/machines/privateLinkScopeResourceId",
+      "exists": false
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/efa3f296-ff2b-4f38-bc0d-5ef12c965b68",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "efa3f296-ff2b-4f38-bc0d-5ef12c965b68"
+}

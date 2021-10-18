@@ -1,0 +1,47 @@
+{
+ "properties": {
+  "displayName": "App Service 앱을 가상 네트워크에 삽입해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "가상 네트워크에 App Service 앱을 삽입하면 고급 App Service 네트워킹 및 보안 기능을 잠금 해제하고 네트워크 보안 구성을 보다 효과적으로 제어할 수 있습니다. 자세한 내용은 https://docs.microsoft.com/azure/app-service/web-sites-integrate-with-vnet를 참조하세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "App Service"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Web/sites"
+     },
+     {
+      "field": "Microsoft.Web/sites/virtualNetworkSubnetId",
+      "equals": ""
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/72d04c29-f87d-4575-9731-419ff16a2757",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "72d04c29-f87d-4575-9731-419ff16a2757"
+}

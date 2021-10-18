@@ -1,0 +1,103 @@
+{
+ "properties": {
+  "displayName": "Azure Kubernetes Service의 리소스 로그를 사용하도록 설정해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Kubernetes Service의 리소스 로그는 보안 인시던트를 조사할 때 활동 추적을 다시 만드는 데 도움이 될 수 있습니다. 필요할 때 로그가 존재하는지 확인하려면 이 로그를 사용하도록 설정하세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Kubernetes"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   },
+   "requiredRetentionDays": {
+    "type": "String",
+    "metadata": {
+     "displayName": "필수 보존 기간(일)",
+     "description": "필요한 리소스 로그 보존(일)"
+    },
+    "defaultValue": "365"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.ContainerService/managedClusters"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Insights/diagnosticSettings",
+     "existenceCondition": {
+      "count": {
+       "field": "Microsoft.Insights/diagnosticSettings/logs[*]",
+       "where": {
+        "anyOf": [
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Insights/diagnosticSettings/logs[*].retentionPolicy.enabled",
+            "equals": "true"
+           },
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Insights/diagnosticSettings/logs[*].retentionPolicy.days",
+              "equals": "0"
+             },
+             {
+              "value": "[padLeft(current('Microsoft.Insights/diagnosticSettings/logs[*].retentionPolicy.days'), 3, '0')]",
+              "greaterOrEquals": "[padLeft(parameters('requiredRetentionDays'), 3, '0')]"
+             }
+            ]
+           },
+           {
+            "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+            "equals": "true"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+            "equals": "true"
+           },
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Insights/diagnosticSettings/logs[*].retentionPolicy.enabled",
+              "notEquals": "true"
+             },
+             {
+              "field": "Microsoft.Insights/diagnosticSettings/storageAccountId",
+              "exists": false
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       }
+      },
+      "greaterOrEquals": 1
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/245fc9df-fa96-4414-9a0b-3738c2f7341c",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "245fc9df-fa96-4414-9a0b-3738c2f7341c"
+}

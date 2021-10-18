@@ -1,0 +1,206 @@
+{
+ "properties": {
+  "displayName": "Stream Analytics에 대한 진단 설정을 이벤트 허브에 배포",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Stream Analytics에 대한 진단 설정을 배포하여 이 진단 설정이 없는 Stream Analytics가 만들어지거나 업데이트될 때 지역별 이벤트 허브로 스트림합니다.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "Monitoring"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "DeployIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "DeployIfNotExists"
+   },
+   "profileName": {
+    "type": "String",
+    "metadata": {
+     "displayName": "프로필 이름",
+     "description": "진단 설정 프로필 이름"
+    },
+    "defaultValue": "setbypolicy_eventHub"
+   },
+   "eventHubRuleId": {
+    "type": "String",
+    "metadata": {
+     "displayName": "이벤트 허브 권한 부여 규칙 ID",
+     "description": "Azure Diagnostics의 이벤트 허브 권한 부여 규칙 ID입니다. 권한 부여 규칙은 이벤트 허브 네임스페이스 수준에 있어야 합니다. 예: /subscriptions/{subscription Id}/resourceGroups/{resource group}/providers/Microsoft.EventHub/namespaces/{이벤트 허브 namespace}/authorizationrules/{authorization rule}",
+     "strongType": "Microsoft.EventHub/Namespaces/AuthorizationRules",
+     "assignPermissions": true
+    }
+   },
+   "eventHubLocation": {
+    "type": "String",
+    "metadata": {
+     "displayName": "이벤트 허브 위치",
+     "description": "이벤트 허브가 있는 위치입니다. 이 위치에 있는 Stream Analytics만 이 이벤트 허브에 연결됩니다.",
+     "strongType": "location"
+    },
+    "defaultValue": ""
+   },
+   "metricsEnabled": {
+    "type": "String",
+    "metadata": {
+     "displayName": "메트릭 사용",
+     "description": "이벤트 허브로의 메트릭 스트림을 사용하도록 설정할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "False"
+   },
+   "logsEnabled": {
+    "type": "String",
+    "metadata": {
+     "displayName": "로그 사용",
+     "description": "이벤트 허브로의 로그 스트림을 사용하도록 설정할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "True"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.StreamAnalytics/streamingjobs"
+     },
+     {
+      "anyOf": [
+       {
+        "value": "[parameters('eventHubLocation')]",
+        "equals": ""
+       },
+       {
+        "field": "location",
+        "equals": "[parameters('eventHubLocation')]"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Insights/diagnosticSettings",
+     "name": "[parameters('profileName')]",
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+        "equals": "[parameters('logsEnabled')]"
+       },
+       {
+        "field": "Microsoft.Insights/diagnosticSettings/metrics.enabled",
+        "equals": "[parameters('metricsEnabled')]"
+       }
+      ]
+     },
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+     ],
+     "deployment": {
+      "properties": {
+       "mode": "incremental",
+       "template": {
+        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "resourceName": {
+          "type": "string"
+         },
+         "location": {
+          "type": "string"
+         },
+         "eventHubRuleId": {
+          "type": "string"
+         },
+         "metricsEnabled": {
+          "type": "string"
+         },
+         "logsEnabled": {
+          "type": "string"
+         },
+         "profileName": {
+          "type": "string"
+         }
+        },
+        "variables": {},
+        "resources": [
+         {
+          "type": "Microsoft.StreamAnalytics/streamingjobs/providers/diagnosticSettings",
+          "apiVersion": "2017-05-01-preview",
+          "name": "[concat(parameters('resourceName'), '/', 'Microsoft.Insights/', parameters('profileName'))]",
+          "location": "[parameters('location')]",
+          "dependsOn": [],
+          "properties": {
+           "eventHubAuthorizationRuleId": "[parameters('eventHubRuleId')]",
+           "metrics": [
+            {
+             "category": "AllMetrics",
+             "enabled": "[parameters('metricsEnabled')]",
+             "retentionPolicy": {
+              "enabled": false,
+              "days": 0
+             }
+            }
+           ],
+           "logs": [
+            {
+             "category": "Execution",
+             "enabled": "[parameters('logsEnabled')]"
+            },
+            {
+             "category": "Authoring",
+             "enabled": "[parameters('logsEnabled')]"
+            }
+           ]
+          }
+         }
+        ],
+        "outputs": {}
+       },
+       "parameters": {
+        "location": {
+         "value": "[field('location')]"
+        },
+        "resourceName": {
+         "value": "[field('name')]"
+        },
+        "eventHubRuleId": {
+         "value": "[parameters('eventHubRuleId')]"
+        },
+        "metricsEnabled": {
+         "value": "[parameters('metricsEnabled')]"
+        },
+        "logsEnabled": {
+         "value": "[parameters('logsEnabled')]"
+        },
+        "profileName": {
+         "value": "[parameters('profileName')]"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/edf3780c-3d70-40fe-b17e-ab72013dafca",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "edf3780c-3d70-40fe-b17e-ab72013dafca"
+}

@@ -1,0 +1,66 @@
+{
+ "properties": {
+  "displayName": "키는 지정한 암호화 유형 RSA 또는 EC여야 함",
+  "policyType": "BuiltIn",
+  "mode": "Microsoft.KeyVault.Data",
+  "description": "일부 애플리케이션은 특정 암호화 유형으로 지원되는 키를 사용해야 합니다. 사용자 환경에서 특정 암호화 키 유형(RSA 또는 EC)을 적용하세요.",
+  "metadata": {
+   "version": "1.0.1",
+   "category": "Key Vault"
+  },
+  "parameters": {
+   "allowedKeyTypes": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "허용된 키 유형",
+     "description": "허용되는 인증서 키 유형의 목록"
+    },
+    "allowedValues": [
+     "RSA",
+     "RSA-HSM",
+     "EC",
+     "EC-HSM"
+    ],
+    "defaultValue": [
+     "RSA",
+     "RSA-HSM",
+     "EC",
+     "EC-HSM"
+    ]
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "'감사'는 비준수 리소스를 만들도록 허용하지만 리소스에 비준수로 플래그 지정합니다. '거부'는 리소스 생성을 차단합니다. '사용 안 함'은 정책을 끕니다."
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.KeyVault.Data/vaults/keys"
+     },
+     {
+      "field": "Microsoft.KeyVault.Data/vaults/keys/keyType",
+      "notIn": "[parameters('allowedKeyTypes')]"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/75c4f823-d65c-4f29-a733-01d0077fdbcb",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "75c4f823-d65c-4f29-a733-01d0077fdbcb"
+}

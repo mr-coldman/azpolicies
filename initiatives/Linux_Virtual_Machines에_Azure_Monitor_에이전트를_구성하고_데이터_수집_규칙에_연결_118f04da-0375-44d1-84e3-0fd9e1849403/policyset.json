@@ -1,0 +1,72 @@
+{
+ "properties": {
+  "displayName": "Linux Virtual Machines에 Azure Monitor 에이전트를 구성하고 데이터 수집 규칙에 연결",
+  "policyType": "BuiltIn",
+  "description": "가상 머신 이미지(OS) 및 위치가 정의된 목록에 있고 에이전트가 설치되지 않은 경우 Linux Virtual Machines를 위한 Azure Monitor 에이전트를 배포합니다. 그런 다음 Association을 배포하여 가상 머신을 지정된 데이터 수집 규칙에 연결합니다. OS 이미지 목록은 지원이 늘어나면 시간이 지남에 따라 업데이트됩니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Monitoring"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정합니다."
+    },
+    "allowedValues": [
+     "DeployIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "DeployIfNotExists"
+   },
+   "listOfLinuxImageIdToInclude": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "선택 사항: 범위에 추가할 Linux OS를 지원한 가상 머신 이미지 목록",
+     "description": "예제 값: '/subscriptions/<subscriptionId>/resourceGroups/YourResourceGroup/providers/Microsoft.Compute/images/ContosoStdImage'"
+    },
+    "defaultValue": []
+   },
+   "DcrResourceId": {
+    "type": "String",
+    "metadata": {
+     "displayName": "데이터 수집 규칙 리소스 ID",
+     "description": "범위 내의 가상 머신이 가리켜야 하는 데이터 수집 규칙의 리소스 ID입니다."
+    }
+   }
+  },
+  "policyDefinitions": [
+   {
+    "policyDefinitionReferenceId": "deployAzureMonitoringAgentLinux",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a4034bc6-ae50-406d-bf76-50f4ee5a7811",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('effect')]"
+     },
+     "listOfLinuxImageIdToInclude": {
+      "value": "[parameters('listOfLinuxImageIdToInclude')]"
+     }
+    }
+   },
+   {
+    "policyDefinitionReferenceId": "associateDataCollectionRuleLinux",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/2ea82cdd-f2e8-4500-af75-67a2e084ca74",
+    "parameters": {
+     "effect": {
+      "value": "[parameters('effect')]"
+     },
+     "listOfLinuxImageIdToInclude": {
+      "value": "[parameters('listOfLinuxImageIdToInclude')]"
+     },
+     "DcrResourceId": {
+      "value": "[parameters('DcrResourceId')]"
+     }
+    }
+   }
+  ]
+ },
+ "id": "/providers/Microsoft.Authorization/policySetDefinitions/118f04da-0375-44d1-84e3-0fd9e1849403",
+ "type": "Microsoft.Authorization/policySetDefinitions",
+ "name": "118f04da-0375-44d1-84e3-0fd9e1849403"
+}

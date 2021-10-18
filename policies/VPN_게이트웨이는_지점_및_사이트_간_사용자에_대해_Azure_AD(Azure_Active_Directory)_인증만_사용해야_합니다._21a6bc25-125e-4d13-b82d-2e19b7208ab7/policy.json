@@ -1,0 +1,57 @@
+{
+ "properties": {
+  "displayName": "VPN 게이트웨이는 지점 및 사이트 간 사용자에 대해 Azure AD(Azure Active Directory) 인증만 사용해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "로컬 인증 방법을 사용하지 않도록 설정하면 VPN 게이트웨이가 인증에 Azure Active Directory ID만 사용하도록 하여 보안이 향상됩니다. https://docs.microsoft.com/azure/vpn-gateway/openvpn-azure-ad-tenant에서 Azure AD 인증에 대해 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Network"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Network/virtualNetworkGateways"
+     },
+     {
+      "field": "Microsoft.Network/virtualNetworkGateways/vpnClientConfiguration.vpnClientAddressPool.addressPrefixes",
+      "exists": "true"
+     },
+     {
+      "count": {
+       "field": "Microsoft.Network/virtualNetworkGateways/vpnClientConfiguration.vpnAuthenticationTypes[*]",
+       "where": {
+        "field": "Microsoft.Network/virtualNetworkGateways/vpnClientConfiguration.vpnAuthenticationTypes[*]",
+        "notcontains": "AAD"
+       }
+      },
+      "greaterOrEquals": 1
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/21a6bc25-125e-4d13-b82d-2e19b7208ab7",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "21a6bc25-125e-4d13-b82d-2e19b7208ab7"
+}

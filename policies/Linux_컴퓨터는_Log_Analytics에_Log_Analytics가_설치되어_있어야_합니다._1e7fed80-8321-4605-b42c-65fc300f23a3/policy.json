@@ -1,0 +1,77 @@
+{
+ "properties": {
+  "displayName": "Linux 컴퓨터는 Log Analytics에 Log Analytics가 설치되어 있어야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Log Analytics 에이전트가 Azure Arc를 사용하도록 설정된 Linux 서버에 설치되어 있지 않으면 컴퓨터가 호환되지 않습니다.",
+  "metadata": {
+   "category": "Guest Configuration",
+   "version": "1.0.0",
+   "requiredProviders": [
+    "Microsoft.GuestConfiguration"
+   ],
+   "guestConfiguration": {
+    "name": "LinuxLogAnalyticsAgentInstalled",
+    "version": "1.*"
+   }
+  },
+  "parameters": {
+   "IncludeArcMachines": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Arc 연결된 서버 포함",
+     "description": "이 옵션을 선택하면 Arc 연결된 머신마다 매달 청구되는 것에 동의하게 됩니다."
+    },
+    "allowedValues": [
+     "true",
+     "false"
+    ],
+    "defaultValue": "false"
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "이 정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "value": "[parameters('IncludeArcMachines')]",
+      "equals": "true"
+     },
+     {
+      "field": "type",
+      "equals": "Microsoft.HybridCompute/machines"
+     },
+     {
+      "field": "Microsoft.HybridCompute/imageOffer",
+      "like": "linux*"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.GuestConfiguration/guestConfigurationAssignments",
+     "name": "LinuxLogAnalyticsAgentInstalled",
+     "existenceCondition": {
+      "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/complianceStatus",
+      "equals": "Compliant"
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/1e7fed80-8321-4605-b42c-65fc300f23a3",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "1e7fed80-8321-4605-b42c-65fc300f23a3"
+}

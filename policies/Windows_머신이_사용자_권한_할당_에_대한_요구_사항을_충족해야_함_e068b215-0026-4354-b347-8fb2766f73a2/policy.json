@@ -1,0 +1,403 @@
+{
+ "properties": {
+  "displayName": "Windows 머신이 '사용자 권한 할당'에 대한 요구 사항을 충족해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Windows 머신에서 로컬에서 로그온, RDP, 네트워크에서 액세스 및 기타 여러 사용자 활동을 허용하려면 '사용자 권한 할당' 범주에 지정된 그룹 정책 설정이 있어야 합니다. 이 정책을 사용하려면 게스트 구성 필수 구성 요소가 정책 할당 범위에 배포되었어야 합니다. 자세한 내용을 보려면 https://aka.ms/gcpol을 방문하세요.",
+  "metadata": {
+   "category": "Guest Configuration",
+   "version": "2.0.0",
+   "requiredProviders": [
+    "Microsoft.GuestConfiguration"
+   ],
+   "guestConfiguration": {
+    "name": "AzureBaseline_UserRightsAssignment",
+    "version": "1.*",
+    "configurationParameter": {
+     "UsersOrGroupsThatMayAccessThisComputerFromTheNetwork": "Access this computer from the network;ExpectedValue",
+     "UsersOrGroupsThatMayLogOnLocally": "Allow log on locally;ExpectedValue",
+     "UsersOrGroupsThatMayLogOnThroughRemoteDesktopServices": "Allow log on through Remote Desktop Services;ExpectedValue",
+     "UsersAndGroupsThatAreDeniedAccessToThisComputerFromTheNetwork": "Deny access to this computer from the network;ExpectedValue",
+     "UsersOrGroupsThatMayManageAuditingAndSecurityLog": "Manage auditing and security log;ExpectedValue",
+     "UsersOrGroupsThatMayBackUpFilesAndDirectories": "Back up files and directories;ExpectedValue",
+     "UsersOrGroupsThatMayChangeTheSystemTime": "Change the system time;ExpectedValue",
+     "UsersOrGroupsThatMayChangeTheTimeZone": "Change the time zone;ExpectedValue",
+     "UsersOrGroupsThatMayCreateATokenObject": "Create a token object;ExpectedValue",
+     "UsersAndGroupsThatAreDeniedLoggingOnAsABatchJob": "Deny log on as a batch job;ExpectedValue",
+     "UsersAndGroupsThatAreDeniedLoggingOnAsAService": "Deny log on as a service;ExpectedValue",
+     "UsersAndGroupsThatAreDeniedLocalLogon": "Deny log on locally;ExpectedValue",
+     "UsersAndGroupsThatAreDeniedLogOnThroughRemoteDesktopServices": "Deny log on through Remote Desktop Services;ExpectedValue",
+     "UserAndGroupsThatMayForceShutdownFromARemoteSystem": "Force shutdown from a remote system;ExpectedValue",
+     "UsersAndGroupsThatMayRestoreFilesAndDirectories": "Restore files and directories;ExpectedValue",
+     "UsersAndGroupsThatMayShutDownTheSystem": "Shut down the system;ExpectedValue",
+     "UsersOrGroupsThatMayTakeOwnershipOfFilesOrOtherObjects": "Take ownership of files or other objects;ExpectedValue"
+    }
+   }
+  },
+  "parameters": {
+   "IncludeArcMachines": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Arc 연결된 서버 포함",
+     "description": "이 옵션을 선택하면 Arc 연결된 머신마다 매달 청구되는 것에 동의하게 됩니다."
+    },
+    "allowedValues": [
+     "true",
+     "false"
+    ],
+    "defaultValue": "false"
+   },
+   "UsersOrGroupsThatMayAccessThisComputerFromTheNetwork": {
+    "type": "String",
+    "metadata": {
+     "displayName": "네트워크에서 이 컴퓨터에 액세스할 수 있는 사용자 또는 그룹",
+     "description": "컴퓨터에 연결하도록 허용되는 네트워크의 원격 사용자를 지정합니다. 원격 데스크톱 연결은 포함되지 않습니다."
+    },
+    "defaultValue": "Administrators, Authenticated Users"
+   },
+   "UsersOrGroupsThatMayLogOnLocally": {
+    "type": "String",
+    "metadata": {
+     "displayName": "로컬로 로그온할 수 있는 사용자 또는 그룹",
+     "description": "컴퓨터에 대화형으로 로그온할 수 있는 사용자 또는 그룹을 지정합니다. 원격 데스크톱 연결 또는 IIS를 통해 로그온하려는 사용자에게 이 사용자 권한이 필요합니다."
+    },
+    "defaultValue": "Administrators"
+   },
+   "UsersOrGroupsThatMayLogOnThroughRemoteDesktopServices": {
+    "type": "String",
+    "metadata": {
+     "displayName": "원격 데스크톱 서비스를 통해 로그온할 수 있는 사용자 또는 그룹",
+     "description": "터미널 서비스 클라이언트나 원격 데스크톱으로 로그온하거나 원격 지원을 위해 로그온하도록 허용되는 사용자 또는 그룹을 지정합니다."
+    },
+    "defaultValue": "Administrators, Remote Desktop Users"
+   },
+   "UsersAndGroupsThatAreDeniedAccessToThisComputerFromTheNetwork": {
+    "type": "String",
+    "metadata": {
+     "displayName": "네트워크에서 이 컴퓨터에 대한 액세스가 거부된 사용자 및 그룹",
+     "description": "네트워크를 통해 컴퓨터에 연결하는 것이 명시적으로 금지된 사용자 또는 그룹을 지정합니다."
+    },
+    "defaultValue": "Guests"
+   },
+   "UsersOrGroupsThatMayManageAuditingAndSecurityLog": {
+    "type": "String",
+    "metadata": {
+     "displayName": "감사 및 보안 로그를 관리할 수 있는 사용자 또는 그룹",
+     "description": "파일 및 디렉터리의 감사 옵션을 변경하고 보안 로그를 지울 수 있는 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Administrators"
+   },
+   "UsersOrGroupsThatMayBackUpFilesAndDirectories": {
+    "type": "String",
+    "metadata": {
+     "displayName": "파일 및 디렉터리를 백업할 수 있는 사용자 또는 그룹",
+     "description": "시스템을 백업하기 위한 파일 및 디렉터리 권한을 우회하도록 허용된 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Administrators, Backup Operators"
+   },
+   "UsersOrGroupsThatMayChangeTheSystemTime": {
+    "type": "String",
+    "metadata": {
+     "displayName": "시스템 시간을 변경할 수 있는 사용자 또는 그룹",
+     "description": "컴퓨터 내부 시계의 시간과 날짜를 변경하도록 허용되는 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Administrators, LOCAL SERVICE"
+   },
+   "UsersOrGroupsThatMayChangeTheTimeZone": {
+    "type": "String",
+    "metadata": {
+     "displayName": "표준 시간대를 변경할 수 있는 사용자 또는 그룹",
+     "description": "컴퓨터 표준 시간대를 변경하도록 허용되는 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Administrators, LOCAL SERVICE"
+   },
+   "UsersOrGroupsThatMayCreateATokenObject": {
+    "type": "String",
+    "metadata": {
+     "displayName": "토큰 개체를 만들 수 있는 사용자 또는 그룹",
+     "description": "중요한 데이터에 액세스하기 위한 상승된 권한을 제공할 수 있는 액세스 토큰을 만들도록 허용되는 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "No One"
+   },
+   "UsersAndGroupsThatAreDeniedLoggingOnAsABatchJob": {
+    "type": "String",
+    "metadata": {
+     "displayName": "일괄 작업으로서의 로그온이 거부된 사용자 및 그룹",
+     "description": "일괄 작업(예: 예약된 작업)으로 컴퓨터에 로그온하도록 명시적으로 허용되지 않는 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Guests"
+   },
+   "UsersAndGroupsThatAreDeniedLoggingOnAsAService": {
+    "type": "String",
+    "metadata": {
+     "displayName": "서비스로서의 로그온이 거부된 사용자 및 그룹",
+     "description": "프로세스를 서비스로 등록하도록 명시적으로 허용되지 않는 서비스 계정을 지정합니다."
+    },
+    "defaultValue": "Guests"
+   },
+   "UsersAndGroupsThatAreDeniedLocalLogon": {
+    "type": "String",
+    "metadata": {
+     "displayName": "로컬 로그온이 거부된 사용자 및 그룹",
+     "description": "컴퓨터에 로그온하도록 명시적으로 허용되지 않은 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Guests"
+   },
+   "UsersAndGroupsThatAreDeniedLogOnThroughRemoteDesktopServices": {
+    "type": "String",
+    "metadata": {
+     "displayName": "원격 데스크톱 서비스를 통한 로그온이 거부된 사용자 및 그룹",
+     "description": "터미널 서비스/원격 데스크톱 클라이언트를 통해 컴퓨터에 로그온하도록 명시적으로 허용되지 않은 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Guests"
+   },
+   "UserAndGroupsThatMayForceShutdownFromARemoteSystem": {
+    "type": "String",
+    "metadata": {
+     "displayName": "원격 시스템에서 강제로 종료할 수 있는 사용자 및 그룹",
+     "description": "네트워크의 원격 위치에서 컴퓨터를 종료하도록 허용되는 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Administrators"
+   },
+   "UsersAndGroupsThatMayRestoreFilesAndDirectories": {
+    "type": "String",
+    "metadata": {
+     "displayName": "파일 및 디렉터리를 복원할 수 있는 사용자 및 그룹",
+     "description": "백업된 파일 및 디렉터리를 복원할 때 파일, 디렉터리, 레지스트리 및 기타 영구 개체 권한을 무시하도록 허용되는 사용자 및 그룹을 지정합니다."
+    },
+    "defaultValue": "Administrators, Backup Operators"
+   },
+   "UsersAndGroupsThatMayShutDownTheSystem": {
+    "type": "String",
+    "metadata": {
+     "displayName": "시스템을 종료할 수 있는 사용자 및 그룹",
+     "description": "사용자 환경의 컴퓨터에 로컬로 로그온하는 사용자 및 그룹 중에서 시스템 종료 명령을 사용하여 운영 체제를 종료하도록 허용되는 대상을 지정합니다."
+    },
+    "defaultValue": "Administrators"
+   },
+   "UsersOrGroupsThatMayTakeOwnershipOfFilesOrOtherObjects": {
+    "type": "String",
+    "metadata": {
+     "displayName": "파일 또는 다른 개체의 소유권을 가져올 수 있는 사용자 또는 그룹",
+     "description": "파일, 폴더, 레지스트리 키, 프로세스 또는 스레드의 소유권이 허용되는 사용자 및 그룹을 지정합니다. 이 사용자 권한은 개체를 보호하기 위해 지정된 모든 권한을 무시하고 지정된 사용자에게 소유권을 제공합니다."
+    },
+    "defaultValue": "Administrators"
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "이 정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "anyOf": [
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/virtualMachines"
+       },
+       {
+        "anyOf": [
+         {
+          "field": "Microsoft.Compute/imagePublisher",
+          "in": [
+           "esri",
+           "incredibuild",
+           "MicrosoftDynamicsAX",
+           "MicrosoftSharepoint",
+           "MicrosoftVisualStudio",
+           "MicrosoftWindowsDesktop",
+           "MicrosoftWindowsServerHPCPack"
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "MicrosoftWindowsServer"
+           },
+           {
+            "field": "Microsoft.Compute/imageSKU",
+            "notLike": "2008*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "MicrosoftSQLServer"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "notLike": "SQL2008*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "microsoft-dsvm"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "equals": "dsvm-windows"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "microsoft-ads"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "in": [
+             "standard-data-science-vm",
+             "windows-data-science-vm"
+            ]
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "batch"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "equals": "rendering-windows2016"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "center-for-internet-security-inc"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "cis-windows-server-201*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "pivotal"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "bosh-windows-server*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "cloud-infrastructure-services"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "ad*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Compute/virtualMachines/osProfile.windowsConfiguration",
+              "exists": "true"
+             },
+             {
+              "field": "Microsoft.Compute/virtualMachines/storageProfile.osDisk.osType",
+              "like": "Windows*"
+             }
+            ]
+           },
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Compute/imageSKU",
+              "exists": "false"
+             },
+             {
+              "allOf": [
+               {
+                "field": "Microsoft.Compute/imageSKU",
+                "notLike": "2008*"
+               },
+               {
+                "field": "Microsoft.Compute/imageOffer",
+                "notLike": "SQL2008*"
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "allOf": [
+       {
+        "value": "[parameters('IncludeArcMachines')]",
+        "equals": "true"
+       },
+       {
+        "field": "type",
+        "equals": "Microsoft.HybridCompute/machines"
+       },
+       {
+        "field": "Microsoft.HybridCompute/imageOffer",
+        "like": "windows*"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.GuestConfiguration/guestConfigurationAssignments",
+     "name": "AzureBaseline_UserRightsAssignment",
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/complianceStatus",
+        "equals": "Compliant"
+       },
+       {
+        "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/parameterHash",
+        "equals": "[base64(concat('Access this computer from the network;ExpectedValue', '=', parameters('UsersOrGroupsThatMayAccessThisComputerFromTheNetwork'), ',', 'Allow log on locally;ExpectedValue', '=', parameters('UsersOrGroupsThatMayLogOnLocally'), ',', 'Allow log on through Remote Desktop Services;ExpectedValue', '=', parameters('UsersOrGroupsThatMayLogOnThroughRemoteDesktopServices'), ',', 'Deny access to this computer from the network;ExpectedValue', '=', parameters('UsersAndGroupsThatAreDeniedAccessToThisComputerFromTheNetwork'), ',', 'Manage auditing and security log;ExpectedValue', '=', parameters('UsersOrGroupsThatMayManageAuditingAndSecurityLog'), ',', 'Back up files and directories;ExpectedValue', '=', parameters('UsersOrGroupsThatMayBackUpFilesAndDirectories'), ',', 'Change the system time;ExpectedValue', '=', parameters('UsersOrGroupsThatMayChangeTheSystemTime'), ',', 'Change the time zone;ExpectedValue', '=', parameters('UsersOrGroupsThatMayChangeTheTimeZone'), ',', 'Create a token object;ExpectedValue', '=', parameters('UsersOrGroupsThatMayCreateATokenObject'), ',', 'Deny log on as a batch job;ExpectedValue', '=', parameters('UsersAndGroupsThatAreDeniedLoggingOnAsABatchJob'), ',', 'Deny log on as a service;ExpectedValue', '=', parameters('UsersAndGroupsThatAreDeniedLoggingOnAsAService'), ',', 'Deny log on locally;ExpectedValue', '=', parameters('UsersAndGroupsThatAreDeniedLocalLogon'), ',', 'Deny log on through Remote Desktop Services;ExpectedValue', '=', parameters('UsersAndGroupsThatAreDeniedLogOnThroughRemoteDesktopServices'), ',', 'Force shutdown from a remote system;ExpectedValue', '=', parameters('UserAndGroupsThatMayForceShutdownFromARemoteSystem'), ',', 'Restore files and directories;ExpectedValue', '=', parameters('UsersAndGroupsThatMayRestoreFilesAndDirectories'), ',', 'Shut down the system;ExpectedValue', '=', parameters('UsersAndGroupsThatMayShutDownTheSystem'), ',', 'Take ownership of files or other objects;ExpectedValue', '=', parameters('UsersOrGroupsThatMayTakeOwnershipOfFilesOrOtherObjects')))]"
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/e068b215-0026-4354-b347-8fb2766f73a2",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "e068b215-0026-4354-b347-8fb2766f73a2"
+}

@@ -1,0 +1,116 @@
+{
+ "properties": {
+  "displayName": "배포 - 프라이빗 DNS 영역을 사용하도록 Azure IoT Hubs 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure 프라이빗 DNS는 사용자 지정 DNS 솔루션을 추가할 필요 없이 가상 네트워크에서 도메인 이름을 관리하고 확인하는 신뢰할 수 있는 보안 DNS 서비스를 제공합니다. 프라이빗 DNS 영역을 사용하여 프라이빗 엔드포인트의 고유한 사용자 지정 도메인 이름으로 DNS 확인을 재정의할 수 있습니다. 해당 정책은 IoT Hub 프라이빗 엔드포인트의 프라이빗 DNS 영역을 배포합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Internet of Things"
+  },
+  "parameters": {
+   "privateDnsZoneId": {
+    "type": "String",
+    "metadata": {
+     "displayName": "프라이빗 DNS 영역 ID",
+     "description": "프라이빗 엔드포인트를 구성하는 데 사용할 프라이빗 DNS 영역을 지정합니다.",
+     "strongType": "Microsoft.Network/privateDnsZones"
+    }
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "deployIfNotExists",
+     "disabled"
+    ],
+    "defaultValue": "deployIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Network/privateEndpoints"
+     },
+     {
+      "count": {
+       "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].groupIds[*]",
+       "where": {
+        "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].groupIds[*]",
+        "equals": "iotHub"
+       }
+      },
+      "greaterOrEquals": 1
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+     "roleDefinitionIds": [
+      "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7",
+      "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+     ],
+     "deployment": {
+      "properties": {
+       "mode": "incremental",
+       "template": {
+        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "privateDnsZoneId": {
+          "type": "string"
+         },
+         "privateEndpointName": {
+          "type": "string"
+         },
+         "location": {
+          "type": "string"
+         }
+        },
+        "resources": [
+         {
+          "name": "[concat(parameters('privateEndpointName'), '/deployedByPolicy')]",
+          "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+          "apiVersion": "2020-03-01",
+          "location": "[parameters('location')]",
+          "properties": {
+           "privateDnsZoneConfigs": [
+            {
+             "name": "privatelink.azure-devices.net",
+             "properties": {
+              "privateDnsZoneId": "[parameters('privateDnsZoneId')]"
+             }
+            }
+           ]
+          }
+         }
+        ]
+       },
+       "parameters": {
+        "privateDnsZoneId": {
+         "value": "[parameters('privateDnsZoneId')]"
+        },
+        "privateEndpointName": {
+         "value": "[field('name')]"
+        },
+        "location": {
+         "value": "[field('location')]"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/c99ce9c1-ced7-4c3e-aca0-10e69ce0cb02",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "c99ce9c1-ced7-4c3e-aca0-10e69ce0cb02"
+}

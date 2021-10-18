@@ -1,0 +1,53 @@
+{
+ "properties": {
+  "displayName": "Azure Monitor 솔루션 '보안 및 감사'가 배포되어야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "이 정책은 보안 및 감사가 배포되었는지 확인합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Monitoring"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Resources/subscriptions"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.OperationsManagement/solutions",
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.OperationsManagement/solutions/provisioningState",
+        "equals": "Succeeded"
+       },
+       {
+        "field": "name",
+        "like": "Security(*)"
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/3e596b57-105f-48a6-be97-03e9243bad6e",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "3e596b57-105f-48a6-be97-03e9243bad6e"
+}

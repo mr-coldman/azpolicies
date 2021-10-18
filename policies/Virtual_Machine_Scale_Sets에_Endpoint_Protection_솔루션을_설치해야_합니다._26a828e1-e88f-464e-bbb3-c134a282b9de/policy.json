@@ -1,0 +1,49 @@
+{
+ "properties": {
+  "displayName": "Virtual Machine Scale Sets에 Endpoint Protection 솔루션을 설치해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "가상 머신 확장 집합에 엔드포인트 보호 솔루션이 있는지 및 현재 상태를 감사하여 위협 및 취약성으로부터 보호합니다.",
+  "metadata": {
+   "version": "3.0.0",
+   "category": "Security Center"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Compute/virtualMachineScaleSets"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Security/assessments",
+     "name": "e71020c2-860c-3235-cd39-04f3f8c936d2",
+     "existenceCondition": {
+      "field": "Microsoft.Security/assessments/status.code",
+      "in": [
+       "NotApplicable",
+       "Healthy"
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/26a828e1-e88f-464e-bbb3-c134a282b9de",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "26a828e1-e88f-464e-bbb3-c134a282b9de"
+}

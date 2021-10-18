@@ -1,0 +1,46 @@
+{
+ "properties": {
+  "displayName": "사용자 지정 RBAC 규칙의 사용 감사",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "오류가 발생하기 쉬운 사용자 지정 RBAC 역할 대신 'Owner, Contributer, Reader'와 같은 기본 제공 역할을 감사합니다. 사용자 지정 역할의 사용은 예외로 처리되고 엄격한 검토 및 위협 모델링이 필요합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "General"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Authorization/roleDefinitions"
+     },
+     {
+      "field": "Microsoft.Authorization/roleDefinitions/type",
+      "equals": "CustomRole"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/a451c1ef-c6ca-483d-87ed-f49761e3ffb5",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "a451c1ef-c6ca-483d-87ed-f49761e3ffb5"
+}

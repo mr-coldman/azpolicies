@@ -1,0 +1,106 @@
+{
+ "properties": {
+  "displayName": "공용 네트워크 액세스를 비활성화하도록 API Management 서비스 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "API Management 서비스의 보안을 개선하려면 공용 엔드포인트를 비활성화하세요. 일부 공용 엔드포인트는 API Management 서비스에 의해 노출되어 사용자 시나리오를 지원합니다. 관리 API에 대한 직접 액세스, Git을 사용한 구성 관리, 자체 호스팅 게이트웨이 구성. 이러한 기능이 사용되지 않는 경우 해당 엔드포인트를 비활성화해야 합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "API Management"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "DeployIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "DeployIfNotExists"
+   },
+   "endpointType": {
+    "type": "String",
+    "metadata": {
+     "displayName": "공용 엔드포인트 유형",
+     "description": "액세스 확인을 적용할 공용 엔드포인트 유형"
+    },
+    "allowedValues": [
+     "Management",
+     "Git",
+     "Gateway Configuration"
+    ],
+    "defaultValue": "Management"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.ApiManagement/service"
+     },
+     {
+      "field": "Microsoft.ApiManagement/service/sku.name",
+      "notEquals": "Consumption"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.ApiManagement/service/tenant",
+     "name": "[if(equals(parameters('endpointType'), 'Management'), 'access', if(equals(parameters('endpointType'), 'Git'), 'gitaccess', 'gatewayaccess'))]",
+     "evaluationDelay": "AfterProvisioningSuccess",
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/312a565d-c81f-4fd8-895a-4e21e48d571c"
+     ],
+     "existenceCondition": {
+      "field": "Microsoft.ApiManagement/service/tenant/enabled",
+      "equals": false
+     },
+     "deployment": {
+      "properties": {
+       "mode": "incremental",
+       "template": {
+        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "endpointType": {
+          "type": "string"
+         },
+         "apimName": {
+          "type": "string"
+         }
+        },
+        "resources": [
+         {
+          "name": "[concat(parameters('apimName'), '/', parameters('endpointType'))]",
+          "type": "Microsoft.ApiManagement/service/tenant",
+          "apiVersion": "2020-06-01-preview",
+          "properties": {
+           "enabled": false
+          }
+         }
+        ]
+       },
+       "parameters": {
+        "endpointType": {
+         "value": "[if(equals(parameters('endpointType'), 'Management'), 'access', if(equals(parameters('endpointType'), 'Git'), 'gitaccess', 'gatewayaccess'))]"
+        },
+        "apimName": {
+         "value": "[field('name')]"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/7ca8c8ac-3a6e-493d-99ba-c5fa35347ff2",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "7ca8c8ac-3a6e-493d-99ba-c5fa35347ff2"
+}

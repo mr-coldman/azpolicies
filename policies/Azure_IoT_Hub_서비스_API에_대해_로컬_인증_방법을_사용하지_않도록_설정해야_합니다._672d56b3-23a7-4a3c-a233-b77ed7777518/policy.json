@@ -1,0 +1,47 @@
+{
+ "properties": {
+  "displayName": "Azure IoT Hub 서비스 API에 대해 로컬 인증 방법을 사용하지 않도록 설정해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "로컬 인증 방법을 사용하지 않도록 설정하면 Azure IoT Hub가 Service Api 인증을 위해 Azure Active Directory ID를 독점적으로 요구하도록 하여 보안이 향상됩니다. https://aka.ms/iothubdisablelocalauth에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Internet of Things"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Devices/IotHubs"
+     },
+     {
+      "field": "Microsoft.Devices/IotHubs/disableLocalAuth",
+      "notEquals": true
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/672d56b3-23a7-4a3c-a233-b77ed7777518",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "672d56b3-23a7-4a3c-a233-b77ed7777518"
+}

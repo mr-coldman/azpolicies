@@ -1,0 +1,1784 @@
+name: manage-azure-policy-fd729d48
+on:
+  workflow_dispatch:
+    inputs:
+      remarks:
+        description: 'Reason for triggering the workflow run'
+        required: false
+        default: 'Updating Azure Policies'
+
+
+## Uncomment the following if you wish to automatically trigger workflow run with every commit
+#
+#  push:
+#    paths:
+#      - 'policies/재해_복구가_구성되어_있지_않은_가상_머신_감사_0015ea4d-51ff-4ce3-8d8c-f3f8f0179a56/**'
+#      - 'policies/Synapse_작업_영역에서_취약성_평가를_사용하도록_설정해야_함_0049a6b3-a662-4f3e-8635-39cf44ace45a/**'
+#      - 'policies/Azure_Data_Factory의_SQL_Server_Integration_Services_통합_런타임을_가상_네트워크에_조인해야_함_0088bc63-6dee-4a9c-9d29-91cfdc848952/**'
+#      - 'policies/배치_계정에서_프라이빗_엔드포인트_연결을_사용하도록_설정해야_합니다._009a0c92-f5b4-4776-9b66-4ed2b4775563/**'
+#      - 'policies/Virtual_Machines에_대해_Azure_Backup을_사용하도록_설정해야_합니다._013e242c-8828-4970-87b3-ab247555486d/**'
+#      - 'policies/_미리_보기_Windows_Arc_컴퓨터에_Azure_Security_에이전트를_설치해야_합니다._0367cfc4-90b3-46ba-a8a6-ddd5d3514878/**'
+#      - 'policies/Cognitive_Services_계정은_네트워크_액세스를_제한해야_합니다._037eea7a-bd0a-46c5-9a66-03aea78705d3/**'
+#      - 'policies/Azure_Kubernetes_Service_프라이빗_클러스터를_사용하도록_설정해야_함_040732e8-d947-40b8-95d6-854c95024bf8/**'
+#      - 'policies/지정된_애플리케이션이_설치된_Linux_머신_감사_0447bc18-e2f7-4c0d-aa20-bff034275be1/**'
+#      - 'policies/스토리지_계정_키는_만료되지_않아야_합니다._044985bb-afe1-42cd-8a36-9d5d42424537/**'
+#      - 'policies/Azure_Cosmos_DB_허용되는_위치_0473574d-2d43-4217-aefe-941fcdf7e684/**'
+#      - 'policies/SQL_Managed_Instance는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_048248b0-55cd-46da-b1ff-39efd52db260/**'
+#      - 'policies/_미리_보기_Linux_가상_머신에_네트워크_트래픽_데이터_수집_에이전트를_설치해야_함_04c4380f-3fae-46e8-96c9-30193528f602/**'
+#      - 'policies/공유_대시보드에_인라인_콘텐츠가_포함된_markdown_타일이_있어서는_안_됩니다._04c655fe-0ac7-48ae-9a32-3a2e208c7624/**'
+#      - 'policies/Service_Bus에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_04d53d87-841c-4f23-8a5b-21564380b55e/**'
+#      - 'policies/Azure_API_for_FHIR은_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_051cba44-2429-45b9-9649-46cec11c7119/**'
+#      - 'policies/Linux_VM용_Log_Analytics_확장_배포_053d3325-282c-4e5c-b944-24faffd30d77/**'
+#      - 'policies/Azure_Front_Door_Service_서비스에_대해_WAF(Web_Application_Firewall)를_사용하도록_설정해야_함_055aa869-bc98-4af8-bafc-23f1ab6ffe2c/**'
+#      - 'policies/프라이빗_엔드포인트를_PostgreSQL_서버에서_사용할_수_있어야_합니다._0564d078-92f5-4f97-8398-b9f58a51f70b/**'
+#      - 'policies/SQL_Server에_대한_취약성_평가_설정에는_검사_보고서를_수신할_메일_주소를_포함해야_합니다._057d6cfe-9c4f-4a6d-bc60-14420ea1f1a9/**'
+#      - 'policies/Azure_Data_Lake_Store의_리소스_로그를_사용하도록_설정해야_함_057ef27e-665e-4328-8ea3-04b3122bd9fb/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_Azure_파일_동기화_구성_06695360-db88-47f6-b976-7500d4297475/**'
+#      - 'policies/관리_되는_디스크를_사용_하지_않는_Vm_감사_06a78e20-9358-41c9-923c-fb736d382a4d/**'
+#      - 'policies/Cognitive_Services_계정은_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_0725b4dd-7e76-479c-a735-68e7ee23d5ca/**'
+#      - 'policies/CORS에서_모든_리소스가_함수_앱에_액세스하도록_허용하지_않아야_합니다._0820b7b9-23aa-4725-a1ce-ae4558f718e5/**'
+#      - 'policies/배포_-_Windows_가상_머신에서_사용하도록_Log_Analytics_확장_구성_0868462e-646c-4fe3-9ced-a733534b6a2c/**'
+#      - 'policies/DSC_구성이_비규격인_Windows_머신_감사_08a2f2d2-94b2-4a7b-aa3b-bb3f523ee6fd/**'
+#      - 'policies/Azure_Edge_하드웨어_센터_디바이스에서_이중_암호화_지원을_사용하도록_설정해야_합니다._08a6b96f-576e-47a2-8511-119a212d344d/**'
+#      - 'policies/공용_네트워크_액세스를_사용하지_않도록_데이터_팩터리_구성_08b1442b-7789-4130-8506-4f99a97226a7/**'
+#      - 'policies/Search_Service에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_08ba64b8-738f-4918-9686-730d2ed79c7d/**'
+#      - 'policies/적응형_네트워크_강화_권장_사항은_인터넷에_연결된_가상_머신에_적용해야_합니다._08e6af2d-db70-460a-bfe9-d5bd474ba9d6/**'
+#      - 'policies/구독에_둘_이상의_소유자를_할당해야_합니다._09024ccc-0c5f-475e-9457-b7c0d9ed487b/**'
+#      - 'policies/가상_머신은_Compute_및_Storage_리소스_간에_임시_디스크,_캐시_및_데이터_흐름을_암호화해야_합니다._0961003e-5a0a-4549-abde-af6a37f2724d/**'
+#      - 'policies/동일한_위치에_있는_기존_Recovery_Services_자격_증명_모음에_대해_지정된_태그가_없는_가상_머신의_백업_구성_09ce66bc-1220-4153-8104-e3f51c936913/**'
+#      - 'policies/프라이빗_엔드포인트를_MariaDB_서버에서_사용할_수_있어야_합니다._0a1302fb-a631-4106-9753-f3d494733990/**'
+#      - 'policies/클러스터에_AKS(Azure_Kubernetes_Service)용_Azure_Policy_추가_기능을_설치하고_사용하도록_설정해야_함_0a15ec92-a229-4763-bb14-0ea34a568f8d/**'
+#      - 'policies/_미리_보기_SQL_Server는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_합니다._0a370ff3-6cab-4e85-8995-295fd854c5b8/**'
+#      - 'policies/리소스_위치가_리소스_그룹_위치와_일치하는지_감사_0a914e76-4921-4c19-b460-a2d36003525a/**'
+#      - 'policies/오픈_소스_관계형_데이터베이스용_Azure_Defender를_사용하도록_설정해야_합니다._0a9fbe0d-c5c4-4da8-87d8-f4fd77338835/**'
+#      - 'policies/Azure_Container_Instance_컨테이너_그룹은_암호화에_고객_관리형_키를_사용해야_합니다._0aa61e00-0a01-4a3c-9945-e93cffedf0e6/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_Azure_Web_PubSub_서비스_구성_0b026355-49cb-467b-8ac4-f777874e175a/**'
+#      - 'policies/심각도가_높은_경고에_대해_구독_소유자에게_메일_알림을_사용하도록_설정해야_합니다._0b15565f-aa9e-48ba-8619-45960f2c314d/**'
+#      - 'policies/키_자격_증명_모음은_제거_방지_기능을_사용하도록_설정되어야_함_0b60c0b2-2dc2-4e1c-b5c9-abbed971de53/**'
+#      - 'policies/Azure_Cosmos_DB_처리량을_제한해야_합니다._0b7ef78e-a035-4f23-b9bd-aff122a1b1cf/**'
+#      - 'policies/API_앱에서_클라이언트_인증서(들어오는_클라이언트_인증서)_가_켜기_로_설정되어_있는지_확인하세요._0c192fe8-9cbb-4516-85b3-0ade8bd03886/**'
+#      - 'policies/Automation_계정에서_프라이빗_엔드포인트_연결을_사용하도록_설정해야_합니다._0c2b3618-68a8-4034-a150-ff4abc873462/**'
+#      - 'policies/Private_Link를_사용하도록_설정된_Application_Insights_구성_요소는_Profiler_및_디버거에_Bring_Your_Own_Storage_계정을_사용해야_합니다._0c4bd2e8-8872-4f37-a654-03f6f38ddc76/**'
+#      - 'policies/SQL_Server는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_0d134df8-db83-46fb-ad72-fe0c9428c8dd/**'
+#      - 'policies/IoT_Hub의_프라이빗_엔드포인트를_사용하도록_설정해야_합니다._0d40b058-9f95-4a19-93e3-9b0330baa2a3/**'
+#      - 'policies/함수_앱에서_관리_ID를_사용해야_합니다._0da106f2-4ca3-48e8-bc85-c638fe6aea8f/**'
+#      - 'policies/대상_네트워크_보안_그룹을_사용하여_흐름_로그_리소스_배포_0db34a60-64f4-4bf6-bd44-f95c16cf34b9/**'
+#      - 'policies/수정_-_공용_네트워크_액세스를_사용하지_않도록_Azure_파일_동기화_구성_0e07b2e9-6cd9-4c40-9ccb-52817b95133b/**'
+#      - 'policies/Kubernetes_서비스에_권한_있는_IP_범위를_정의해야_합니다._0e246bcf-5f6f-4f87-bc6f-775d4712c7ea/**'
+#      - 'policies/함수_앱에_대해_원격_디버깅을_해제해야_합니다._0e60b895-3786-45da-8377-9c6b4b6ac5f9/**'
+#      - 'policies/Key_Vault용_Azure_Defender를_사용하도록_설정해야_함_0e6763cc-5078-4e64-889d-ff4d9a839047/**'
+#      - 'policies/Azure_Database_for_MariaDB에_대해_지역_중복_백업을_사용하도록_설정해야_함_0ec47710-77ff-4a3d-9181-6aa50af424d0/**'
+#      - 'policies/프라이빗_엔드포인트를_사용하여_Batch_계정_구성_0ef5aac7-c064-427a-b87b-d47b3ddcaf73/**'
+#      - 'policies/_미리_보기_분산_추적을_사용하도록_설정되지_않은_Azure_Spring_Cloud_인스턴스_감사_0f2d8593-4667-4932-acca-6a9f187af109/**'
+#      - 'policies/Azure_Monitor_Private_Link_범위는_개인_링크를_사용해야_합니다._0fc55270-f8bf-4feb-b7b8-5e7e7eacc6a6/**'
+#      - 'policies/Azure_Cognitive_Search_서비스에서_프라이빗_링크를_사용해야_함_0fda3595-9f2b-4592-8675-4231d6fa82fe/**'
+#      - 'policies/컨테이너_레지스트리에_대해_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_0fdf0491-d080-4575-b627-ad0e843cba0f/**'
+#      - 'policies/CORS에서_모든_도메인이_API_for_FHIR에_액세스하도록_허용하지_않아야_함_0fea8f8a-4169-495d-8307-30ec335f387d/**'
+#      - 'policies/사용자_지정_구독_소유자_역할이_없어야_합니다._10ee2ea2-fb4d-45b8-a7e9-a2e770044cd9/**'
+#      - 'policies/수정_-_공용_네트워크_액세스를_사용하지_않도록_Azure_IoT_Hubs_구성_114eec6e-5e59-4bad-999d-6eceeb39d582/**'
+#      - 'policies/Dependency_Agent_배포_감사_-_VM_이미지(OS)가_나열_취소됨_11ac78e3-31bc-4f0c-8434-37ab963cea07/**'
+#      - 'policies/_미리_보기_Recovery_Services_자격_증명_모음은_Private_Link를_사용해야_합니다._11e3da8c-1d68-4392-badd-0ff3c43ab5b0/**'
+#      - 'policies/Windows_머신이_보안_옵션_-_시스템_설정_에_대한_요구_사항을_충족해야_함_12017595-5a75-4bb1-9d97-4c2c939ea3c3/**'
+#      - 'policies/Windows_머신이_보안_옵션_-_네트워크_보안_에_대한_요구_사항을_충족해야_함_1221c620-d201-468c-81e7-2817e6107e84/**'
+#      - 'policies/적응형_애플리케이션_제어_정책의_허용_목록_규칙을_업데이트해야_합니다._123a3936-f020-408a-ba0c-47873faf1534/**'
+#      - 'policies/WAF(웹_애플리케이션_방화벽)는_Application_Gateway에_대해_지정된_모드를_사용해야_함_12430be1-6cc8-4527-a9a8-e3d38f250096/**'
+#      - 'policies/_미리_보기_Azure_Data_Factory_연결된_서비스에서_비밀을_저장하는_데_Key_Vault를_사용해야_함_127ef6d7-242f-43b3-9eef-947faf1725d0/**'
+#      - 'policies/Azure_Defender_for_Kubernetes가_사용_설정되도록_구성_133047bf-1369-41e3-a3be-74a11ed1395a/**'
+#      - 'policies/_미리_보기_취약성_평가_공급자를_수신하도록_머신_구성_13ce0167-8ca6-4048-8e6b-f996402e3c1b/**'
+#      - 'policies/지정한_기간(일)_내에_만료되는_인증서가_포함된_Windows_머신_감사_1417908b-4bff-46ee-a2a6-4acc899320ab/**'
+#      - 'policies/로컬_인증_방법을_사용하지_않도록_Cognitive_Services_계정_구성_14de9e63-1b31-492e-a5a3-c3f7fd57f555/**'
+#      - 'policies/_미리_보기_Azure_Security_에이전트를_자동으로_설치하도록_지원되는_Windows_머신_구성_1537496a-b1e8-482b-a06a-1cc2415cdc7b/**'
+#      - 'policies/Cloud_Services(확장_지원)_역할_인스턴스에_Log_Analytics_에이전트를_설치해야_합니다._15fdbc87-8a47-4ee9-a2aa-9a2ea1f37554/**'
+#      - 'policies/Azure_Batch_풀에는_디스크_암호화를_사용하도록_설정해야_합니다._1760f9d4-7206-436e-a28f-d9f3a5c8a227/**'
+#      - 'policies/관리형_애플리케이션의_연결_배포_17763ad9-70c0-4794-9397-53d765932634/**'
+#      - 'policies/_ASC_프라이빗_미리_보기_VM에서_Azure_Monitor_할당을_사용하도록_시스템이_할당한_관리_ID_구성_17b3de92-f710-4cf4-aa55-0e7859f1ed7b/**'
+#      - 'policies/SQL_데이터베이스에_투명한_데이터_암호화를_사용하도록_설정해야_합니다._17k78e20-9358-41c9-923c-fb736d382a12/**'
+#      - 'policies/PostgreSQL_서버는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_18adea5e-f416-4d0f-8aa8-d24321e3e274/**'
+#      - 'policies/Application_Insights_구성_요소는_Azure_Active_Directory_기반이_아닌_수집을_차단해야_합니다._199d5677-e4d9-4264-9465-efe1839c06bd/**'
+#      - 'policies/Windows_머신이_시스템_감사_정책_-_로그온-로그오프_에_대한_요구_사항을_충족해야_함_19be9779-c776-4dfa-8a15-a2fd5dc843d6/**'
+#      - 'policies/_미리_보기_Azure_Key_Vault_관리형_HSM은_공용_네트워크_액세스를_비활성화해야_합니다._19ea9d63-adee-4431-a95e-1913c6c1c75f/**'
+#      - 'policies/Azure_Monitor_로그_프로필은_범주_쓰기,_삭제_및_작업_에_대한_로그를_수집해야_합니다._1a4e592a-6a6e-44a5-9814-e36264ca96e7/**'
+#      - 'policies/Azure_Event_Grid_토픽은_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._1adadefe-5f21-44f7-b931-a59b54ccdb45/**'
+#      - 'policies/SQL_Managed_Instance에서_취약성_평가를_사용하도록_설정해야_합니다._1b7aa243-30e4-4c9e-bca8-d0d3022b634a/**'
+#      - 'policies/Azure_SQL_Database에서_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_1b8ca024-1d5c-4dec-8995-b1a932b41780/**'
+#      - 'policies/프라이빗_엔드포인트로_Azure_Web_PubSub_서비스_구성_1b9c0b58-fc7b-42c8-8010-cdfa1d1b8544/**'
+#      - 'policies/Application_Insights_구성_요소는_공용_네트워크에서_로그_수집_및_쿼리를_차단해야_합니다._1bc02227-0cb6-4e11-8f53-eb0b22eab7e8/**'
+#      - 'policies/API_앱의_일부로_사용되는_경우_PHP_버전_이_최신_상태인지_확인하세요._1bc1795e-d44a-4d48-9b3b-6fff0fd5f9ba/**'
+#      - 'policies/Azure_Service_Bus_네임스페이스는_프라이빗_링크를_사용해야_함_1c06e275-d63d-4540-b761-71f364c2111d/**'
+#      - 'policies/Windows_Virtual_Machines용_Dependency_Agent_배포_1c210e94-a481-4beb-95fa-1571b434fb04/**'
+#      - 'policies/_미리_보기_지원되는_가상_머신에서_vTPM을_사용하도록_설정해야_합니다._1c30f9cd-b84c-49cc-aa2c-9288447cc3b3/**'
+#      - 'policies/로컬_인증을_사용하지_않도록_Azure_Event_Grid_항목_구성_1c8144d9-746a-4501-b08c-093c8d29ad04/**'
+#      - 'policies/_미리_보기_지원되는_Windows_가상_머신에_게스트_증명_확장을_설치해야_합니다._1cb4d9c2-f88f-4069-bee0-dba239a57b09/**'
+#      - 'policies/Azure_Data_Factory의_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._1cf164be-6819-4a50-b8fa-4bcaa4f98fb6/**'
+#      - 'policies/Azure_파일_동기화는_프라이빗_링크를_사용해야_합니다._1d320205-c6a1-4ac6-873d-46224024e8e2/**'
+#      - 'policies/비밀을_사용하지_않고_지정된_GitOps_구성으로_Kubernetes_클러스터_구성_1d61c4d2-aef2-432b-87fc-7f96b019b7e1/**'
+#      - 'policies/Virtual_Machines을_새_Azure_Resource_Manager_리소스로_마이그레이션해야_합니다._1d84d5fb-01f6-4d12-ba4f-4a26081d403d/**'
+#      - 'policies/리소스에_태그_및_값_필요_1e30110a-5ceb-460c-a204-c1c3969c6d62/**'
+#      - 'policies/Cloud_Services(확장_지원)_역할_인스턴스에는_Endpoint_Protection_솔루션이_설치되어_있어야_합니다._1e378679-f122-4a96-a739-a7729c46e1aa/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_Azure_Synapse_작업_영역_구성_1e5ed725-f16c-478b-bd4b-7bfa2f7940b9/**'
+#      - 'policies/키_자격_증명_모음은_일시_삭제를_사용하도록_설정되어야_함_1e66c121-a66a-4b1f-9b83-0fd99bf0fc2d/**'
+#      - 'policies/Linux_컴퓨터는_Log_Analytics에_Log_Analytics가_설치되어_있어야_합니다._1e7fed80-8321-4605-b42c-65fc300f23a3/**'
+#      - 'policies/Azure_API_for_FHIR은_프라이빗_링크를_사용해야_합니다._1ee56206-5dd1-42ab-b02d-8aae8b1634ce/**'
+#      - 'policies/_미리_보기_Linux_Arc_컴퓨터에_Azure_Security_에이전트를_설치해야_합니다._1f300abb-f5a0-41c3-a163-91bd3ed35de7/**'
+#      - 'policies/SQL_Server에_대해_Azure_Active_Directory_관리자를_프로비저닝해야_합니다._1f314764-cb73-4fc9-b863-8eca98ac36e9/**'
+#      - 'policies/Azure_Monitor_로그_클러스터는_고객_관리형_키로_암호화해야_합니다._1f68a601-6e6d-4e42-babf-3f643a047ea2/**'
+#      - 'policies/이벤트_허브에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_1f6e93e8-6b31-41b1-83f6-36e449a42579/**'
+#      - 'policies/Key_Vault를_사용_설정하도록_Azure_Defender_구성_1f725891-01c0-420a-9059-4fa46cb770b7/**'
+#      - 'policies/머신에_Endpoint_Protection을_설치해야_함_1f7c564c-0a90-4d44-b7e1-9d456cffaee8/**'
+#      - 'policies/Azure_Cosmos_DB_계정은_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_1f905d99-2ab7-462c-a6b0-f709acca6c8f/**'
+#      - 'policies/Logic_Apps_통합_서비스_환경은_고객_관리형_키로_암호화되어야_함_1fafeaf6-7927-4059-a50a-8eb2a7a6f2b5/**'
+#      - 'policies/Azure_HDInsight_클러스터는_호스트에서_암호화를_사용하여_미사용_데이터를_암호화해야_함_1fd32ebd-e4c3-4e13-a54a-d7422d4d95f6/**'
+#      - 'policies/VM_Image_Builder_템플릿은_Private_Link를_사용해야_함_2154edb9-244f-4741-9970-660785bccdaa/**'
+#      - 'policies/VPN_게이트웨이는_지점_및_사이트_간_사용자에_대해_Azure_AD(Azure_Active_Directory)_인증만_사용해야_합니다._21a6bc25-125e-4d13-b82d-2e19b7208ab7/**'
+#      - 'policies/Azure_파일_동기화의_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._21a8cd35-125e-4d13-b82d-2e19b7208bb7/**'
+#      - 'policies/Azure_SignalR_Service는_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_21a9766a-82a5-4747-abb5-650b6dbba6d0/**'
+#      - 'policies/가상_머신에서_관리_포트를_닫아야_합니다._22730e10-96f6-4aac-ad84-9383d35b5917/**'
+#      - 'policies/Azure_Cache_for_Redis에_보안_연결만_사용하도록_설정해야_함_22bee202-a82f-4305-9a2a-6d7f44d4dedb/**'
+#      - 'policies/DNS를_사용_설정하도록_Azure_Defender_구성_2370a3c1-4a25-4283-a91a-c9c1a145fb2f/**'
+#      - 'policies/암호_사용_최소_기간이_1일로_설정되지_않은_Windows_머신_감사_237b38db-ca4d-4259-9e47-7882441ca2c0/**'
+#      - 'policies/Stream_Analytics에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_237e0f7e-b0e8-4ec4-ad46-8c12cb66d673/**'
+#      - 'policies/공용_네트워크_액세스를_사용하지_않도록_Azure_Automation_계정_구성_23b36a7c-9d26-4288-a8fd-c1d2fa284d8c/**'
+#      - 'policies/Azure_Kubernetes_Service의_리소스_로그를_사용하도록_설정해야_합니다._245fc9df-fa96-4414-9a0b-3738c2f7341c/**'
+#      - 'policies/지정된_Log_Analytics_작업_영역으로_스트림할_Azure_활동_로그_구성_2465583e-4e78-4c15-b6be-a36cbc7c8b0f/**'
+#      - 'policies/Azure_Database_for_PostgreSQL_서버에_대해_인프라_암호화를_사용하도록_설정해야_함_24fba194-95d6-48c0-aea7-f65bf859c598/**'
+#      - 'policies/Data_Lake_Storage_Gen1에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_25763a0a-5783-4f14-969e-79d4933eb74b/**'
+#      - 'policies/프라이빗_엔드포인트가_있는_Azure_HDInsight_클러스터_구성_2676090a-4baf-46ac-9085-4ac02cc50e3e/**'
+#      - 'policies/Virtual_Machine_Scale_Sets에_Endpoint_Protection_솔루션을_설치해야_합니다._26a828e1-e88f-464e-bbb3-c134a282b9de/**'
+#      - 'policies/Bach_계정에서_메트릭_경고_규칙을_구성해야_합니다._26ee67a2-f81a-4ba8-b9ce-8550bd5ee1a7/**'
+#      - 'policies/자동_관리_사용_-_Azure_가상_머신_모범_사례_270610db-8c04-438a-a739-e8e6745b22d3/**'
+#      - 'policies/모든_네트워크_보안_그룹에_대해_흐름_로그를_사용하도록_설정해야_함_27960feb-a23c-4577-8d36-ef8b5f35e0be/**'
+#      - 'policies/Windows_Server에_대한_기본_Microsoft_IaaSAntimalware_확장_배포_2835b622-407b-4114-9198-6f7064cbe0dc/**'
+#      - 'policies/공용_네트워크_액세스를_사용하지_않도록_Azure_SQL_Server_구성_28b0b1e5-17ba-4963-a7a4-5a1ab4400a0b/**'
+#      - 'policies/App_Service용_Azure_Defender를_사용하도록_설정해야_함_2913021d-f2fd-4f3d-b958-22354e2bdbcb/**'
+#      - 'policies/프라이빗_엔드포인트를_사용하여_BotService_리소스_구성_29261f8e-efdb-4255-95b8-8215414515d6/**'
+#      - 'policies/Service_Bus_프리미엄_네임스페이스는_암호화에_고객_관리형_키를_사용해야_함_295fc8b1-dc9f-4f53-9c61-3f313ceab40a/**'
+#      - 'policies/리소스에_태그_및_값_추가_2a0e14a6-b0a6-4fab-991a-187a4f81c498/**'
+#      - 'policies/스토리지_계정은_가상_네트워크_규칙을_사용하여_네트워크_액세스를_제한해야_합니다._2a1a9cdf-e04d-429a-8416-3bfb72a1b26f/**'
+#      - 'policies/Windows_머신이_시스템_감사_정책_-_정책_변경_에_대한_요구_사항을_충족해야_함_2a7a701e-dff3-4da9-9ec5-42cb98594c0b/**'
+#      - 'policies/_미리_보기_가상_머신에서_Azure_Defender_SQL_에이전트_구성_2ada9901-073c-444a-9a9a-91865174f0aa/**'
+#      - 'policies/Synapse_작업_영역_감사_설정에_중요한_활동을_캡처하기_위해_구성된_작업_그룹이_있어야_함_2b18f286-371e-4b80-9887-04759970c0d3/**'
+#      - 'policies/웹앱에서_관리_ID를_사용해야_합니다._2b9ad585-36bc-4615-b300-fd4435808332/**'
+#      - 'policies/SCM_사이트에_대한_로컬_인증을_사용하지_않도록_App_Service_슬롯을_구성합니다._2c034a29-2a5f-4857-b120-f800fe5549ae/**'
+#      - 'policies/연결되지_않은_디스크는_암호화되어야_합니다._2c89a2e5-7285-40fe-afe0-ae8654b92fb2/**'
+#      - 'policies/App_Service_Environment_앱은_공용_인터넷을_통해_연결할_수_없습니다._2d048aca-6479-4923-88f5-e2ac295d9af3/**'
+#      - 'policies/App_Service는_가상_네트워크_서비스_엔드포인트를_사용해야_함_2d21331d-a4c2-4def-a9ad-ee4e1e023beb/**'
+#      - 'policies/Azure_IoT_Hub의_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._2d6830fb-07eb-48e7-8c4d-2a442b35f0fb/**'
+#      - 'policies/_미리_보기_Azure_IoT_Hub는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_합니다._2d7e144b-159c-44fc-95c1-ac3dbf5e6e54/**'
+#      - 'policies/Azure_Synapse_작업_영역의_관리형_작업_영역_가상_네트워크를_사용하도록_설정해야_함_2d9dbfa3-927b-4cf0-9d0f-08747f971650/**'
+#      - 'policies/로컬_인증을_사용하지_않도록_Azure_Event_Grid_파트너_네임스페이스_구성_2dd0e8b9-4289-4bb0-b813-1883298e9924/**'
+#      - 'policies/_미리_보기_Azure_Recovery_Services_자격_증명_모음에서_백업_데이터를_암호화하려면_고객_관리형_키를_사용해야_합니다._2e94d99a-8a36-4563-bc77-810d8893b671/**'
+#      - 'policies/Linux_Virtual_Machines를_데이터_수집_규칙에_연결하도록_연결_구성_2ea82cdd-f2e8-4500-af75-67a2e084ca74/**'
+#      - 'policies/Network_Watcher_흐름_로그에_트래픽_분석이_사용되도록_설정되어야_합니다._2f080164-9f4d-497e-9db6-416dc9f7b48a/**'
+#      - 'policies/Windows_머신이_보안_옵션_-_시스템_개체_에_대한_요구_사항을_충족해야_함_2f262ace-812a-4fd0-b731-b38ba9e9708d/**'
+#      - 'policies/_미리_보기_Windows_가상_머신에_네트워크_트래픽_데이터_수집_에이전트를_설치해야_함_2f2ee1de-44aa-4762-b6bd-0893fc3f306d/**'
+#      - 'policies/_미리_보기_Azure_Security_에이전트를_자동으로_설치하도록_지원되는_Linux_Arc_컴퓨터_구성_2f47ec78-4301-4655-b78e-b29377030cdc/**'
+#      - 'policies/스토리지용_Azure_Defender를_사용하도록_설정해야_함_308fbb08-4ab8-4e67-9b29-592e93fb94fa/**'
+#      - 'policies/공용_네트워크_액세스를_사용하지_않도록_Azure_Cache_for_Redis_구성_30b3dfa5-a70d-4c8e-bed6-0083858f663d/**'
+#      - 'policies/로컬_인증을_사용하지_않도록_Azure_Automation_계정_구성_30d1d58e-8f96-47a5-8564-499a3f3cca81/**'
+#      - 'policies/관리자_그룹에_지정한_구성원이_없는_Windows_머신_감사_30f71ea1-ac77-4f26-9fc5-2d926bbd4ba7/**'
+#      - 'policies/_미리_보기_나열된_가상_머신_이미지의_Log_Analytics_확장을_사용하도록_설정해야_합니다._32133ab0-ee4b-4b44-98d6-042180979d50/**'
+#      - 'policies/API_앱은_콘텐츠_디렉터리에_Azure_파일_공유를_사용해야_합니다._324c7761-08db-4474-9661-d1039abc92ee/**'
+#      - 'policies/Azure_SQL_Database는_최소_TLS_버전_1.2를_사용해야_함_32e6bbec-16b6-44c2-be37-c5b672d103cf/**'
+#      - 'policies/Linux_게스트_구성_확장을_배포하여_Linux_VM에서_게스트_구성_할당을_사용하도록_설정_331e8ea8-378a-410f-a2e5-ae22f38bb0da/**'
+#      - 'policies/App_Service_앱은_Azure_Virtual_Network에_대한_아웃바운드_비RFC_1918_트래픽을_사용해야_합니다._33228571-70a4-4fa1-8ca1-26d0aba8d6ef/**'
+#      - 'policies/MySQL_서버는_가상_네트워크_서비스_엔드포인트를_사용해야_함_3375856c-3824-4e0e-ae6a-79e011dd4c47/**'
+#      - 'policies/Windows_머신이_보안_옵션_-_감사_에_대한_요구_사항을_충족해야_함_33936777-f2ac-45aa-82ec-07958ec9ade4/**'
+#      - 'policies/동일한_위치에_있는_기존_Recovery_Services_자격_증명_모음에_대해_지정된_태그가_있는_가상_머신의_백업_구성_345fa903-145c-4fe1-8bcd-93ec2adccde8/**'
+#      - 'policies/Azure_Synapse_작업_영역은_승인된_대상에_대한_아웃바운드_데이터_트래픽만_허용해야_합니다._3484ce98-c0c5-4c83-994b-c5ac24785218/**'
+#      - 'policies/스토리지_계정은_네트워크_액세스를_제한해야_합니다._34c877ad-507e-4c82-993e-3452a6e0ad3c/**'
+#      - 'policies/Logic_Apps의_리소스_로그를_사용하도록_설정해야_함_34f95f76-5386-4de7-b824-0d8478470c9d/**'
+#      - 'policies/Windows_머신이_시스템_감사_정책_-_개체_액세스_에_대한_요구_사항을_충족해야_함_35781875-8026-4628-b19b-f6efb4d88a1d/**'
+#      - 'policies/CORS에서_모든_리소스가_API_앱에_액세스하도록_허용하지_않아야_함_358c20a6-3f9e-4f0e-97ff-c6ce485e2aac/**'
+#      - 'policies/Windows_머신이_Windows_방화벽_속성_에_대한_요구_사항을_충족해야_함_35d9882c-993d-44e6-87d2-db66ce21b636/**'
+#      - 'policies/게이트웨이_서브넷은_네트워크_보안_그룹을_사용하여_구성해서는_안_됩니다._35f9c03a-cc27-418e-9c0c-539ff999d010/**'
+#      - 'policies/스토리지_계정에_Advanced_Threat_Protection_배포_361c2074-3595-4e5d-8cab-4f21dffc835c/**'
+#      - 'policies/계정_변수_자동화는_암호화되어야_합니다._3657f5a0-770e-44a3-b44e-9431ba1e9735/**'
+#      - 'policies/Azure_Defender가_SQL_Server에서_사용_설정되도록_구성_36d49e87-48c4-4f2e-beed-ba4ed02b71f5/**'
+#      - 'policies/수정_-_공용_네트워크_액세스를_사용하지_않도록_Azure_Event_Grid_토픽_구성_36ea4b4b-0f7f-4a54-89fa-ab18f555a172/**'
+#      - 'policies/배포_-_프라이빗_엔드포인트를_사용하여_Azure_Event_Grid_도메인_구성_36f4658a-848a-467b-881c-e6fa20cf75fc/**'
+#      - 'policies/Storage_계정을_새_Azure_Resource_Manager_리소스로_마이그레이션해야_합니다._37e0d2fe-28a5-43d6-a273-67d37d1f5606/**'
+#      - 'policies/IoT_Hub의_리소스_로그를_사용하도록_설정해야_함_383856f8-de7f-44a2-81fc-e5135b5c2aa4/**'
+#      - 'policies/Windows_게스트_구성_확장을_배포하여_Windows_VM에서_게스트_구성_할당을_사용하도록_설정_385f5831-96d4-41db-9a3c-cd3af78aaae6/**'
+#      - 'policies/Azure_Synapse_작업_영역은_공용_네트워크_액세스를_사용하지_않도록_해야_합니다._38d8df46-cf4e-4073-8e03-48c24b29de0d/**'
+#      - 'policies/함수_앱에서_FTPS만_요구해야_합니다._399b2637-a50f-4f95-96f8-3a145476eb15/**'
+#      - 'policies/Synapse_관리형_프라이빗_엔드포인트는_승인된_Azure_Active_Directory_테넌트의_리소스에만_연결해야_합니다._3a003702-13d2-4679-941b-937e58c443f0/**'
+#      - 'policies/Azure_Database_for_MySQL_서버에_대해_인프라_암호화를_사용하도록_설정해야_함_3a58212a-c829-4f13-9872-6371df2fd0b4/**'
+#      - 'policies/Windows_머신이_관리_템플릿_-_제어판_에_대한_요구_사항을_충족해야_함_3aa2661b-02d7-4ba6-99bc-dc36b10489fd/**'
+#      - 'policies/Azure_Active_Directory_Domain_Services_관리_도메인은_TLS_1.2_전용_모드를_사용해야_합니다._3aa87b5a-7813-4b57-8a43-42dd9df5aaa7/**'
+#      - 'policies/프라이빗_엔드포인트를_사용하여_Azure_Synapse_작업_영역_구성_3b3b0c27-08d2-4b32-879d-19930bee3266/**'
+#      - 'policies/특정_보안_작업의_활동_로그_경고가_있어야_함_3b980d31-7904-4bb7-8575-5665739a8052/**'
+#      - 'policies/Windows_Virtual_Machine_Scale_Sets용_Dependency_Agent_배포_3be22e3b-d919-47aa-805e-8985dbeb0ad9/**'
+#      - 'policies/PostgreSQL_서버는_가상_네트워크_서비스_엔드포인트를_사용해야_함_3c14b034-bcb6-4905-94e7-5b8e98a47b65/**'
+#      - 'policies/배포_-_Windows_가상_머신에서_사용하도록_Log_Analytics_확장_집합_구성_3c1b3629-c8f8-4bf6-862c-037cb9094038/**'
+#      - 'policies/Virtual_Machine_Scale_Sets에서_보안_구성의_취약성을_수정해야_합니다._3c735d8a-a4ba-4a3a-b7cf-db7754cf57f4/**'
+#      - 'policies/시스템_할당_관리_ID를_추가하여_ID가_없는_가상_머신에서_게스트_구성_할당을_사용하도록_설정_3cf2ab00-13f1-4d0c-8971-2ac904541a7e/**'
+#      - 'policies/관리자_그룹에_추가_계정이_있는_Windows_머신_감사_3d2a3320-2a72-4c67-ac5f-caa40fbee2b2/**'
+#      - 'policies/Search_Services에_대한_진단_설정을_이벤트_허브에_배포_3d5da587-71bd-41f5-ac95-dd3330c2d58d/**'
+#      - 'policies/App_Configuration은_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._3d9f5e4c-9947-4579-9539-2a7695fbc187/**'
+#      - 'policies/지정한_Windows_PowerShell_모듈이_설치되지_않은_Windows_머신_감사_3e4e2bd5-15a2-4628-b3e1-58977e9793f3/**'
+#      - 'policies/Azure_Monitor_솔루션_보안_및_감사_가_배포되어야_합니다._3e596b57-105f-48a6-be97-03e9243bad6e/**'
+#      - 'policies/Windows_머신이_보안_옵션_-_네트워크_액세스_에_대한_요구_사항을_충족해야_함_3ff60f98-7fa4-410a-9f7f-0b00f5afdbdd/**'
+#      - 'policies/Storage_계정에_보안_전송을_사용하도록_설정해야_합니다._404c3081-a854-4457-ae30-26a93ef643f9/**'
+#      - 'policies/Windows_컴퓨터는_Log_Analytics에_Log_Analytics가_설치되어_있어야_합니다._4078e558-bda6-41fb-9b3c-361e8875200d/**'
+#      - 'policies/Azure_Machine_Learning_작업_영역은_Private_Link를_사용해야_함_40cec1dd-a100-4920-b15b-3024fe8901ab/**'
+#      - 'policies/없는_경우_구독에서_태그_상속_40df99da-1232-49b1-a39a-6da8d878f469/**'
+#      - 'policies/Azure_Monitor는_모든_지역의_활동_로그를_수집해야_합니다._41388f1c-2db0-4c25-95b2-35d7f5ccbfa9/**'
+#      - 'policies/Azure_Kubernetes_Service_클러스터의_에이전트_노드_풀에_대한_임시_디스크_및_캐시는_호스트에서_암호화되어야_함_41425d9f-d1a5-499a-9932-f8ed8453932c/**'
+#      - 'policies/보류_중인_다시_부팅이_있는_Windows_VM_감사_4221adbc-5c0f-474f-88b7-037a99e6114c/**'
+#      - 'policies/WAF(웹_애플리케이션_방화벽)는_Azure_Front_Door_Service에_대해_지정된_모드를_사용해야_함_425bea59-a659-4cbb-8d31-34499bd030b8/**'
+#      - 'policies/배치_계정의_리소스_로그를_사용하도록_설정해야_함_428256e6-1fac-4f48-a757-df34c2b3336d/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_Azure_Monitor_Private_Link_범위_구성_437914ee-c176-4fff-8986-7e05eb971365/**'
+#      - 'policies/Azure_Machine_Learning_작업_영역은_공용_네트워크_액세스를_비활성화해야_합니다._438c38d2-3772-465a-a9cc-7a6666a275ce/**'
+#      - 'policies/Windows_머신이_시스템_감사_정책_-_계정_로그온_에_대한_요구_사항을_충족해야_함_43bb60fe-1d7e-4b82-9e93-496bfc99e7d5/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_Azure_HDInsight_클러스터_구성_43d6e3bd-fc6a-4b44-8b4d-2151d8736a11/**'
+#      - 'policies/오픈_소스_관계형_데이터베이스를_사용하도록_Azure_Defender를_구성합니다._44433aa3-7ec2-4002-93ea-65c65ff0310a/**'
+#      - 'policies/Azure_SignalR_Service는_Private_Link_사용_SKU를_사용해야_함_464a1620-21b5-448d-8ce6-d4ac6d1bc49a/**'
+#      - 'policies/Virtual_Machine_Scale_Sets에_자동_OS_이미지_패치_필요_465f0161-0087-490a-9ad9-ad6217f4f43a/**'
+#      - 'policies/Cognitive_Services_계정은_고객_소유_스토리지를_사용해야_합니다._46aa9b05-0e60-4eae-a88b-1e9d374fa515/**'
+#      - 'policies/_미리_보기_IoT_Hub_Device_Provisioning_Service_데이터는_CMK(고객_관리형_키)를_사용하여_암호화해야_합니다._47031206-ce96-41f8-861b-6a915f3de284/**'
+#      - 'policies/Azure_Cache_for_Redis는_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_470baccb-7e51-4549-8b1a-3e5be069f663/**'
+#      - 'policies/스토리지_계정에_인프라_암호화가_있어야_함_4733ea7b-a883-42fe-8cac-97454c2a9e4a/**'
+#      - 'policies/Azure_Cosmos_DB_키_기반_메타데이터_쓰기_권한을_사용하지_않도록_설정해야_합니다._4750c32b-89c0-46af-bfcb-2e4541a818d5/**'
+#      - 'policies/구독에_Log_Analytics_에이전트의_자동_프로비저닝을_사용하도록_설정해야_함_475aae12-b88a-4572-8b36-9b712b2b3a17/**'
+#      - 'policies/머신에서_안전한_애플리케이션을_정의하기_위해_적응형_애플리케이션_제어를_사용하도록_설정해야_합니다._47a6b606-51aa-4496-8bb7-64b11cf66adc/**'
+#      - 'policies/공용_네트워크_액세스를_사용하지_않도록_Cognitive_Services_계정_구성_47ba1dd7-28d9-4b07-a8d5-9813bed64e0c/**'
+#      - 'policies/게스트_구성_할당에_프라이빗_엔드포인트를_사용해야_함_480d0f91-30af-4a76-9afb-f5710ac52b09/**'
+#      - 'policies/Azure_Database_for_PostgreSQL에_대해_지역_중복_백업을_사용하도록_설정해야_함_48af4db5-9b8b-401c-8e74-076be876a430/**'
+#      - 'policies/Azure_Automation_계정에는_로컬_인증_방법이_비활성화되어_있어야_합니다._48c5f1cb-14ad-4797-8e3b-f78ab3f8d700/**'
+#      - 'policies/Windows_머신이_보안_옵션_-_사용자_계정_컨트롤_에_대한_요구_사항을_충족해야_함_492a29ed-d143-4f03-b6a4-705ce081b463/**'
+#      - 'policies/웹앱의_일부로_사용되는_경우_Java_버전_이_최신_상태인지_확인하세요._496223c3-ad65-4ecd-878a-bae78737e9ed/**'
+#      - 'policies/데이터_팩터리의_프라이빗_엔드포인트_구성_496ca26b-f669-4322-a1ad-06b7b5e41882/**'
+#      - 'policies/시스템이_할당한_관리_ID를_추가하여_사용자가_할당한_ID가_있는_VM에서_게스트_구성_할당을_사용하도록_설정_497dff13-db2a-4c0f-8603-28fa3b331ab6/**'
+#      - 'policies/리소스_그룹에_태그_및_값_추가_49c88fc8-6fd1-46fd-a676-f12d1d3a4c71/**'
+#      - 'policies/Azure_Media_Services_프라이빗_링크를_사용해야_합니다._4a591bf5-918e-4a5f-8dad-841863140d61/**'
+#      - 'policies/Azure_Event_Grid_토픽은_프라이빗_링크를_사용해야_함_4b90e17e-8448-49db-875e-bd83fb6f804f/**'
+#      - 'policies/암호_사용_최대_기간이_70일로_설정되지_않은_Windows_머신_감사_4ceb8dc2-559c-478b-a15b-733fbf1e3738/**'
+#      - 'policies/함수_앱은_콘텐츠_디렉터리에_Azure_파일_공유를_사용해야_합니다._4d0bc837-6eff-477e-9ecd-33bf8d4212a5/**'
+#      - 'policies/웹앱에서_FTPS를_요구해야_합니다._4d24b6d4-5e53-4a4f-a7f4-618fa573ee4b/**'
+#      - 'policies/Linux_Virtual_Machines용_Dependency_Agent_배포_4da21710-ce6f-4e06-8cdb-5cc4c93ffbee/**'
+#      - 'policies/서버용_Azure_Defender를_사용하도록_설정해야_함_4da35fc9-c9e7-4960-aec9-797fe7d9051d/**'
+#      - 'policies/Data_Lake_Analytics에_대한_진단_설정을_이벤트_허브에_배포_4daddf25-4823-43d4-88eb-2419eb6dcc08/**'
+#      - 'policies/로컬_인증을_사용하지_않도록_Batch_계정_구성_4dbc2f5c-51cf-4e38-9179-c7028eed2274/**'
+#      - 'policies/Cloud_Services(확장_지원)_역할_인스턴스에_시스템_업데이트가_설치되어_있어야_합니다._4df26ba8-026d-45b0-9521-bffa44d741d2/**'
+#      - 'policies/배포_-_배치_계정에_연결되는_프라이빗_엔드포인트의_프라이빗_DNS_영역_구성_4ec38ebc-381f-45ee-81a4-acbc4be878f8/**'
+#      - 'policies/Azure_데이터_팩터리는_고객_관리형_키로_암호화해야_함_4ec52d6d-beb7-40c4-9a9e-fe753254690e/**'
+#      - 'policies/구독에_최대_3명의_소유자를_지정해야_합니다._4f11b553-d42e-4e3a-89be-32ca364cad4c/**'
+#      - 'policies/구독에_보안_문제에_대한_연락처_메일_주소가_있어야_함_4f4f78b8-e367-4b10-a341-d9a4ad5cf1c7/**'
+#      - 'policies/리소스에_태그_추가_4f9dc7db-30c1-420c-b61a-e1d640128d26/**'
+#      - 'policies/_미리_보기_스토리지_계정_공용_액세스를_허용하지_않아야_함_4fa4b6c0-31ca-4c0d-b10d-24b96f62a751/**'
+#      - 'policies/취약성_평가_솔루션을_가상_머신에서_사용하도록_설정해야_합니다._501541f7-f7e7-4cd6-868c-4190fdad3ac9/**'
+#      - 'policies/Azure_Security_Center_규정_준수에_대한_워크플로_자동화_배포_509122b9-ddd9-47ba-a5f1-d0dac20be63c/**'
+#      - 'policies/모든_Azure_가상_네트워크_게이트웨이_연결에_사용자_지정_IPsec/IKE_정책을_적용해야_합니다._50b83b09-03da-41c1-b656-c293c914862b/**'
+#      - 'policies/컴퓨터의_SQL_서버가_사용_설정되도록_Azure_Defender_구성_50ea7265-7d8c-429e-9a7d-ca1f410191c3/**'
+#      - 'policies/Bot_Service는_고객_관리형_키를_사용하여_암호화해야_합니다._51522a96-0869-4791-82f3-981000c2c67f/**'
+#      - 'policies/Bot_Service에서_격리_모드를_사용하도록_설정해야_합니다._52152f42-0dda-40d9-976e-abb1acdd611e/**'
+#      - 'policies/Kubernetes용_Azure_Defender를_사용하도록_설정해야_함_523b5cd1-3e23-492f-a539-13118b6d1e3a/**'
+#      - 'policies/컨테이너_레지스트리에서_내보내기를_사용하지_않도록_설정해야_합니다_524b0254-c285-4903-bee6-bb8126cde579/**'
+#      - 'policies/Azure_Web_PubSub_Service는_프라이빗_링크를_사용해야_함_52630df9-ca7e-442b-853b-c6ce548b31a2/**'
+#      - 'policies/스토리지_계정_대상에_대해_SQL_감사가_있는_Synapse_작업_영역의_보존_기간을_90일_이상으로_구성해야_함_529ea018-6afc-4ed4-95bd-7c9ee47b00bc/**'
+#      - 'policies/PostgreSQL_데이터베이스_서버에_대해_연결_제한을_사용하도록_설정해야_합니다._5345bb39-67dc-4960-a1bf-427e16b9a0bd/**'
+#      - 'policies/Azure_SignalR_Service는_프라이빗_링크를_사용해야_함_53503636-bcc9-4748-9663-5348217f160f/**'
+#      - 'policies/Cosmos_DB_데이터베이스_계정은_로컬_인증_방법을_사용하지_않도록_설정해야_합니다_5450f5bd-9c72-4390-a9c4-a7aba4edfdd2/**'
+#      - 'policies/App_Service_앱은_프라이빗_링크를_지원하는_SKU를_사용해야_합니다._546fe8d2-368d-4029-a418-6af48a7f61e5/**'
+#      - 'policies/_미리_보기_Azure_Key_Vault에서_공용_네트워크_액세스를_사용할_수_없음_55615ac9-af46-4a59-874e-391cc3dfb490/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_Azure_Monitor_Arc_프라이빗_링크_범위_55c4db33-97b0-437b-8469-c4f4498f5df9/**'
+#      - 'policies/Application_Gateway에_대해_WAF(웹_애플리케이션_방화벽)를_사용하도록_설정해야_함_564feb30-bf6a-4854-b4bb-0d2d2d1e6c66/**'
+#      - 'policies/Azure_Automation_계정은_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_56a5ee18-2ae6-4810-86f7-18e39ce5629b/**'
+#      - 'policies/Azure_Synapse_작업_영역의_IP_방화벽_규칙을_제거해야_함_56fd377d-098c-4f02-8406-81eb055902b8/**'
+#      - 'policies/FTP_배포에서_로컬_인증을_사용하지_않도록_App_Service를_구성합니다._572e342c-c920-4ef5-be2e-1ed3c6a51dc5/**'
+#      - 'policies/CORS에서_모든_리소스가_웹_애플리케이션에_액세스하도록_허용하지_않아야_합니다._5744710e-cc2f-4ee8-8809-3b11e89f4bc9/**'
+#      - 'policies/Windows_웹_서버는_보안_통신_프로토콜을_사용하도록_구성해야_함_5752e6d6-1206-46d8-8ab1-ecc2f71a8112/**'
+#      - 'policies/_미리_보기_게스트_증명_확장을_자동으로_설치하도록_지원되는_Linux_가상_머신_확장_집합을_구성합니다._57c2e3f0-98cf-4c3b-aa6b-e8f70726e74e/**'
+#      - 'policies/로컬_인증을_사용하지_않도록_Azure_Event_Hub_네임스페이스_구성_57f35901-8389-40bb-ac49-3ba4f86d889d/**'
+#      - 'policies/프라이빗_엔드포인트를_사용하여_디스크_액세스_리소스_구성_582bd7a6-a5f6-4dc6-b9dc-9cb81fe0d4c5/**'
+#      - 'policies/Windows_머신이_시스템_감사_정책_-_자세한_추적_에_대한_요구_사항을_충족해야_함_58383b73-94a9-4414-b382-4146eb02611b/**'
+#      - 'policies/CosmosDB_계정은_프라이빗_링크를_사용해야_함_58440f8a-10c5-4151-bdce-dfbaad4a20b7/**'
+#      - 'policies/Windows_직렬_콘솔을_사용하도록_설정되지_않은_Windows_머신_감사_58c460e9-7573-4bb2-9676-339c2f2486bb/**'
+#      - 'policies/_미리_보기_Azure_가상_머신에서_누락된_시스템_업데이트에_대한_정기_검사를_구성합니다._59efceea-0c96-497e-a4a1-4eb2290dac15/**'
+#      - 'policies/_미리_보기_Azure_Key_Vault_관리형_HSM은_프라이빗_링크를_사용해야_합니다._59fee2f4-d439-4f1b-9b9a-982e1474bfd8/**'
+#      - 'policies/이전_24개_암호의_재사용을_허용하는_Windows_머신_감사_5b054a0d-39e2-4d53-bea3-9734cad2c69b/**'
+#      - 'policies/공용_네트워크_액세스를_사용하지_않도록_Azure_Web_PubSub_서비스_구성_5b1213e4-06e4-4ccc-81de-4201f2f7131a/**'
+#      - 'policies/컨테이너_레지스트리는_고객_관리형_키로_암호화해야_함_5b9159ae-1701-4a6f-9a7a-aa9c8ddd0580/**'
+#      - 'policies/웹앱에서_클라이언트_인증서(들어오는_클라이언트_인증서)_가_켜기_로_설정되어_있는지_확인하세요._5bb220d9-2698-4ee4-8404-b9c30c9df609/**'
+#      - 'policies/가상_머신_확장_집합에서_나열된_가상_머신_이미지의_Log_Analytics_확장을_사용하도록_설정해야_합니다._5c3bc7b8-a64c-4e08-a9cd-7ff0f31e1138/**'
+#      - 'policies/쓰기_권한이_있는_외부_계정을_구독에서_제거해야_합니다._5c607a2e-c700-4744-8254-d77e7c9eb5e4/**'
+#      - 'policies/공용_네트워크_액세스를_사용하지_않도록_Azure_Synapse_작업_영역_구성_5c8cad01-ef30-4891-b230-652dadb4876a/**'
+#      - 'policies/Azure_Event_Hub_네임스페이스에_로컬_인증_방법을_사용하지_않도록_설정_5d4e3c65-4873-47be-94f3-6f8b953a3598/**'
+#      - 'policies/프라이빗_엔드포인트를_사용하여_Azure_Cache_for_Redis_구성_5d8094d7-7340-465a-b6fd-e60ab7e48920/**'
+#      - 'policies/트래픽_분석에_특정_작업_영역을_사용하도록_네트워크_보안_그룹_구성_5e1cd26a-5090-4fdb-9d6a-84a90335e22d/**'
+#      - 'policies/PostgreSQL_유연한_서버에_대해_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_5e1de0e3-42cb-4ebc-a86d-61d0c619ca48/**'
+#      - 'policies/SCM_사이트에_대한_로컬_인증을_사용하지_않도록_App_Service를_구성합니다._5e97b776-f380-4722-a9a3-e7f0be029e79/**'
+#      - 'policies/Linux_Virtual_Machine_Scale_Sets용_Log_Analytics_확장_배포_5ee9e9ed-0b42-41b7-8c9c-3cfb2fbe2069/**'
+#      - 'policies/_미리_보기_Key_Vault의_프라이빗_엔드포인트를_구성해야_함_5f0bc445-3935-4915-9981-011aa2b46147/**'
+#      - 'policies/Azure_Machine_Learning_작업_영역은_사용자가_할당한_관리_ID를_사용해야_합니다._5f0c7d88-c7de-45b8-ac49-db49e72eaa78/**'
+#      - 'policies/Azure_Container_Registry_이미지의_취약성을_수정해야_합니다._5f0f936f-2f01-4bf5-b6be-d423792fa562/**'
+#      - 'policies/읽기_권한이_있는_외부_계정을_구독에서_제거해야_합니다._5f76cf89-fbf2-47fd-a3f4-b891fa780b60/**'
+#      - 'policies/_미리_보기_Azure_Security_에이전트를_자동으로_설치하도록_지원되는_Linux_가상_머신_구성_5f8eb305-9c9f-4abe-9bb0-df220d9faba2/**'
+#      - 'policies/리소스에_태그_추가_또는_바꾸기_5ffd78d9-436d-4b41-a421-5baa819e3008/**'
+#      - 'policies/_미리_보기_게스트_증명_확장을_자동으로_설치하도록_지원되는_Linux_가상_머신을_구성합니다._6074e9a3-c711-4856-976d-24d51f9e065b/**'
+#      - 'policies/스토리지_계정은_가상_네트워크_서비스_엔드포인트를_사용해야_함_60d21c4f-21a3-4d94-85f4-b924e6aeeda4/**'
+#      - 'policies/SQL_서버에_Advanced_Data_Security_배포_6134c3db-786f-471e-87bc-8f479dc890f6/**'
+#      - 'policies/Windows_컴퓨터에서_표준_시간대를_구성합니다._6141c932-9384-44c6-a395-59e4c057d7c9/**'
+#      - 'policies/App_Configuration의_프라이빗_엔드포인트_구성_614ffa75-862c-456e-ad8b-eaa1b0844b07/**'
+#      - 'policies/Bot_Service_엔드포인트는_유효한_HTTPS_URI여야_합니다._6164527b-e1ee-4882-8673-572f425f5e0a/**'
+#      - 'policies/Service_Fabric_클러스터에는_ClusterProtectionLevel_속성이_EncryptAndSign으로_설정되어_있어야_합니다._617c02be-7f02-4efd-8836-3180d47b6c68/**'
+#      - 'policies/구독에_태그_추가_또는_바꾸기_61a4d60b-7326-440e-8051-9f94394d4dd1/**'
+#      - 'policies/Log_Analytics_에이전트가_예상대로_연결되지_않은_Windows_머신_감사_6265018c-d7e2-432f-a75d-094d5f6f4465/**'
+#      - 'policies/Azure_SignalR_Service_리소스를_수정하여_공용_네트워크_액세스를_사용하지_않도록_설정_62a3ae95-8169-403e-a2d2-b82141448092/**'
+#      - 'policies/_미리_보기_Linux_가상_머신_확장_집합에_Azure_Security_에이전트를_설치해야_합니다._62b52eae-c795-44e3-94e8-1b3d264766fb/**'
+#      - 'policies/Windows_머신_네트워크_연결_감사_630ac30f-a234-4533-ac2d-e0df77acda51/**'
+#      - 'policies/Linux_머신에_대한_인증에_SSH_키가_필요함_630c64f9-8b6b-4c64-b511-6544ceff6fd6/**'
+#      - 'policies/App_Services는_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_63a0ac64-5d5f-4569-8a3d-df67cc1ce9d7/**'
+#      - 'policies/Azure_HDInsight_클러스터는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_64d314f6-6062-4780-a861-c23e8951bee5/**'
+#      - 'policies/_미리_보기_Azure_Defender_프로필을_사용하도록_Azure_Kubernetes_Service_클러스터_구성_64def556-fbad-4622-930e-72d1d5589bf5/**'
+#      - 'policies/머신에서_SQL_Server용_Azure_Defender를_사용하도록_설정해야_함_6581d072-105e-4418-827f-bd446d56421b/**'
+#      - 'policies/관리_인증서_대신_서비스_주체를_사용하여_구독을_보호해야_합니다._6646a0bd-e110-40ca-bb97-84fcee63c414/**'
+#      - 'policies/_미리_보기_Azure_Security_에이전트를_자동으로_설치하도록_지원되는_Linux_가상_머신_확장_집합을_구성합니다._6654c8c4-e6f8-43f8-8869-54327af7ce32/**'
+#      - 'policies/Cognitive_Services_계정은_고객_관리형_키로_데이터_암호화를_사용하도록_설정해야_함_67121cc7-ff39-4ab8-b7e3-95b84dab487d/**'
+#      - 'policies/Azure_IoT_Hub_서비스_API에_대해_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._672d56b3-23a7-4a3c-a233-b77ed7777518/**'
+#      - 'policies/_미리_보기_지원되는_Linux_가상_머신에_게스트_증명_확장을_설치해야_합니다._672fe5a1-2fcd-42d7-b85d-902b6e28c6ff/**'
+#      - 'policies/Windows_머신이_관리_템플릿_-_네트워크_에_대한_요구_사항을_충족해야_함_67e010c1-640d-438e-a3a5-feaccb533a98/**'
+#      - 'policies/_미리_보기_Azure_Data_Factory_연결된_서비스_리소스_종류가_허용_목록에_있어야_함_6809a3d0-d354-42fb-b955-783d207c62a8/**'
+#      - 'policies/App_Service_프라이빗_링크를_사용해야_함_687aa49d-0982-40f8-bf6b-66d1da97a04b/**'
+#      - 'policies/Azure_Arc_사용_Windows_서버에서_Log_Analytics_확장_구성_69af7d4a-7b18-4044-93a9-2651498ef203/**'
+#      - 'policies/관리자_그룹에_지정한_구성원이_있는_Windows_머신_감사_69bf4abd-ca1e-4cf6-8b5a-762d42e61d4f/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_BotService_리소스_구성_6a4e6f44-f2af-4082-9702-033c9e88b9f8/**'
+#      - 'policies/더_이상_사용되지_않는_계정을_구독에서_제거해야_합니다._6b1cbf55-e8b6-442f-ba4c-7246b6381474/**'
+#      - 'policies/Service_Bus에_대한_진단_설정을_이벤트_허브에_배포_6b51af03-9277-49a9-a3f8-1c69c9ff7403/**'
+#      - 'policies/컴퓨터의_SQL_Server는_발견한_취약성을_해결해야_합니다._6ba6d016-e7c3-4842-b8f2-4992ebc0d72d/**'
+#      - 'policies/리소스_종류를_사용할_수_없습니다._6c112d4e-5bc7-47ae-a041-ea2d9dccd749/**'
+#      - 'policies/Log_Analytics_작업_영역은_공용_네트워크에서_로그_수집_및_쿼리를_차단해야_합니다._6c53d030-cc64-46f0-906d-2bc061cd1334/**'
+#      - 'policies/배포_-_Azure_Kubernetes_Service의_진단_설정을_Log_Analytics_작업_영역으로_구성_6c66c325-74c8-42fd-a286-a74b0e2939d8/**'
+#      - 'policies/함수_앱은_HTTPS를_통해서만_액세스할_수_있어야_합니다._6d555dd1-86f2-4f1c-8ed7-5abae7c6cbab/**'
+#      - 'policies/프라이빗_DNS_영역으로_Azure_Automation_계정_구성_6dd01e4f-1be1-4e80-9d0b-d109e04cb064/**'
+#      - 'policies/Security_Center가_기본_작업_영역을_사용하여_구독에서_Log_Analytics_에이전트를_자동_프로비저닝하도록_합니다._6df2fee6-a9ed-4fef-bced-e13be1b25f1c/**'
+#      - 'policies/심각도가_높은_경고에_대해_메일_알림을_사용하도록_설정해야_합니다._6e2593d9-add6-4083-9c9b-4b7d2188c899/**'
+#      - 'policies/스토리지_계정은_Private_Link를_사용해야_합니다._6edd7eda-6dd8-40f7-810d-67160c639cd9/**'
+#      - 'policies/Batch_계정은_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._6f68b69f-05fe-49cd-b361-777ee9ca7e35/**'
+#      - 'policies/스토리지_계정의_진단_설정을_Log_Analytics_작업_영역으로_구성_6f8f98a4-f108-47cb-8e98-91a0d85cd474/**'
+#      - 'policies/스토리지_계정은_암호화에_고객_관리형_키를_사용해야_함_6fac406b-40ca-413b-bf8e-0bf964659c25/**'
+#      - 'policies/통합_문서는_사용자가_제어하는_스토리지_계정에_저장해야_합니다._6fc8115b-2008-441f-8c61-9b722c1e537f/**'
+#      - 'policies/배포_-_프라이빗_엔드포인트를_사용하여_Azure_Event_Grid_토픽_구성_6fcec95c-fbdf-45e8-91e1-e3175d9c9eca/**'
+#      - 'policies/웹앱의_일부로_사용되는_경우_Python_버전_이_최신_상태인지_확인하세요._7008174a-fd10-4ef0-817e-fc820a951d73/**'
+#      - 'policies/로컬_인증을_사용하지_않도록_Azure_SignalR_Service_구성_702133e5-5ec5-4f90-9638-c78e22f13b39/**'
+#      - 'policies/OS_및_데이터_디스크는_고객_관리형_키로_암호화해야_합니다._702dd420-7fcc-42c5-afe8-4026edd20fe0/**'
+#      - 'policies/_미리_보기_Azure_Defender의_확장을_설치하도록_Azure_Arc_지원_Kubernetes_클러스터_구성_708b60a6-d253-4fe0-9114-4be4c00f012c/**'
+#      - 'policies/Cognitive_Services_계정은_로컬_인증_방법을_사용하지_않도록_설정해야_합니다_71ef260a-8f18-47b7-abcb-62d0673d94dc/**'
+#      - 'policies/함수_앱의_일부로_사용되는_경우_Python_버전_이_최신_상태인지_확인하세요._7238174a-fd10-4ef0-817e-fc820a951d73/**'
+#      - 'policies/웹앱의_일부로_사용되는_경우_PHP_버전_이_최신_상태인지_확인하세요._7261b898-8a84-4db8-9e04-18527132abb3/**'
+#      - 'policies/_미리_보기_Windows_컴퓨터는_Azure_컴퓨팅_보안_기준의_요구_사항을_충족해야_합니다._72650e9f-97bc-4b2a-ab5f-9781a9fcecbc/**'
+#      - 'policies/리소스_그룹에_태그_추가_726aca4c-86e9-4b04-b0c5-073027359532/**'
+#      - 'policies/로컬_인증_방법을_사용하지_않도록_App_구성_저장소_구성_72bc14af-4ab8-43af-b4e4-38e7983f9a1f/**'
+#      - 'policies/App_Service_앱을_가상_네트워크에_삽입해야_합니다._72d04c29-f87d-4575-9731-419ff16a2757/**'
+#      - 'policies/Azure_Synapse_작업_영역은_Private_Link를_사용해야_합니다._72d11df1-dd8a-41f7-8925-b05b960ebafc/**'
+#      - 'policies/공용_네트워크_액세스를_사용하지_않도록_App_Configuration_구성_73290fa2-dfa7-4bbb-945d-a5e23b75df2c/**'
+#      - 'policies/Azure_Security_Center_권장_사항에_대한_워크플로_자동화_배포_73d6ab6c-2475-4850-afd6-43795f3492ef/**'
+#      - 'policies/Linux_컴퓨터에는_허용된_로컬_계정만_있어야_합니다._73db37c4-f180-4b0f-ab2c-8ee96467686b/**'
+#      - 'policies/API_Management_서비스는_가상_네트워크를_지원하는_SKU를_사용해야_함_73ef9241-5d81-4cd4-b483-8443d1730fe5/**'
+#      - 'policies/스토리지_계정은_허용된_SKU별로_제한해야_합니다._7433c107-6db4-4ad1-b57a-a76dce0154a1/**'
+#      - 'policies/저장소를_사용_설정하도록_Azure_Defender_구성_74c30959-af11-47b3-9ed2-a26e03f427a3/**'
+#      - 'policies/API_앱의_일부로_사용되는_경우_Python_버전_이_최신_상태인지_확인하세요._74c3584d-afae-46f7-a20a-6f8adba71a16/**'
+#      - 'policies/배치_계정에_대해_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._74c5a0ae-5e48-4738-b093-65e23a060488/**'
+#      - 'policies/공용_IP_주소는_Azure_DDoS_Protection_표준에_대해_리소스_로그를_사용하도록_설정되어_있어야_함_752154a7-1e0f-45c6-a880-ac75a7e4f648/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_Azure_Migrate_리소스_구성_7590a335-57cf-4c95-babd-ecbc8fafeb1f/**'
+#      - 'policies/프라이빗_엔드포인트를_MySQL_서버에서_사용할_수_있어야_합니다._7595c971-233d-4bcf-bd18-596129188c49/**'
+#      - 'policies/Linux_Virtual_Machine_Scale_Sets용_Dependency_Agent_배포_765266ab-e40e-4c61-bcb2-5a5275d0b7c0/**'
+#      - 'policies/Azure_SQL_Database에서_프라이빗_엔드포인트_연결을_사용하도록_설정해야_함_7698e800-9299-47a6-b3b6-5a0fee576eed/**'
+#      - 'policies/Azure_Cognitive_Search_서비스는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_76a56461-9dc0-40f0-82f5-2453283afa2f/**'
+#      - 'policies/관리_테넌트에_대한_범위_위임_감사_76bed37b-484f-430f-a009-fd7592dff818/**'
+#      - 'policies/Azure_구독에는_활동_로그에_대한_로그_프로필이_있어야_합니다._7796937f-307b-4598-941c-67d3a05ebfe7/**'
+#      - 'policies/_미리_보기_Azure_Data_Factory에서_원본_제어에_Git_리포지토리를_사용해야_함_77d40665-3120-4348-b539-3192ec808307/**'
+#      - 'policies/지정한_서브넷의_트래픽을_허용하려면_Azure_SQL_Database에서_가상_네트워크_방화벽_규칙을_사용하도록_설정해야_함_77e8b146-0078-4fb2-b002-e112381199f0/**'
+#      - 'policies/Azure_Cache_for_Redis는_프라이빗_링크를_사용해야_함_7803067c-7d34-46e3-8c79-0ca68fc4036d/**'
+#      - 'policies/감사_Azure_Machine_Learning_컴퓨팅_클러스터_및_인스턴스가_가상_네트워크_뒤에_있습니다._7804b5c7-01dc-4723-969b-ae300cc07ff1/**'
+#      - 'policies/Azure_SQL_Managed_Instance_Azure_Active_Directory_인증만_사용하도록_설정해야_합니다._78215662-041e-49ed-a9dd-5385911b3a1f/**'
+#      - 'policies/프라이빗_엔드포인트를_사용하여_Azure_Machine_Learning_작업_영역_구성_7838fd83-5cbb-4b5d-888c-bfa240972597/**'
+#      - 'policies/Azure_Cosmos_DB는_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_797b37f7-06b8-444c-b1ad-fc62867f335a/**'
+#      - 'policies/로컬_인증을_사용하지_않도록_컨테이너_레지스트리를_구성합니다._79fdfe03-ffcb-4e55-b4d0-b925b8241759/**'
+#      - 'policies/App_Configuration에_연결된_프라이빗_엔드포인트의_프라이빗_DNS_영역_구성_7a860e27-9ca2-4fc6-822d-c2d248c300df/**'
+#      - 'policies/관리_테넌트_ID가_Azure_Lighthouse를_통해_온보딩하도록_허용_7a8a51a3-ad87-4def-96f3-65a1839242b6/**'
+#      - 'policies/Azure_Attestation_공급자는_프라이빗_엔드포인트를_사용해야_함_7b256a2d-058b-41f8-bed9-3f870541c40a/**'
+#      - 'policies/Virtual_Machine_Scale_Sets의_리소스_로그를_사용하도록_설정해야_함_7c1b1214-f927-48bf-8882-84f0af6588b1/**'
+#      - 'policies/공용_네트워크_액세스를_비활성화하도록_API_Management_서비스_구성_7ca8c8ac-3a6e-493d-99ba-c5fa35347ff2/**'
+#      - 'policies/_미리_보기_자동으로_보안_부팅을_사용하도록_지원되는_Windows_가상_머신_구성_7cb1b219-61c6-47e0-b80c-4472cadeeb5f/**'
+#      - 'policies/Azure_Cache_for_Redis가_가상_네트워크_내에_있어야_함_7d092e0a-7acd-40d2-a975-dca21cae48c4/**'
+#      - 'policies/Azure_Kubernetes_Service_클러스터의_운영_체제와_데이터_디스크를_모두_고객_관리형_키로_암호화해야_합니다._7d7be79c-23ba-4033-84dd-45e2a5ccdd67/**'
+#      - 'policies/프라이빗_엔드포인트로_Service_Bus_네임스페이스_구성_7d890f7f-100c-473d-baa1-2777e2266535/**'
+#      - 'policies/Azure_SQL_데이터베이스_서버에_대한_진단_설정을_Log_Analytics_작업_영역으로_구성_7ea8a143-05e3-4553-abfe-f56bef8b0b70/**'
+#      - 'policies/Azure_Arc_프라이빗_링크_범위는_프라이빗_엔드포인트로_구성해야_합니다._7eab1da3-2bf0-4ff0-8303-1a4277c380e8/**'
+#      - 'policies/감사_진단_설정_7f89b1eb-583c-429a-8828-af049802c1d9/**'
+#      - 'policies/Azure_SQL_Database_서버용_Azure_Defender를_사용하도록_설정해야_함_7fe3b40f-802b-4cdd-8bd4-fd799c948cc2/**'
+#      - 'policies/SQL_감사_설정에_중요한_활동을_캡처하도록_구성된_작업_그룹이_있어야_함_7ff426e2-515f-405a-91c8-4f2333442eb5/**'
+#      - 'policies/_미리_보기_Azure_Security_에이전트를_자동으로_설치하도록_지원되는_Windows_가상_머신_확장_집합을_구성합니다._808a7dc4-49f2-4e7b-af75-d14e561c244a/**'
+#      - 'policies/배포_-_Azure_Security_Center_경고에_대한_제거_규칙_구성_80e94a21-c6cd-4c95-a2c7-beb5704e61c0/**'
+#      - 'policies/Azure_Database_for_MySQL에서_사용하도록_Advanced_Threat_Protection_구성_80ed5239-4122-41ed-b54a-6f1fa7552816/**'
+#      - 'policies/App_Service_Environment는_가장_강력한_TLS_암호_그룹을_사용하여_구성해야_합니다._817dcf37-e83d-4999-a472-644eada2ea1e/**'
+#      - 'policies/공용_네트워크_액세스를_사용하지_않도록_App_Services_구성_81dff7c0-4020-4b58-955d-c076a2136b56/**'
+#      - 'policies/Azure_Data_Explorer_미사용_암호화는_고객_관리형_키를_사용해야_함_81e74cea-30fd-40d5-802f-d72103c2aaaa/**'
+#      - 'policies/Azure_Database_for_MySQL에_대해_지역_중복_백업을_사용하도록_설정해야_함_82339799-d096-41ae-8538-b108becf0970/**'
+#      - 'policies/Azure_Web_PubSub_Search_서비스는_프라이빗_링크를_지원하는_SKU를_사용해야_합니다._82909236-25f3-46a6-841c-fe1020f95ae1/**'
+#      - 'policies/Windows_머신이_시스템_감사_정책_-_시스템_에_대한_요구_사항을_충족해야_함_8316fa92-d69c-4810-8124-62414f560dcf/**'
+#      - 'policies/기본_정책을_사용하여_새_Recovery_Services_자격_증명_모음에_대해_지정된_태그가_있는_가상_머신의_백업_구성_83644c87-93dd-49fe-bf9f-6aff8fd0834e/**'
+#      - 'policies/Event_Hub_네임스페이스는_이중_암호화를_사용하도록_설정해야_합니다._836cd60e-87f3-4e6a-a27c-29d687f01a4c/**'
+#      - 'policies/이벤트_허브의_리소스_로그를_사용하도록_설정해야_함_83a214f7-d01a-484b-91a9-ed54470c9a6a/**'
+#      - 'policies/네트워크_인터페이스에_공용_IP를_사용할_수_없습니다._83a86a26-fd1f-447c-b59d-e51f44264114/**'
+#      - 'policies/MySQL_서버는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_83cef61d-dbd1-4b20-a4fc-5fbc7da10833/**'
+#      - 'policies/관리_디스크에서_공용_네트워크_액세스를_사용할_수_없어야_함_8405fdab-1faf-48aa-b702-999c9c172094/**'
+#      - 'policies/공용_네트워크_액세스를_사용하지_않도록_관리_디스크_구성_8426280e-b5be-43d9-979e-653d12a08638/**'
+#      - 'policies/_미리_보기_Linux_Azure_Arc_머신에_Log_Analytics_확장을_설치해야_합니다._842c54e8-c2f9-4d79-ae8d-38d8b8019373/**'
+#      - 'policies/지정한_도메인에_가입되지_않는_Windows_머신_감사_84662df4-0e37-44a6-9ce1-c9d2150db18c/**'
+#      - 'policies/App_Service_슬롯에는_SCM_사이트_배포에_대해_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._847ef871-e2fe-4e6e-907e-4adbf71de5cf/**'
+#      - 'policies/_미리_보기_Azure_Key_Vault_관리형_HSM에서_공용_네트워크_액세스를_비활성화하도록_구성_84d327c3-164a-4685-b453-900478614456/**'
+#      - 'policies/Windows_머신이_Windows_구성_요소_에_대한_요구_사항을_충족해야_함_8537fe96-8cbe-43de-b0ef-131bc72bc22a/**'
+#      - 'policies/공용_네트워크_액세스를_사용하지_않도록_IoT_Hub_디바이스_프로비저닝_서비스_인스턴스_구성_859dfc91-ea35-43a6-8256-31271c363794/**'
+#      - 'policies/_미리_보기_Azure_Data_Factory_통합_런타임에_코어_수_제한이_있어야_함_85bb39b5-2f66-49f8-9306-77da3ac5130f/**'
+#      - 'policies/Azure_Cosmos_DB_계정에_방화벽_규칙이_있어야_함_862e97cf-49fc-4a5c-9de4-40d4e2e7c8eb/**'
+#      - 'policies/Azure_Event_Grid_파트너_네임스페이스에는_로컬_인증_방법이_비활성화되어_있어야_합니다._8632b003-3545-4b29-85e6-b2b96773df1e/**'
+#      - 'policies/SQL_DB_투명한_데이터_암호화_배포_86a912f6-9a06-4e26-b447-11b16ba8659f/**'
+#      - 'policies/머신에_시스템_업데이트를_설치해야_합니다._86b3d65f-7626-441e-b690-81a8b71cff60/**'
+#      - 'policies/프라이빗_엔드포인트의_프라이빗_DNS_영역을_구성하여_Azure_Data_Factory에_연결_86cd96e1-1745-420d-94d4-d3f2fe415aa4/**'
+#      - 'policies/Azure_Data_Box_작업에서_고객_관리형_키를_사용하여_디바이스_잠금_해제_암호를_암호화해야_함_86efb160-8de7-451d-bc08-5d475b0aadae/**'
+#      - 'policies/App_Service가_FTP_배포에_대해_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._871b205b-57cf-4e1e-a234-492616998bf7/**'
+#      - 'policies/리소스에_태그_필요_871b6d14-10aa-478d-b590-94f262ecfa99/**'
+#      - 'policies/Windows_머신이_시스템_감사_정책_-_권한_사용_에_대한_요구_사항을_충족해야_함_87845465-c458-45f3-af66-dcd62176f397/**'
+#      - 'policies/Windows_머신이_보안_옵션_-_디바이스_에_대한_요구_사항을_충족해야_함_8794ff4f-1a35-4e18-938f-0b22055067cd/**'
+#      - 'policies/Azure_Stream_Analytics_작업에서_데이터를_암호화하려면_고객_관리형_키를_사용해야_합니다._87ba29ef-1ab3-4d82-b763-87fcd4f531f7/**'
+#      - 'policies/API_앱의_일부로_사용되는_경우_Java_버전_이_최신_상태인지_확인하세요._88999f4c-376a-45c8-bcb3-4058f713cf39/**'
+#      - 'policies/네트워크_인터페이스가_IP_전달을_사용하지_않아야_합니다._88c0b9da-ce96-4b03-9635-f29a937e2900/**'
+#      - 'policies/스토리지_계정_대상에_대해_감사가_있는_SQL_서버의_보존_기간을_90일_이상으로_구성해야_함_89099bee-89e0-4b26-a5f4-165451757743/**'
+#      - 'policies/수정_-_공용_네트워크_액세스를_사용하지_않도록_Azure_Event_Grid_도메인_구성_898e9824-104c-4965-8e0e-5197588fa5d4/**'
+#      - 'policies/Azure_Arc_프라이빗_링크_범위가_공용_네트워크_액세스를_비활성화해야_합니다._898f2439-3333-4713-af25-f1d78bc50556/**'
+#      - 'policies/App_Configuration은_프라이빗_링크를_지원하는_SKU를_사용해야_합니다._89c8a434-18f0-402c-8147-630a8dea54e0/**'
+#      - 'policies/로컬_인증을_사용하지_않도록_Azure_Event_Grid_도메인_구성_8ac2748f-3bf1-4c02-a3b6-92ae68cf75b1/**'
+#      - 'policies/Azure_Container_Instance_컨테이너_그룹은_가상_네트워크에_배포해야_합니다._8af8f826-edcb-4178-b35f-851ea6fea615/**'
+#      - 'policies/Azure_Data_Factory는_프라이빗_링크를_사용해야_함_8b0323be-cc25-4b61-935d-002c3798c6ea/**'
+#      - 'policies/_미리_보기_Azure_Monitor_에이전트에_대한_Azure_Security_Center_파이프라인을_자동으로_만들도록_컴퓨터_구성_8b5ad9ab-3d44-4a6e-9ac3-75b04ea5fd28/**'
+#      - 'policies/Azure_Event_Grid_도메인에는_로컬_인증_방법이_비활성화되어_있어야_합니다._8bfadddb-ee1c-4639-8911-a38cb8e0b3bd/**'
+#      - 'policies/Azure_Media_Services_계정은_공용_네트워크_액세스를_비활성화해야_합니다._8bfe3603-0888-404a-87ff-5c1b6b4cc5e3/**'
+#      - 'policies/웹앱을_실행하는_데_사용되는_경우_HTTP_버전_이_최신_상태인지_확인하세요._8c122334-9d20-4eb8-89ea-ac9a705b74ae/**'
+#      - 'policies/스토리지_계정은_공유_키_액세스를_차단해야_합니다._8c6a50c6-9ffd-4ae7-986f-5fa6111f9a54/**'
+#      - 'policies/API_앱에서_최신_TLS_버전을_사용해야_합니다._8cb6aa8b-9e41-4f4e-aa25-089a7ac2581e/**'
+#      - 'policies/리소스_그룹에_태그_및_값_필요_8ce3da23-7156-49e4-b145-24f95f9dcb46/**'
+#      - 'policies/_미리_보기_Azure_Arc_사용_Kubernetes_클러스터에_Azure_Defender의_확장이_설치되어_있어야_함_8dfab9c4-fe7b-49ad-85e4-1e9be085358f/**'
+#      - 'policies/Log_Analytics_작업_영역_및_자동화_계정을_구성하여_로그_및_모니터링_중앙_집중화_8e3e61b3-0b32-22d5-4edf-55f87fdb5955/**'
+#      - 'policies/컴퓨터에서_Endpoint_Protection_상태_문제를_해결해야_합니다._8e42c1f2-a2ab-49bc-994a-12bcd0dc4ac2/**'
+#      - 'policies/Security_Center가_사용자_지정_작업_영역을_사용하여_구독에서_Log_Analytics_에이전트를_자동_프로비저닝하도록_합니다._8e7da0a5-0a0e-4bbc-bfc0-7773c018b616/**'
+#      - 'policies/서버를_사용_설정하도록_Azure_Defender_구성_8e86a5b6-b9bd-49d1-8e21-4bb8a0862222/**'
+#      - 'policies/프라이빗_엔드포인트_연결을_사용하도록_Azure_SQL_Server_구성_8e8ca470-d980-4831-99e6-dc70d9f6af87/**'
+#      - 'policies/로컬_인증을_사용하지_않도록_Azure_Service_Bus_네임스페이스_구성_910711a6-8aa2-4f15-ae62-1e5b2ed3ef9e/**'
+#      - 'policies/프라이빗_엔드포인트로_Event_Hub_네임스페이스_구성_91678b7c-d721-4fc5-b179-3cdf74e96b1c/**'
+#      - 'policies/App_Services의_리소스_로그를_사용하도록_설정해야_함_91a78b24-f231-4a8a-8da9-02c35b2b6510/**'
+#      - 'policies/Azure_Arc_사용_Windows_서버에서_종속성_에이전트_구성_91cb9edd-cd92-4d2f-b2f2-bdd8d065a3d4/**'
+#      - 'policies/구독에서_쓰기_권한이_있는_계정에_MFA를_사용하도록_설정해야_합니다._9297c21d-2ed6-4474-b48f-163f75654ce3/**'
+#      - 'policies/스토리지_계정은_테넌트_간_개체_복제를_방지해야_합니다._92a89a79-6c52-4a7e-a03f-61306fc49312/**'
+#      - 'policies/신뢰할_수_있는_루트에_지정한_인증서가_포함되지_않은_Windows_머신_감사_934345e1-4dfb-4c70-90d7-41990dc9608b/**'
+#      - 'policies/_미리_보기_프라이빗_DNS_영역_사용을_위해_Azure_Recovery_Services_자격_증명_모음_구성_942bd215-1a66-44be-af65-6a1c0318dbe2/**'
+#      - 'policies/Log_Analytics_작업_영역에서_Azure_로그_검색_알림은_고객_관리_키를_사용해야_합니다._94c1f94d-33b0-4062-bd04-1cdc3e7eece2/**'
+#      - 'policies/Windows_머신이_시스템_감사_정책_-_계정_관리_에_대한_요구_사항을_충족해야_함_94d9aca8-3757-46df-aa51-f218c5f11954/**'
+#      - 'policies/가상_네트워크는_Azure_DDoS_Protection_표준으로_보호되어야_함_94de2ad3-e0c1-4caf-ad78-5d47bbc83d3d/**'
+#      - 'policies/배포_-_Azure_Key_Vault의_진단_설정을_Log_Analytics_작업_영역으로_구성_951af2fa-529b-416e-ab6e-066fd85ac459/**'
+#      - 'policies/_미리_보기_자동으로_보안_부팅을_사용하도록_지원되는_Linux_가상_머신_구성_95406fc3-1f69-47b0-8105-4c03b276ec5c/**'
+#      - 'policies/Automation_계정은_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_955a914f-bf86-4f0e-acd5-e0766b0efcb6/**'
+#      - 'policies/웹앱에서_인증을_사용하도록_설정해야_합니다._95bccee9-a7f8-4bec-9ee9-62c3473701fc/**'
+#      - 'policies/리소스_그룹에_태그_필요_96670d01-0a4d-4649-9c89-2d3abc0a5025/**'
+#      - 'policies/App_Configuration에서_고객_관리형_키를_사용해야_함_967a4b4b-2da9-43c1-b7d0-f98d0d74d0b1/**'
+#      - 'policies/Windows_머신이_관리_템플릿_-_시스템_에_대한_요구_사항을_충족해야_함_968410dc-5ca0-4518-8a5b-7b55f0530ea9/**'
+#      - 'policies/구독에_태그_추가_96d9a89c-0d67-41fc-899d-2b9599f76a24/**'
+#      - 'policies/HPC_Cache_계정은_암호화에_고객_관리형_키를_사용해야_합니다._970f84d8-71b6-4091-9979-ace7e3fb6dbb/**'
+#      - 'policies/_미리_보기_지원되는_Windows_가상_머신에서_보안_부팅을_사용하도록_설정해야_합니다._97566dd7-78ae-4997-8b36-1c7bfe0d8121/**'
+#      - 'policies/Azure_Event_Grid_도메인은_프라이빗_링크를_사용해야_함_9830b652-8523-49cc-b1b3-e17dce1127ca/**'
+#      - 'policies/Azure_Network_Security_Groups에_대한_진단_설정을_Log_Analytics_작업_영역으로_구성_98a2e215-5382-489e-bd29-32e7190a39ba/**'
+#      - 'policies/기본_정책을_사용하여_새_Recovery_Services_자격_증명_모음에_대해_제공된_태그가_없는_가상_머신의_백업_구성_98d0b9f8-fd90-49c9-88e2-d3baf3b0dd86/**'
+#      - 'policies/_미리_보기_게스트_증명_확장을_자동으로_설치하도록_지원되는_Windows_가상_머신을_구성합니다._98ea2fc7-6fc6-4fd1-9d8d-6331154da071/**'
+#      - 'policies/API_앱을_실행하는_데_사용되는_경우_HTTP_버전_이_최신_상태인지_확인하세요._991310cd-e9f3-47bc-b7b6-f57b557d07db/**'
+#      - 'policies/Azure_Kubernetes_Service_클러스터에는_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._993c2fcd-2b29-49d2-9eb0-df2c3a730c32/**'
+#      - 'policies/Azure_Batch_계정은_고객_관리형_키를_사용하여_데이터를_암호화해야_합니다._99e9ccd8-3db9-4592-b0d1-14b1715a4d8a/**'
+#      - 'policies/API_앱에서_FTPS만_요구해야_합니다._9a1b8c48-453a-4044-86c3-d8bfd823e4f5/**'
+#      - 'policies/Azure_SQL_Database의_진단_설정을_이벤트_허브에_적용_9a7c7a7d-49e5-4213-bea8-6a502b6272e0/**'
+#      - 'policies/Azure_Data_Explorer에_대해_가상_네트워크_삽입을_사용하도록_설정해야_함_9ad2fd1f-b25f-47a2-aa01-1a5a779e6413/**'
+#      - 'policies/Microsoft_IaaSAntimalware_확장을_Windows_Server에_배포해야_합니다._9b597639-28e4-48eb-b506-56b05d366257/**'
+#      - 'policies/프라이빗_엔드포인트로_IoT_Hub_디바이스_프로비저닝_서비스_인스턴스_구성_9b75ea5b-c796-4c99-aaaf-21c204daac43/**'
+#      - 'policies/공용_네트워크_액세스를_사용하지_않도록_설정하도록_Azure_Cognitive_Search_서비스_구성_9cee519f-d9c1-4fd9-9f79-24ec3449ed30/**'
+#      - 'policies/함수_앱의_일부로_사용되는_경우_Java_버전_이_최신_상태인지_확인하세요._9d0b6ea4-93e2-4578-bf2f-6bb17d22b4bc/**'
+#      - 'policies/Azure_Arc_사용_Linux_서버에서_Log_Analytics_확장_구성_9d2b61b4-1d14-4a63-be30-d4498e7ad2cf/**'
+#      - 'policies/_미리_보기_프라이빗_엔드포인트로_Azure_Key_Vault_구성_9d4fad1f-5189-4a42-b29e-cf7929c6b6df/**'
+#      - 'policies/가상_머신과_연결된_네트워크_보안_그룹에_대해서_모든_네트워크_포트를_제한해야_합니다._9daedab3-fb2d-461e-b861-71790eead4f6/**'
+#      - 'policies/관리형_애플리케이션의_애플리케이션_정의는_고객이_제공한_스토리지_계정을_사용해야_함_9db7917b-1607-4e7d-a689-bca978dd0633/**'
+#      - 'policies/리소스_그룹에서_태그_및_값_추가_9ea02ca2-71db-412d-8b00-7c7ca9fcd32d/**'
+#      - 'policies/Private_Link_연결을_사용하도록_스토리지_계정_구성_9f766f00-8d11-464e-80e1-4091d7874074/**'
+#      - 'policies/로컬_인증을_사용하지_않도록_Azure_IoT_Hub_구성_9f8ba900-a70f-486e-9ffc-faf907305376/**'
+#      - 'policies/Azure_Cognitive_Search_서비스는_Private_Link를_지원하는_SKU를_사용해야_합니다._a049bf77-880b-470f-ba6d-9f21c530cf83/**'
+#      - 'policies/허용되는_리소스_종류_a08ec900-254a-4555-9bf5-e42af04b5c5c/**'
+#      - 'policies/Cloud_Services(확장_지원)_역할_인스턴스는_안전하게_구성되어야_합니다._a0c11ca4-5828-4384-a2f2-fd7444dd5b4d/**'
+#      - 'policies/공용_네트워크_액세스를_비활성화하도록_Azure_Machine_Learning_작업_영역_구성_a10ee784-7409-4941-b091-663697637c0f/**'
+#      - 'policies/Security_Center_표준_가격_책정_계층을_선택해야_합니다._a1181c5f-672a-477a-979a-7d58aa086233/**'
+#      - 'policies/Service_Bus_네임스페이스에서_RootManageSharedAccessKey를_제외한_모든_권한_부여_규칙을_제거해야_합니다._a1817ec0-a368-432a-8057-8371e17ac6ee/**'
+#      - 'policies/_미리_보기_Azure_Kubernetes_Service_클러스터에는_Azure_Defender_프로필이_활성화되어_있어야_합니다._a1840de2-8088-4ea8-b153-b4c723e9cb01/**'
+#      - 'policies/이벤트_허브_네임스페이스는_암호화에_고객_관리형_키를_사용해야_함_a1ad735a-e96f-45d2-a7b2-9a4932cab7ec/**'
+#      - 'policies/Logic_Apps에_대한_진단_설정을_이벤트_허브에_배포_a1dae6c7-13f3-48ea-a149-ff8442661f60/**'
+#      - 'policies/_미리_보기_지원되는_Linux_가상_머신_확장_집합에_게스트_증명_확장을_설치해야_합니다._a21f8c92-9e22-4f09-b759-50500d1d2dda/**'
+#      - 'policies/Azure_Key_Vault_관리되는_HSM의_리소스_로그를_사용하도록_설정해야_합니다._a2a5b911-5617-447e-a49e-59dbe0e0434b/**'
+#      - 'policies/암호_최소_길이를_14자로_제한하지_않는_Windows_머신_감사_a2d0e922-65d0-40c4-8f87-ea6da2d307a2/**'
+#      - 'policies/_미리_보기_가상_머신을_기본_Azure_Security_Center_데이터_수집_규칙에_연결하도록_연결_구성_a2ea54a3-9707-45e3-8230-bbda8309d17e/**'
+#      - 'policies/Azure_Arc_프라이빗_링크_범위를_사용하도록_Azure_Arc_사용_서버_구성_a3461c8c-6c9d-4e42-a644-40ba8a1abf49/**'
+#      - 'policies/공용_네트워크_액세스를_사용하지_않도록_컨테이너_레지스트리_구성_a3701552-92ea-433e-9d17-33b7f1208fc9/**'
+#      - 'policies/Azure_Security_Center를_모니터링하려면_가상_머신_확장_집합에_Log_Analytics_에이전트를_설치해야_함_a3a6ea0c-e018-4933-9ef0-5aaa1501449b/**'
+#      - 'policies/Azure_Monitor_에이전트를_사용하여_Linux_Virtual_Machines_구성_a4034bc6-ae50-406d-bf76-50f4ee5a7811/**'
+#      - 'policies/사용자_지정_RBAC_규칙의_사용_감사_a451c1ef-c6ca-483d-87ed-f49761e3ffb5/**'
+#      - 'policies/웹_애플리케이션은_HTTPS를_통해서만_액세스할_수_있어야_합니다._a4af4a39-4135-47fb-b175-47fbdf85311d/**'
+#      - 'policies/Azure_Security_Center를_모니터링하려면_가상_머신에_Log_Analytics_에이전트를_설치해야_함_a4fe33eb-e377-4efb-ab31-0784311bc499/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_CosmosDB_계정_구성_a63cc0bd-cda4-4178-b705-37dc439d3e0f/**'
+#      - 'policies/_미리_보기_Azure_Key_Vault에서_프라이빗_링크를_사용해야_함_a6abeaec-4d90-4a02-805f-6b26c4d3fbe9/**'
+#      - 'policies/Azure_Database_for_MariaDB에서_사용하도록_Advanced_Threat_Protection_구성_a6cf7411-da9e-49e2-aec0-cba0250eaf8c/**'
+#      - 'policies/배포_-_Azure_Key_Vault_관리되는_HSM에서_사용할_수_있도록_이벤트_허브에_대한_진단_설정을_구성합니다._a6d2c800-5230-4a40-bff3-8268b4987d42/**'
+#      - 'policies/HTTPS_비밀을_사용하여_지정된_GitOps_구성으로_Kubernetes_클러스터_구성_a6f560f4-f582-4b67-b123-a37dcd1bf7ea/**'
+#      - 'policies/로컬_인증_방법을_사용하지_않도록_Machine_Learning_컴퓨팅_구성_a6f9a2d0-cff7-4855-83ad-4cd750666512/**'
+#      - 'policies/SQL_Server에_대한_감사를_사용하도록_설정해야_합니다._a6fb4358-5bf4-4ad7-ba82-2cd2f41ce5e9/**'
+#      - 'policies/가상_머신에_Log_Analytics_확장이_설치되어_있어야_합니다._a70ca396-0a34-413a-88e1-b956c1e683be/**'
+#      - 'policies/Azure_Media_Services_계정은_Private_Link를_지원하는_API를_사용해야_합니다._a77d8bb4-8d22-4bc1-a884-f582a705b480/**'
+#      - 'policies/Azure_DDoS_Protection_표준을_사용하도록_설정해야_합니다._a7aca53f-2ed4-4466-a25e-0b45ade68efd/**'
+#      - 'policies/Data_Lake_Store_계정에서_암호화_필요_a7ff3161-0087-490a-9ad9-ad6217f4f43a/**'
+#      - 'policies/SQL_Managed_Instance는_최소_TLS_버전_1.2를_사용해야_함_a8793640-60f7-487c-b5c3-1d37215905c4/**'
+#      - 'policies/Azure_Kubernetes_Service_클러스터에_Azure_Policy_추가_기능_배포_a8eff44f-8c92-45c3-a3fb-9880802d67a7/**'
+#      - 'policies/SQL_Managed_Instance는_GRS_백업_중복을_사용하지_않아야_함_a9934fd7-29f2-4e6d-ab3d-607ea38e9079/**'
+#      - 'policies/가상_네트워크를_만들_때_Network_Watcher_배포_a9b99dd8-06c5-4317-8629-9d86a3c6e7d9/**'
+#      - 'policies/구독에서_소유자_권한이_있는_계정에_MFA를_사용하도록_설정해야_합니다._aa633080-8b72-40c4-a2d7-d00c03e80bed/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_IoT_Hub_디바이스_프로비저닝_인스턴스_구성_aaa64d2d-2fa3-45e5-b332-0b031b9b30e8/**'
+#      - 'policies/Azure_SQL_Database_Azure_Active_Directory_인증만_사용하도록_설정해야_합니다._abda6d70-9778-44e7-84a8-06713e6db027/**'
+#      - 'policies/보호되지_않는_Azure_SQL_서버에_대해_SQL용_Azure_Defender를_사용하도록_설정해야_합니다._abfb4388-5bf4-4ad7-ba82-2cd2f41ceae9/**'
+#      - 'policies/보호되지_않는_SQL_Managed_Instance에_대해_SQL용_Azure_Defender를_사용하도록_설정해야_합니다._abfb7388-5bf4-4ad7-ba99-2cd2f41cebb9/**'
+#      - 'policies/_미리_보기_SQL_Managed_Instance는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_합니다._ac01ad65-10e5-46df-bdd9-6b0cad13e1d2/**'
+#      - 'policies/구독에서_Azure_Security_Center_사용_ac076320-ddcf-4066-b451-6154267e8ad2/**'
+#      - 'policies/Azure_Site_Recovery를_통해_복제를_사용하여_가상_머신에서_재해_복구_구성_ac34a73f-9fa5-4067-9247-a3ecae514468/**'
+#      - 'policies/Kubernetes_서비스에서_RBAC(역할_기반_액세스_제어)를_사용해야_합니다._ac4a19c2-fa67-49b4-8ae5-0b2e78c49457/**'
+#      - 'policies/_미리_보기_프라이빗_DNS_영역을_사용하도록_Azure_Key_Vault_구성_ac673a9a-f77d-4846-b2d8-a57f8e1c01d4/**'
+#      - 'policies/_미리_보기_공용_네트워크_액세스를_사용하지_않도록_Key_Vault_구성_ac673a9a-f77d-4846-b2d8-a57f8e1c01dc/**'
+#      - 'policies/감사를_사용하도록_Synapse_작업_영역_구성_ac7891a4-ac7a-4ba0-9ae9-c923e5a225ee/**'
+#      - 'policies/BotService_리소스는_프라이빗_링크를_사용해야_함_ad5621d6-a877-4407-aa93-a950b428315e/**'
+#      - 'policies/SQL_Server는_가상_네트워크_서비스_엔드포인트를_사용해야_함_ae5d2f14-d830-42b6-9899-df6cfe9c71a3/**'
+#      - 'policies/머신에_게스트_구성_확장을_설치해야_함_ae89ebca-1c92-4898-ac2c-9f63decb045c/**'
+#      - 'policies/Azure_Event_Grid_항목에는_로컬_인증_방법이_비활성화되어_있어야_합니다._ae9fb87f-8a17-4428-94a4-8135d431055c/**'
+#      - 'policies/App_Service가_SCM_사이트_배포에_대해_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._aede300b-d67f-480a-ae26-4b3dfb1a1fdc/**'
+#      - 'policies/Azure_Spring_Cloud가_네트워크_삽입을_사용해야_함_af35e2a4-ef96-44e7-a9ae-853dd97032c4/**'
+#      - 'policies/Azure_Security_Center에서_누락된_Endpoint_Protection_모니터링_af6cd1bd-1635-48cb-bde7-5b15693900b9/**'
+#      - 'policies/_미리_보기_백업용_프라이빗_DNS_영역을_사용하도록_Recovery_Services_자격_증명_모음_구성_af783da1-4ad1-42be-800d-d19c70038820/**'
+#      - 'policies/_미리_보기_머신에는_공격_경로를_노출_시킬_수_있는_포트를_닫아야_합니다._af99038c-02fd-4a2f-ac24-386b62bf32de/**'
+#      - 'policies/활동_로그는_1년_이상_보존되어야_합니다._b02aacc0-b073-424e-8298-42b22829ee0a/**'
+#      - 'policies/App_구성_저장소에는_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._b08ab3ca-1062-4db3-8803-eec9cae605d6/**'
+#      - 'policies/Azure_HDInsight_클러스터는_가상_네트워크에_삽입해야_합니다._b0ab5b05-1c98-40f7-bb9e-dc568e41b501/**'
+#      - 'policies/배포_-_프라이빗_엔드포인트의_프라이빗_DNS_영역을_구성하여_Azure_SignalR_Service에_연결_b0e86710-7fb7-4a6c-a064-32e9b829509e/**'
+#      - 'policies/가상_머신의_관리_포트는_Just-In-Time_네트워크_액세스_제어로_보호해야_합니다._b0f33259-77d7-4c9e-aac6-3aabcfae693c/**'
+#      - 'policies/_미리_보기_Linux_Virtual_Machines는_보안_부팅을_사용해야_합니다._b1bb3592-47b8-4150-8db0-bfdcc2c8965b/**'
+#      - 'policies/SQL_Database는_GRS_백업_중복을_사용하지_않아야_함_b219b9cf-f672-4f96-9ab0-f5a3ac5e1c13/**'
+#      - 'policies/이벤트_허브_네임스페이스에서_RootManageSharedAccessKey를_제외한_모든_권한_부여_규칙을_제거해야_합니다._b278e460-7cfc-4451-8294-cccc40a940d7/**'
+#      - 'policies/구독에서_태그_상속_b27a0cbd-a167-4dfa-ae64-4337be671140/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_App_Services_구성_b318f84a-b872-429b-ac6d-a01b96814452/**'
+#      - 'policies/프라이빗_엔드포인트를_사용하여_Azure_파일_동기화_구성_b35dddd9-daf7-423b-8375-5a5b86806d5a/**'
+#      - 'policies/배포_-_Azure_Key_Vault_관리되는_HSM에서_사용할_수_있도록_Log_Analytics_작업_영역에_대한_진단_설정을_구성합니다._b3884c81-31aa-473d-a9bb-9466fe0ec2a0/**'
+#      - 'policies/App_Service를_사용하도록_Azure_Defender_구성_b40e7bcd-a1e5-47fe-b9cf-2f534d0bfb7d/**'
+#      - 'policies/Search_서비스의_리소스_로그를_사용하도록_설정해야_함_b4330a05-a843-4bc8-bf9a-cacce50c67f4/**'
+#      - 'policies/Windows_머신이_보안_옵션_-_종료_에_대한_요구_사항을_충족해야_함_b4a4d1eb-0263-441b-84cb-a44073d8372d/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_Azure_Media_Services_구성_b4a7f6c1-585e-4177-ad5b-c2c93f4bb991/**'
+#      - 'policies/Azure_Stack_Edge_디바이스는_이중_암호화를_사용해야_함_b4ac1030-89c5-4697-8e00-28b5ba6a8811/**'
+#      - 'policies/PostgreSQL_서버에_대해_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._b52376f7-9612-48a1-81cd-1ffe4b61032c/**'
+#      - 'policies/Service_Fabric_클러스터는_클라이언트_인증에_대해서만_Azure_Active_Directory를_사용해야_합니다._b54ed75b-3e1a-44ac-a333-05ba39b99ff0/**'
+#      - 'policies/스토리지_계정_암호화_범위에서_고객_관리_키를_사용하여_미사용_데이터를_암호화해야_합니다_b5ec538c-daa0-4006-8596-35468b9148e8/**'
+#      - 'policies/Cosmos_DB_계정에_대한_Advanced_Threat_Protection_배포_b5f04e03-92a3-4b09-9410-2cc5e5047656/**'
+#      - 'policies/App_Services의_진단_로그를_사용하도록_설정해야_합니다._b607c5de-e7d9-4eee-9e5c-83f1bcee4fa0/**'
+#      - 'policies/프라이빗_엔드포인트로_CosmosDB_계정_구성_b609e813-3156-4079-91fa-a8494c1471c4/**'
+#      - 'policies/프라이빗_엔드포인트를_사용하여_Azure_Cognitive_Search_서비스_구성_b698b005-b660-4837-b833-a7aaab26ddba/**'
+#      - 'policies/Network_Watcher를_사용하도록_설정해야_합니다._b6e2945c-0b7b-40f5-9233-7a5323b5cdc6/**'
+#      - 'policies/Resource_Manager를_사용_설정하도록_Azure_Defender_구성_b7021b2b-08fd-4dc0-9de7-3c6ece09faf9/**'
+#      - 'policies/배포_-_Log_Analytics_작업_영역에_대한_SQL_Database의_진단_설정_구성_b79fa14e-238a-4c2d-b376-442ce508fc84/**'
+#      - 'policies/API_앱은_HTTPS를_통해서만_액세스할_수_있어야_합니다._b7ddfbdc-1260-477d-91fd-98bd9be789a6/**'
+#      - 'policies/Event_Hub_네임스페이스는_프라이빗_링크를_사용해야_함_b8564268-eb4a-4337-89be-a19db070c59d/**'
+#      - 'policies/Logic_Apps에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_b889a06c-ec72-4b03-910a-cb169ee18721/**'
+#      - 'policies/특정_관리_작업의_활동_로그_경고가_있어야_함_b954148f-4c11-4c38-8221-be76711e194a/**'
+#      - 'policies/Azure_SQL_데이터베이스를_사용_설정하도록_Azure_Defender_구성_b99b73e7-074b-4089-9395-b7236f094491/**'
+#      - 'policies/Azure_Machine_Learning_작업_영역은_고객_관리형_키로_암호화해야_함_ba769a63-b8cc-4b2d-abf6-ac33c7204be8/**'
+#      - 'policies/배포_-_프라이빗_DNS_영역을_사용하도록_Azure_Event_Grid_토픽_구성_baf19753-7502-405f-8745-370519b20483/**'
+#      - 'policies/_미리_보기_Windows_가상_머신에_Azure_Security_에이전트를_설치해야_합니다._bb2c6c6d-14bc-4443-bef3-c6be0adc6076/**'
+#      - 'policies/네트워크_보안_그룹을_사용하여_인터넷에_연결되지_않은_가상_머신을_보호해야_합니다._bb91dfba-c30d-4263-9add-9c2384e659a6/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_디스크_액세스_리소스_구성_bc05b96c-0b36-4ca9-82f0-5c53f96ce05a/**'
+#      - 'policies/가상_머신에서_IP_전달을_사용하지_않도록_설정해야_합니다._bd352bd5-2853-4985-bf0d-73806b4a5744/**'
+#      - 'policies/컨테이너_레지스트리에_Private_Link를_지원하는_SKU가_있어야_함_bd560fc0-3c69-498a-ae9f-aa8eb7de0e13/**'
+#      - 'policies/_미리_보기_누락된_시스템_업데이트가_있는지_주기적으로_확인하도록_머신을_구성해야_합니다._bd876905-5b84-4f73-ab2d-2e7a7c4568d9/**'
+#      - 'policies/Azure_Defender_for_DNS를_사용하도록_설정해야_합니다._bdc59948-5574-49b3-bb91-76b7c986428d/**'
+#      - 'policies/지정한_기간(일)_내에_다시_시작되지_않은_Windows_머신_감사_beb6ccee-b6b8-4e91-9801-a5fa4260a104/**'
+#      - 'policies/Windows_Defender_Exploit_Guard를_머신에서_사용하도록_설정해야_함_bed48b13-6647-468e-aa2f-1af1d3f4dd40/**'
+#      - 'policies/Key_Vault에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_bef3f64c-5290-43b7-85b0-9b254eef4c47/**'
+#      - 'policies/스토리지_계정에_대해_지역_중복_스토리지를_사용하도록_설정해야_함_bf045164-79ba-4215-8f95-f8048dc1780b/**'
+#      - 'policies/암호_복잡성_설정을_사용하도록_설정하지_않는_Windows_머신_감사_bf16e0bb-31e1-4646-8202-60a235cc7e74/**'
+#      - 'policies/Azure_Web_PubSub_서비스는_공용_네트워크_액세스를_비활성화해야_합니다._bf45113f-264e-4a87-88f9-29ac8a0aca6a/**'
+#      - 'policies/배포_-_프라이빗_엔드포인트를_사용하여_Azure_IoT_Hubs_구성_bf684997-3909-404e-929c-d4a38ed23b2e/**'
+#      - 'policies/_미리_보기_Azure_Arc_지원_서버에서_누락된_시스템_업데이트에_대한_정기_검사를_구성합니다._bfea026e-043f-4ff4-9d1b-bf301ca7ff46/**'
+#      - 'policies/스토리지_계정_암호화_범위는_미사용_데이터에_이중_암호화를_사용해야_합니다._bfecdea6-31c4-4045-ad42-71b9dc87247d/**'
+#      - 'policies/SSH_비밀을_사용하여_지정된_GitOps_구성으로_Kubernetes_클러스터_구성_c050047b-b21b-4822-8a2d-c1e37c3c0c6a/**'
+#      - 'policies/Azure_Automation_계정에서_프라이빗_엔드포인트_연결_구성_c0c3130e-7dda-4187-aed0-ee4a472eaa60/**'
+#      - 'policies/승인된_VM_확장만_설치해야_합니다._c0e996f8-39cf-4af9-9f45-83fbde810432/**'
+#      - 'policies/사용자_지정_공급자의_연결_배포_c15c281f-ea5c-44cd-90b8-fc3c14d13f0c/**'
+#      - 'policies/모든_네트워크_보안_그룹에_대해_흐름_로그를_구성해야_함_c251913d-7d24-4958-af87-478ed3b9ba41/**'
+#      - 'policies/컨테이너_레지스트리용_Azure_Defender를_사용하도록_설정해야_함_c25d9a16-bc35-4e15-a7e5-9db606bf9ed4/**'
+#      - 'policies/Azure_Data_Box_작업에서_디바이스의_미사용_데이터에_대한_이중_암호화를_사용하도록_설정해야_함_c349d81b-9985-44ae-a8da-ff98d108ede8/**'
+#      - 'policies/Azure_Key_Vault_관리되는_HSM에_제거_방지를_사용하도록_설정해야_합니다._c39ba22d-4428-4149-b981-70acb31fc383/**'
+#      - 'policies/Azure_Defender_for_Resource_Manager를_사용하도록_설정해야_합니다._c3d20c29-b36d-48fe-808b-99a87530ad99/**'
+#      - 'policies/Virtual_Machine_Scale_Sets에_대한_시스템_업데이트를_설치해야_합니다._c3f317a7-a95c-4547-b7e7-11017ebdf2fe/**'
+#      - 'policies/보호_서명을_자동으로_업데이트하려면_Azure용_Microsoft_Antimalware를_구성해야_합니다._c43e4a30-77cb-48ab-a4dd-93f175c63b57/**'
+#      - 'policies/_미리_보기_Container_Registry는_가상_네트워크_서비스_엔드포인트를_사용해야_함_c4857be7-912a-4c75-87e6-e30292bcdf78/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_Cognitive_Services_계정_구성_c4bc6f10-cb41-49eb-b000-d5ab82e2a091/**'
+#      - 'policies/API_앱에서_관리_ID를_사용해야_합니다._c4d441f8-f9d9-4a9e-9cef-e82117cb3eef/**'
+#      - 'policies/API_앱에서_인증을_사용하도록_설정해야_합니다._c4ebc54a-46e1-481a-bee2-d4411e95d828/**'
+#      - 'policies/특정_정책_작업의_활동_로그_경고가_있어야_함_c5447c04-a4d7-4ba8-a263-c9ee321a6858/**'
+#      - 'policies/프라이빗_엔드포인트를_사용하여_Azure_Media_Services_구성_c5632066-946d-4766-9544-cd79bcc1286e/**'
+#      - 'policies/Azure_Defender가_SQL_관리형_인스턴스에서_사용_설정되도록_구성_c5a62eb0-c65a-4220-8a4d-f70dd4ca95dd/**'
+#      - 'policies/지정된_애플리케이션이_설치된_Windows_머신_감사_c5b85cba-6e6f-4de4-95e1-f0233cd712ac/**'
+#      - 'policies/지정한_표준_시간대로_설정되지_않은_Windows_머신_감사_c633f6a2-7f8b-4d9e-9456-02f0f04f5505/**'
+#      - 'policies/지정한_Windows_PowerShell_실행_정책이_없는_Windows_머신_감사_c648fbbb-591c-4acd-b465-ce9b176ca173/**'
+#      - 'policies/Recovery_Services_자격_증명_모음에_대한_진단_설정을_리소스_특정_범주의_Log_Analytics_작업_영역에_배포합니다._c717fb0c-d118-4c43-ab3d-ece30ac81fb3/**'
+#      - 'policies/함수_앱에서_인증을_사용하도록_설정해야_합니다._c75248c1-ea1d-4a9c-8fc9-29a6aabd5da8/**'
+#      - 'policies/배치_계정에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_c84e5349-db6d-4769-805e-e14037dab9b5/**'
+#      - 'policies/Azure_HDInsight는_프라이빗_링크를_사용해야_합니다._c8cc2f85-e019-4065-9fa3-5e6a2b2dde56/**'
+#      - 'policies/MySQL_유연한_서버에_대해_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_c9299215-ae47-4f50-9c54-8a392f68a052/**'
+#      - 'policies/Data_Lake_Analytics의_리소스_로그를_사용하도록_설정해야_함_c95c74d9-38fe-4f0d-af86-0c7d626a315c/**'
+#      - 'policies/배포_-_프라이빗_DNS_영역을_사용하도록_Azure_IoT_Hubs_구성_c99ce9c1-ced7-4c3e-aca0-10e69ce0cb02/**'
+#      - 'policies/_미리_보기_게스트_증명_확장을_자동으로_설치하도록_지원되는_Windows_가상_머신_확장_집합을_구성합니다._c9b2ae08-09e2-4f0e-bb43-b60bf0135bdf/**'
+#      - 'policies/네트워크_보안_그룹에_대한_진단_설정_배포_c9c29499-c1d1-4195-99bd-2ec9e3a9dc89/**'
+#      - 'policies/스토리지_계정은_신뢰할_수_있는_Microsoft_서비스의_액세스를_허용해야_합니다._c9d007d0-c057-4772-b18c-01e546713bcd/**'
+#      - 'policies/App_Configuration은_프라이빗_링크를_사용해야_함_ca610c1d-041c-4332-9d88-7ed3094967c7/**'
+#      - 'policies/Azure_Monitor_에이전트를_사용하여_Windows_Virtual_Machines_구성_ca817e41-e85a-4783-bc7f-dc532d36235e/**'
+#      - 'policies/관리_디스크는_플랫폼_관리형_및_고객_관리형_키를_둘_다_사용하여_이중_암호화해야_합니다._ca91455f-eace-4f96-be59-e6e2c35b4816/**'
+#      - 'policies/Windows_머신이_보안_옵션_-_Microsoft_네트워크_서버_에_대한_요구_사항을_충족해야_함_caf2d518-f029-4f6b-833b-d7081702f253/**'
+#      - 'policies/웹_애플리케이션에_대해_원격_디버깅을_해제해야_합니다._cb510bfd-1cba-4d9f-a230-cb0976f4bb71/**'
+#      - 'policies/_미리_보기_SQL_데이터베이스에서_중요한_데이터를_분류해야_합니다._cc9835f2-9f6b-4cc8-ab4a-f8ef615eb349/**'
+#      - 'policies/허용된_가상_머신_크기_SKU_cccc23c7-8427-4f53-ad12-b6a63eb452b3/**'
+#      - 'policies/레거시_v2_API에_대한_액세스를_허용하는_Azure_Media_Services_계정은_차단되어야_합니다._ccf93279-9c91-4143-a841-8d1f21505455/**'
+#      - 'policies/리소스_그룹에서_태그_상속_cd3aa116-8754-49c9-a813-ad46512ece54/**'
+#      - 'policies/Cognitive_Services에서_프라이빗_링크를_사용해야_함_cddd188c-4b82-4c48-a19d-ddf74ee66a01/**'
+#      - 'policies/Azure_Security_Center_데이터에_대해_이벤트_허브에_내보내기_배포_cdfcce10-4578-4ecd-9703-530938e4abcb/**'
+#      - 'policies/Key_Vault의_리소스_로그를_사용하도록_설정해야_함_cf820ca0-f99e-4f3e-84fb-66e913812d21/**'
+#      - 'policies/Azure_Service_Bus_네임스페이스에_로컬_인증_방법을_사용하지_않도록_설정_cfb11c26-f069-4c14-8e36-56c394dae5af/**'
+#      - 'policies/_미리_보기_Azure_Security_에이전트를_자동으로_설치하도록_지원되는_Windows_Arc_컴퓨터_구성_d01f3018-de9f-4d75-8dae-d12c1875da9f/**'
+#      - 'policies/컨테이너_레지스트리는_무제한_네트워크_액세스를_허용해서는_안_됩니다._d0793b48-0edc-4296-a390-4c75d1bdfd71/**'
+#      - 'policies/리소스_그룹에_태그_추가_또는_바꾸기_d157c373-a6c4-483d-aaad-570756956268/**'
+#      - 'policies/PostgreSQL_데이터베이스_서버에_대해_SSL_강제_연결을_사용하도록_설정해야_합니다._d158790f-bfb0-486c-8631-2dc6b4e8e6af/**'
+#      - 'policies/_미리_보기_프라이빗_엔드포인트를_이용하여_Azure_Key_Vault_관리형_HSM_구성_d1d6d8bb-cc7c-420f-8c7d-6f6f5279a844/**'
+#      - 'policies/가상_머신의_게스트_구성_확장은_시스템이_할당한_관리_ID를_사용하여_배포해야_함_d26f7642-7545-4e18-9b75-8c9bbdee3a9a/**'
+#      - 'policies/배포_-_프라이빗_DNS_영역을_사용하도록_Azure_Event_Grid_도메인_구성_d389df0a-e0d7-4607-833c-75a6fdac2c2d/**'
+#      - 'policies/Azure_SQL_Database에_대해_장기_지역_중복_백업을_사용하도록_설정해야_함_d38fc420-0735-4ef3-ac11-c806f651a570/**'
+#      - 'policies/지정된_애플리케이션이_설치되지_않은_Linux_머신_감사_d3b823c9-e0fc-4453-9fb2-8213b7338523/**'
+#      - 'policies/로그_수집_및_쿼리를_위해_공용_네트워크_액세스를_사용하지_않도록_Azure_Log_Analytics_작업_영역_구성_d3ba9c42-9dd5-441a-957c-274031c750c0/**'
+#      - 'policies/컨테이너_레지스트리를_사용_설정하도록_Azure_Defender_구성_d3d1e68e-49d4-4b56-acff-93cef644b432/**'
+#      - 'policies/가상_머신은_승인된_가상_네트워크에_연결되어야_함_d416745a-506c-48b6-8ab1-83cb814bcaa3/**'
+#      - 'policies/관리_디스크는_고객_관리형_키_암호화에_대해_디스크_암호화_집합의_특정_세트를_사용해야_합니다._d461a302-a187-421a-89ac-84acdb4edc04/**'
+#      - 'policies/Windows_머신이_보안_옵션_-_대화형_로그온_에_대한_요구_사항을_충족해야_함_d472d2c9-d6a3-4500-9f5f-b15f123005aa/**'
+#      - 'policies/Application_Insights의_Azure_Monitor_로그는_Log_Analytics_작업_영역에_연결해야_합니다._d550e854-df1a-4de9-bf44-cd894b39a95e/**'
+#      - 'policies/Data_Lake_Analytics에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_d56a5a7c-72d7-42bc-8ceb-3baf4c0eae03/**'
+#      - 'policies/머신에서_Log_Analytics_에이전트_상태_문제를_해결해야_합니다._d62cfe2b-3ab0-4d41-980d-76803b58ca65/**'
+#      - 'policies/Event_Hub는_가상_네트워크_서비스_엔드포인트를_사용해야_함_d63edb4a-c612-454d-b47d-191a724fcbf0/**'
+#      - 'policies/App_Service_Environment는_TLS_1.0_및_1.1을_사용하지_않도록_설정해야_합니다._d6545c6b-dd9d-4265-91e6-0b451e2f1c50/**'
+#      - 'policies/_미리_보기_Microsoft_Azure_Arc_머신에_Log_Analytics_확장을_설치해야_합니다._d69b1763-b96d-40b8-a2d9-ca31e9fd0d3e/**'
+#      - 'policies/Windows_머신이_보안_옵션_-_Microsoft_네트워크_클라이언트_에_대한_요구_사항을_충족해야_함_d6c69680-54f0-4349-af10-94dd05f4225e/**'
+#      - 'policies/프라이빗_엔드포인트를_사용하여_Azure_Arc_Private_Link_범위_구성_d6eeba80-df61-4de5-8772-bc1b7852ba6b/**'
+#      - 'policies/IoT_Hub_디바이스_프로비저닝_서비스_인스턴스는_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_d82101f3-f3ce-4fc5-8708-4c09f4009546/**'
+#      - 'policies/프라이빗_엔드포인트를_사용하여_컨테이너_레지스트리_구성_d85c6833-7d33-4cf5-a915-aaa2de84405f/**'
+#      - 'policies/MySQL_서버에_대해_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._d9844e8a-1437-4aeb-a32c-0c992f056095/**'
+#      - 'policies/Azure_HDInsight_클러스터는_전송_중_암호화를_사용하여_Azure_HDInsight_클러스터_노드_간_통신을_암호화해야_함_d9da03a1-f3c3-412a-9709-947156872263/**'
+#      - 'policies/해독_가능한_암호화를_사용하여_암호를_저장하지_않는_Windows_머신_감사_da0f98fe-a24b-4ad5-af69-bd0400233661/**'
+#      - 'policies/공용_네트워크_액세스를_사용하지_않도록_CosmosDB_계정_구성_da69ba51-aaf1-41e5-8651-607cd0b37088/**'
+#      - 'policies/Azure_Media_Services_콘텐츠_키_정책은_토큰_인증을_사용해야_합니다._daccf7e4-9808-470c-a848-1c5b582a1afb/**'
+#      - 'policies/Azure_Database_for_PostgreSQL_서버에서_사용하도록_Advanced_Threat_Protection_구성_db048e65-913c-49f9-bb5f-1084184671d3/**'
+#      - 'policies/배치_계정에_대한_진단_설정을_이벤트_허브에_배포_db51110f-0865-4a6e-b274-e2e07a5b2cd7/**'
+#      - 'policies/프라이빗_엔드포인트로_Cognitive_Services_계정_구성_db630ad5-52e9-4f4d-9c44-53912fe40053/**'
+#      - 'policies/로컬_인증을_사용하지_않도록_Cosmos_DB_데이터베이스_계정_구성_dc2d41d1-4ab1-4666-a3e1-3d51c43e0049/**'
+#      - 'policies/통합_서비스_환경에_Logic_Apps를_배포해야_함_dc595cb1-1cde-45f6-8faf-f88874e1c0e1/**'
+#      - 'policies/컨테이너_레지스트리에는_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._dc921057-6b28-4fbe-9b83-f7bec05db6c2/**'
+#      - 'policies/웹앱은_콘텐츠_디렉터리에_Azure_파일_공유를_사용해야_합니다._dcbc65aa-59f3-4239-8978-3bb869d82604/**'
+#      - 'policies/로그_수집_및_쿼리를_위해_공용_네트워크_액세스를_사용하지_않도록_Azure_애플리케이션_Insights_구성_요소_구성_dddfa1af-dcd6-42f4-b5b0-e1db01e0b405/**'
+#      - 'policies/공용_네트워크_액세스를_비활성화하도록_Azure_Arc_프라이빗_링크_범위를_구성합니다._de0bc8ea-76e2-4fe2-a288-a07556d0e9c4/**'
+#      - 'policies/Azure_Arc_사용_Linux_서버에서_종속성_에이전트_구성_deacecc0-9f84-44d2-bb82-46f32d766d43/**'
+#      - 'policies/_미리_보기_Azure_Recovery_Services_자격_증명_모음은_백업용_프라이빗_링크를_사용해야_합니다._deeddb44-9f94-4903-9fa0-081d524406e3/**'
+#      - 'policies/IoT_Hub_디바이스_프로비저닝_서비스_인스턴스는_프라이빗_링크를_사용해야_함_df39c015-56a4-45de-b4a3-efe77bed320d/**'
+#      - 'policies/API_Management_서비스는_공용_네트워크_액세스를_비활성화해야_합니다._df73bd95-24da-4a4f-96b9-4e8b94b402bd/**'
+#      - 'policies/MariaDB_서버는_가상_네트워크_서비스_엔드포인트를_사용해야_함_dfbd9a64-6114-48de-a47d-90574dc2e489/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_Azure_Cache_for_Redis_구성_e016b22b-e0eb-436d-8fd7-160c4eaed6e2/**'
+#      - 'policies/Synapse_작업_영역에서_감사를_사용하도록_설정해야_함_e04e5000-cd89-451d-bb21-a14d24ff9c73/**'
+#      - 'policies/Windows_머신이_사용자_권한_할당_에_대한_요구_사항을_충족해야_함_e068b215-0026-4354-b347-8fb2766f73a2/**'
+#      - 'policies/Cosmos_DB는_가상_네트워크_서비스_엔드포인트를_사용해야_함_e0a2b1a3-f7f9-4569-807f-2a9edebdf4d9/**'
+#      - 'policies/Windows_머신이_관리_템플릿_-_MSS(레거시)_에_대한_요구_사항을_충족해야_함_e0a7e899-2ce2-4253-8a13-d808fdeb75af/**'
+#      - 'policies/Log_Analytics_작업_영역은_Azure_Active_Directory_기반이_아닌_수집을_차단해야_합니다._e15effd4-2278-4c65-a0da-4d6f6d1890e2/**'
+#      - 'policies/_미리_보기_Windows_가상_머신_확장_집합에_Azure_Security_에이전트를_설치해야_합니다._e16f967a-aa57-4f5e-89cd-8d1434d0a29a/**'
+#      - 'policies/머신에서_보안_구성의_취약성을_수정해야_합니다._e1e5fd5d-3e4c-4ce1-8661-7d1873ae6b15/**'
+#      - 'policies/함수_앱을_실행하는_데_사용되는_경우_HTTP_버전_이_최신_상태인지_확인하세요._e2c1c086-2d84-4019-bff3-c44ccd95113c/**'
+#      - 'policies/Virtual_Machine_Scale_Sets의_Dependency_Agent_배포_감사_-_VM_이미지(OS)가_나열_취소됨_e2dd799a-a932-4e9d-ac17-d473bc3c6c10/**'
+#      - 'policies/Azure_VPN_Gateway에서는_기본_SKU를_사용할_수_없습니다._e345b6c3-24bd-4c93-9bbb-7e5e49a17b78/**'
+#      - 'policies/구독에서_읽기_권한이_있는_계정에_MFA를_사용하도록_설정해야_합니다._e3576e28-8b17-4677-84c3-db2990658d64/**'
+#      - 'policies/_미리_보기_자동으로_vTPM을_사용하도록_지원되는_가상_머신_구성_e494853f-93c3-4e44-9210-d12f61a64b34/**'
+#      - 'policies/허용_되는_위치_e56962a6-4747-49cd-b67b-bf8b01975c4c/**'
+#      - 'policies/passwd_파일_권한이_0644로_설정되지_않은_Linux_머신_감사_e6955644-301c-44b5-a4c4-528577de6861/**'
+#      - 'policies/지정된_서비스가_설치되어_실행_중_이지_않은_Windows_머신_감사_e6ebf138-3d71-4935-a13b-9c7fdddd94df/**'
+#      - 'policies/서브넷을_네트워크_보안_그룹과_연결해야_합니다._e71308d3-144b-4262-b144-efdc3cc90517/**'
+#      - 'policies/리소스_그룹이_허용된_위치_e765b5de-1225-4ba3-bd56-1ac6695af988/**'
+#      - 'policies/MySQL_데이터베이스_서버에_대해_SSL_강제_연결을_사용하도록_설정해야_합니다._e802a67a-daf5-4436-9ea6-f6d821dd0c5d/**'
+#      - 'policies/프라이빗_엔드포인트를_사용하여_Azure_Monitor_Private_Link_범위_구성_e8185402-357b-4768-8058-f620bc0ae6b5/**'
+#      - 'policies/_미리_보기_Linux_가상_머신에_Azure_Security_에이전트를_설치해야_합니다._e8794316-d918-4565-b57d-6b38a06381a0/**'
+#      - 'policies/컨테이너_보안_구성의_취약성을_수정해야_합니다._e8cbc669-f12d-49eb-93e7-9273119e9933/**'
+#      - 'policies/Data_Lake_Storage_Gen1에_대한_진단_설정을_이벤트_허브에_배포_e8d096bc-85de-4c5f-8cfb-857bd1b9d62d/**'
+#      - 'policies/컨테이너_레지스트리는_프라이빗_링크를_사용해야_함_e8eef0a8-67cf-4eb4-9386-14b0e78733d4/**'
+#      - 'policies/트래픽_분석을_사용하도록_네트워크_보안_그룹_구성_e920df7f-9a64-4066-9b58-52684c02a091/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_컨테이너_레지스트리_구성_e9585a95-5b8c-4d03-b193-dc7eb5ac4c32/**'
+#      - 'policies/_미리_보기_Azure_Recovery_Services_자격_증명_모음에서_프라이빗_엔드포인트_구성_e95a8a5c-0987-421f-84ab-df4d88ebf7d1/**'
+#      - 'policies/Machine_Learning_컴퓨팅에는_로컬_인증_방법이_비활성화되어야_합니다._e96a9a5f-07ca-471b-9bc5-6a0f33cbd68f/**'
+#      - 'policies/HTTPS_입력이_있는_Azure_Media_Services_작업은_입력_URI를_허용된_URI_패턴으로_제한해야_합니다._e9914afe-31cd-4b8a-92fa-c887f847d477/**'
+#      - 'policies/API_앱에_대해_원격_디버깅을_해제해야_합니다._e9c8d085-d9cc-4b17-9cdc-059f1f01f19e/**'
+#      - 'policies/Azure_Monitor_로그_클러스터는_인프라_암호화를_사용하도록_설정하고_만들어야_합니다(이중_암호화)._ea0dfaed-95fb-448c-934e-d6e713ce393d/**'
+#      - 'policies/없는_경우_리소스_그룹에서_태그_상속_ea3f2387-9b95-492a-a190-fcdc54f7b070/**'
+#      - 'policies/Key_Vault는_가상_네트워크_서비스_엔드포인트를_사용해야_함_ea4d6841-2173-4317-9747-ff522a45120f/**'
+#      - 'policies/암호가_없는_계정에서_원격_연결을_허용하는_Linux_머신_감사_ea53dbee-c6c9-4f0e-9f9e-de0039b78023/**'
+#      - 'policies/Windows_Virtual_Machines를_데이터_수집_규칙에_연결하도록_연결_구성_eab1f514-22e3-42e3-9a1f-e1dc9199355c/**'
+#      - 'policies/함수_앱은_클라이언트_인증서(들어오는_클라이언트_인증서)_가_사용하도록_설정되어_있어야_함_eaebaea7-8013-4ceb-9d14-7eb32271373c/**'
+#      - 'policies/App_Service_Environment는_최신_버전으로_프로비전해야_합니다._eb4d34ab-0929-491c-bbf3-61e13da19f9a/**'
+#      - 'policies/PostgreSQL_데이터베이스_서버에_대해_로그_검사점을_사용하도록_설정해야_합니다._eb6f77b9-bd53-4e35-a23d-7f65d5f0e43d/**'
+#      - 'policies/PostgreSQL_데이터베이스_서버에_대해_로그_연결을_사용하도록_설정해야_합니다._eb6f77b9-bd53-4e35-a23d-7f65d5f0e442/**'
+#      - 'policies/PostgreSQL_데이터베이스_서버에_대한_연결_끊김을_기록해야_합니다._eb6f77b9-bd53-4e35-a23d-7f65d5f0e446/**'
+#      - 'policies/PostgreSQL_데이터베이스_서버에_대해_로그_기간을_사용하도록_설정해야_합니다._eb6f77b9-bd53-4e35-a23d-7f65d5f0e8f3/**'
+#      - 'policies/Service_Bus_네임스페이스는_이중_암호화를_사용하도록_설정해야_합니다._ebaf4f25-a4e8-415f-86a8-42d9155bef0b/**'
+#      - 'policies/소유자_권한이_있는_사용되지_않는_계정은_구독에서_제거해야_합니다._ebb62a0c-3560-49e1-89ed-27e074e9f8ad/**'
+#      - 'policies/지정된_애플리케이션이_설치되지_않은_Windows_머신_감사_ebb67efd-3c46-49b0-adfe-5599eb944998/**'
+#      - 'policies/Azure_Data_Explorer에서_이중_암호화를_사용하도록_설정해야_함_ec068d99-e9c7-401f-8cef-5bdde4e6ccf1/**'
+#      - 'policies/App_Service_슬롯이_FTP_배포에_대해_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._ec71c0bc-6a45-4b1f-9587-80dc83e6898c/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_Event_Hub_네임스페이스_구성_ed66d4f5-8220-45dc-ab4a-20d1749c74e6/**'
+#      - 'policies/Key_Vault의_진단_설정을_이벤트_허브에_배포_ed7c8c13-51e7-49d1-8a43-8490431a0da2/**'
+#      - 'policies/Stream_Analytics에_대한_진단_설정을_이벤트_허브에_배포_edf3780c-3d70-40fe-b17e-ab72013dafca/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_Azure_Machine_Learning_작업_영역_구성_ee40564d-486e-4f68-a5ca-7a621edae0fb/**'
+#      - 'policies/Azure_Cognitive_Search_서비스는_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._ee980b6d-0eca-4501-8d54-f6290fd512c3/**'
+#      - 'policies/Windows_머신이_보안_옵션_-_계정_에_대한_요구_사항을_충족해야_함_ee984370-154a-4ee8-9726-19d900e56fc0/**'
+#      - 'policies/SQL_Server에서_취약성_평가를_사용하도록_설정해야_합니다._ef2a8f2a-b3d9-49cd-a8a8-9a3aaaf647d9/**'
+#      - 'policies/프라이빗_엔드포인트를_Azure_SignalR_Service로_구성_ef45854f-b33f-49a3-8041-9057e915d88f/**'
+#      - 'policies/API_Management_서비스에서_가상_네트워크를_사용해야_합니다._ef619a2c-cc4d-4d03-b2ba-8c94a834d85b/**'
+#      - 'policies/이벤트_허브에_대한_진단_설정을_이벤트_허브에_배포_ef7b61ef-b8e4-4c91-8e78-6946c6b0023f/**'
+#      - 'policies/Azure_Arc_사용_서버는_Azure_Arc_프라이빗_링크_범위로_구성해야_합니다._efa3f296-ff2b-4f38-bc0d-5ef12c965b68/**'
+#      - 'policies/Virtual_Machine_Scale_Sets에_Log_Analytics_확장을_설치해야_함_efbde977-ba53-4479-b8e9-10b957924fbf/**'
+#      - 'policies/웹앱에서_최신_TLS_버전을_사용해야_합니다._f0e6e85b-9b9f-4a4b-b67b-f730d42f1b0b/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_Service_Bus_네임스페이스_구성_f0fcf93c-c063-4071-9668-c47474bd3564/**'
+#      - 'policies/Azure_Security_Center_경고에_대한_워크플로_자동화_배포_f1525828-9a90-4fcf-be48-268cdd02361e/**'
+#      - 'policies/가상_네트워크는_지정된_가상_네트워크_게이트웨이를_사용해야_함_f1776c76-f58c-4245-a8d0-2b207198dc8b/**'
+#      - 'policies/Windows_머신이_보안_설정_-_계정_정책_에_대한_요구_사항을_충족해야_함_f2143251-70de-4e81-87a8-36cee5a2f29d/**'
+#      - 'policies/디스크_액세스_리소스는_프라이빗_링크를_사용해야_함_f39f5f49-4abf-44de-8c70-0756997bfb51/**'
+#      - 'policies/가상_시스템을_지정된_작업_영역에_연결해야_합니다._f47b5582-33ec-4c5c-87c0-b010a6b2e917/**'
+#      - 'policies/이벤트_허브_인스턴스에_대한_권한_부여_규칙을_정의해야_합니다._f4826e5f-6a27-407c-ae3e-9582eb39891d/**'
+#      - 'policies/FTP_배포에_대한_로컬_인증을_사용하지_않도록_App_Service_슬롯을_구성합니다._f493116f-3b7f-4ab3-bf80-0c2af35e46c2/**'
+#      - 'policies/Azure_Data_Explorer에서_디스크_암호화를_사용하도록_설정해야_함_f4b53539-8df9-40e4-86c6-6b607703bd4e/**'
+#      - 'policies/감사를_사용하도록_SQL_server_구성_f4c68484-132f-41f9-9b6d-3e4b1cb55036/**'
+#      - 'policies/_미리_보기_Virtual_Machines_게스트_증명_상태가_정상이어야_합니다._f6358610-e532-4236-b178-4c65865eb262/**'
+#      - 'policies/_미리_보기_지원되는_Windows_가상_머신_확장_집합에_게스트_증명_확장을_설치해야_합니다._f655e522-adff-494d-95c2-52d4f6d56a42/**'
+#      - 'policies/인터넷_연결_가상_머신은_네트워크_보안_그룹과_함께_보호되어야_합니다._f6de0be7-9a8a-4b8a-b349-43cf02d22f7c/**'
+#      - 'policies/암호_없는_계정이_있는_Linux_머신_감사_f6ec09a3-78bf-4f8f-99dc-6c77182d0f99/**'
+#      - 'policies/Azure_SignalR_Service에서_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._f70eecba-335d-4bbc-81d5-5b17b03d498f/**'
+#      - 'policies/Windows_머신이_보안_옵션_-_복구_콘솔_에_대한_요구_사항을_충족해야_함_f71be03e-e25b-4d0f-b8bc-9b3e309b66c0/**'
+#      - 'policies/_미리_보기_Azure_Data_Factory_연결된_서비스에서_시스템이_할당한_관리_ID_인증(지원되는_경우)을_사용해야_함_f78ccdb4-7bf4-4106-8647-270491d2978a/**'
+#      - 'policies/Windows_컴퓨터에는_허용된_로컬_계정만_있어야_합니다._f79fef0d-0050-4c18-a303-5babb9c14ac7/**'
+#      - 'policies/Azure_Synapse_작업_영역은_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_f7d52b2d-e161-4dfa-a82b-55e564167385/**'
+#      - 'policies/소유자_권한이_있는_외부_계정을_구독에서_제거해야_합니다._f8456c1c-aa66-4dfb-861a-25d127b775c9/**'
+#      - 'policies/Service_Bus의_리소스_로그를_사용하도록_설정해야_함_f8d36e2f-389b-4ee4-898d-21aeb69a0f45/**'
+#      - 'policies/Azure_Event_Grid_도메인은_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._f8f774be-6aee-492a-9e29-486ef81f3a68/**'
+#      - 'policies/Azure_Stream_Analytics의_리소스_로그를_사용하도록_설정해야_함_f9be5368-9bf5-4b84-9e0a-7850da98bb46/**'
+#      - 'policies/함수_앱에서_최신_TLS_버전을_사용해야_합니다._f9d614c5-c173-4d56-95a7-b4437057d193/**'
+#      - 'policies/로그_암호화를_위해_Azure_Monitor의_저장된_쿼리를_고객_스토리지_계정에_저장해야_합니다._fa298e57-9444-42ba-bf04-86e8470e32c7/**'
+#      - 'policies/App_Service_Environment에서_내부_암호화를_사용하도록_설정해야_합니다._fb74e86f-d351-4b8d-b034-93da7391c01f/**'
+#      - 'policies/Kubernetes_서비스를_취약하지_않은_Kubernetes_버전으로_업그레이드해야_합니다._fb893a29-21bb-418c-a157-e99480ec364c/**'
+#      - 'policies/활동_로그가_있는_컨테이너를_포함하는_스토리지_계정은_BYOK로_암호화해야_합니다._fbb99e8e-e444-4da0-9ff1-75c92f5a85b2/**'
+#      - 'policies/프라이빗_DNS_영역을_사용하도록_Azure_Cognitive_Search_서비스_구성_fbc14a67-53e4-4932-abcc-2049c6706009/**'
+#      - 'policies/가상_머신_및_가상_머신_확장_집합에서는_호스트에서_암호화를_사용하도록_설정해야_합니다._fc4d8e41-e223-45ea-9bf5-eada37891d87/**'
+#      - 'policies/_미리_보기_모든_인터넷_트래픽은_배포된_Azure_Firewall을_통해_라우팅되어야_합니다._fc5e4038-4584-4632-8c85-c0448d374b2c/**'
+#      - 'policies/_미리_보기_Linux_머신이_Azure_컴퓨팅_보안_기준에_대한_요구_사항을_충족해야_함_fc9b3da7-8347-4380-8e70-0a0361d8dedd/**'
+#      - 'policies/SQL_Server_확장이_설치되도록_SQL_Server를_실행하는_Arc_지원_컴퓨터를_구성합니다._fd2d1a6e-6d95-4df2-ad00-504bf0273406/**'
+#      - 'policies/MariaDB_서버에_대해_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._fdccbe47-f3e3-4213-ad5d-ea459b2fa077/**'
+#      - 'policies/CORS에서_모든_도메인이_FHIR_서비스에_액세스하도록_허용하지_않아야_함_fe1c9040-c46a-4e81-9aea-c7850fbb3aa6/**'
+#      - 'policies/Cognitive_Services_계정은_관리_ID를_사용해야_합니다._fe3fd216-4f83-4fc1-8984-2bbec80a3418/**'
+#      - 'policies/SQL_데이터베이스는_발견한_취약성을_해결해야_합니다._feedbf84-6b99-488c-acc2-71c829aa5ffc/**'
+#      - 'policies/Azure_Security_Center_데이터에_대해_Log_Analytics_작업_영역에_내보내기_배포_ffb6f416-7bd2-4488-8828-56585fef2be9/**'
+#      - 'policies/Bot_Service는_로컬_인증_방법을_비활성화해야_합니다._ffea632e-4e3a-4424-bf78-10e179bb2e1a/**'
+#      - 'policies/Kubernetes_클러스터_Pod_hostPath_볼륨은_허용된_호스트_경로만_사용해야_합니다._098fc59e-46c7-4d99-9b16-64990e543d75/**'
+#      - 'policies/_미리_보기_인증서에_지정된_최대_유효_기간이_있어야_함_0a075868-4c26-42ef-914c-5bc007359560/**'
+#      - 'policies/인증서는_허용된_키_유형을_사용해야_함_1151cede-290b-4ba0-8b38-0ad145ac888f/**'
+#      - 'policies/인증서에_지정된_수명_작업_트리거가_있어야_함_12ef42cb-9903-4e39-9c26-422d29570417/**'
+#      - 'policies/Kubernetes_클러스터는_취약한_이미지_배포를_차단해야_합니다._13cd7ae3-5bc0-4ac4-a62d-4f7c120b9759/**'
+#      - 'policies/Key_Vault_키에_만료_날짜가_있어야_함_152b15f7-8e1f-4c1f-ab71-8c010ba5dbc0/**'
+#      - 'policies/Kubernetes_클러스터_Pod는_허용된_볼륨_유형만_사용해야_함_16697877-1118-4fb1-9b65-9898ec2509ec/**'
+#      - 'policies/Kubernetes_클러스터는_HTTPS를_통해서만_액세스할_수_있어야_합니다._1a5b4dca-0b6f-4cf5-907c-56316bc1bf3d/**'
+#      - 'policies/Kubernetes_클러스터는_컨테이너_권한_상승을_허용해서는_안_됨_1c6e92c9-99f0-4e55-9cf2-0c234dc48f99/**'
+#      - 'policies/_미리_보기_지정된_Azure_Machine_Learning_컴퓨팅에_대한_전체_로그에_사용할_로그_필터_식_및_데이터_저장소_구성_1d413020-63de-11ea-bc55-0242ac130003/**'
+#      - 'policies/Kubernetes_클러스터는_ClusterRole/system_aggregate-to-edit의_엔드포인트_편집_권한을_허용하지_않아야_합니다._1ddac26b-ed48-4c30-8cc5-3a68c79b8001/**'
+#      - 'policies/서비스가_Kubernetes_클러스터의_허용된_포트에서만_수신_대기하도록_확인_233a2a17-77ca-4fb1-9b6b-69223d272a44/**'
+#      - 'policies/비밀에_지정된_최대_유효_기간이_있어야_함_342e8053-e12e-4c44-be01-c3c2f318400f/**'
+#      - 'policies/_미리_보기_지정된_Azure_Machine_Learning_컴퓨팅에_대해_작업이_실행되기_전에_호출되는_승인_엔드포인트_구성_3948394e-63de-11ea-bc55-0242ac130003/**'
+#      - 'policies/Kubernetes_클러스터에서_내부_부하_분산_장치_적용_3fc4dc25-5baf-40d8-9b05-7fe74c1bc64e/**'
+#      - 'policies/Kubernetes_클러스터는_자동_탑재_API_자격_증명을_사용하지_않도록_설정해야_합니다._423dd1ba-798e-40e4-9c4d-b6902674b423/**'
+#      - 'policies/컨테이너가_Kubernetes_클러스터의_허용된_포트에서만_수신_대기하도록_확인_440b515e-a580-421e-abeb-b159a61ddcbc/**'
+#      - 'policies/Kubernetes_클러스터에서_Pod에_레이블_적용_46592696-4c7b-4bf3-9e45-6c2763bdc0a6/**'
+#      - 'policies/Kubernetes_클러스터_컨테이너는_호스트_프로세스_ID_또는_호스트_IPC_네임스페이스를_공유해서는_안_됨_47a1ee2f-2a2a-4576-bf2a-e0e36709c2b8/**'
+#      - 'policies/키에_지정된_최대_유효_기간이_있어야_함_49a22571-d204-4c91-a7b6-09b1a586fbc9/**'
+#      - 'policies/Kubernetes_클러스터_컨테이너는_허용된_AppArmor_프로필만_사용해야_합니다._511f5417-5d12-434d-ab2e-816901e72a5e/**'
+#      - 'policies/_미리_보기_지정된_Azure_Machine_Learning_컴퓨팅에_대해_허용된_모듈_작성자_구성_53c70b02-63dd-11ea-bc55-0242ac130003/**'
+#      - 'policies/Kubernetes_클러스터_컨테이너는_금지된_sysctl_인터페이스를_사용해서는_안_됩니다._56d0a13f-712f-466b-8416-56fb354fb823/**'
+#      - 'policies/_미리_보기_지정된_Azure_Machine_Learning_컴퓨팅에_대해_허용된_레지스트리_구성_5853517a-63de-11ea-bc55-0242ac130003/**'
+#      - 'policies/키는_HSM(하드웨어_보안_모듈)으로_지원되어야_함_587c79fe-dd04-4a5e-9d0b-f89598c7261b/**'
+#      - 'policies/키는_만료_전_지정된_기간(일)보다_많은_일_수가_남아_있어야_함_5ff38825-c5d8-47c5-b70e-069a21955146/**'
+#      - 'policies/_미리_보기_지정된_Azure_Machine_Learning_컴퓨팅의_학습_코드에_대한_코드_서명_구성_6a6f7384-63de-11ea-bc55-0242ac130003/**'
+#      - 'policies/비밀에_콘텐츠_형식이_설정되어_있어야_함_75262d3e-ba4a-4f43-85f8-9f72c090e5e3/**'
+#      - 'policies/키는_지정한_암호화_유형_RSA_또는_EC여야_함_75c4f823-d65c-4f29-a733-01d0077fdbcb/**'
+#      - 'policies/_미리_보기_지정된_Azure_Machine_Learning_컴퓨팅에_대해_허용된_Python_패키지_구성_77eeea86-7e81-4a7d-9067-de844d096752/**'
+#      - 'policies/RSA_암호화를_사용하는_키에는_지정된_최소_키_크기가_있어야_함_82067dbb-e53b-4e06-b631-546d197452d9/**'
+#      - 'policies/Kubernetes_클러스터_Pod는_승인된_호스트_네트워크와_포트_범위만_사용해야_함_82985f06-dc18-4a48-bc1c-b9f4f0098cfe/**'
+#      - 'policies/인증서는_지정된_통합_인증_기관에서_발급해야_함_8e826246-c976-48f6-b03e-619bb92b3d82/**'
+#      - 'policies/Kubernetes_클러스터에서_권한_있는_컨테이너를_허용하지_않음_95edb821-ddaf-4404-9732-666045e056b4/**'
+#      - 'policies/Kubernetes_클러스터_컨테이너는_허용된_seccomp_프로필만_사용해야_합니다._975ce327-682c-4f2e-aa46-b9598289b86c/**'
+#      - 'policies/Key_Vault_비밀에는_만료_날짜가_있어야_함_98728c90-32c7-4049-8429-847dc0f4fe37/**'
+#      - 'policies/Kubernetes_클러스터는_기본_네임스페이스를_사용하지_않아야_합니다._9f061a12-e40d-4183-a00e-171812443373/**'
+#      - 'policies/인증서는_지정된_비통합_인증_기관에서_발급해야_함_a22f4a40-01d3-4c7d-8071-da157eeff341/**'
+#      - 'policies/Kubernetes_클러스터는_특정_보안_기능을_사용하지_않아야_합니다._a27c700f-8a22-44ec-961c-41625264370b/**'
+#      - 'policies/비밀은_만료_전_지정된_기간(일)보다_많은_일_수가_남아_있어야_함_b0eb591a-5e70-4534-a8bf-04b9c489584a/**'
+#      - 'policies/타원_곡선_암호화를_사용하는_인증서에는_허용되는_곡선_이름이_있어야_함_bd78111f-4953-4367-9fd5-7e08808b54bf/**'
+#      - 'policies/Kubernetes_클러스터_컨테이너는_허용된_기능만_사용해야_합니다._c26596ff-4d70-4e6a-9a30-c2506bd2f80c/**'
+#      - 'policies/키는_지정된_기간(일)보다_오랫동안_활성화_상태가_아니어야_함_c26e4b24-cf98-4c67-b48b-5a25c4c69eb9/**'
+#      - 'policies/RSA_암호화를_사용하는_인증서에는_지정된_최소_키_크기가_있어야_함_cee51871-e572-4576-855c-047c820360f0/**'
+#      - 'policies/Kubernetes_클러스터는_CAP_SYS_ADMIN_보안_기능을_부여하지_않아야_합니다._d2e7ea85-6b44-4317-a0be-1b951587f626/**'
+#      - 'policies/Kubernetes_클러스터_서비스는_허용된_외부_IP만_사용해야_함_d46c275d-1680-448d-b2ec-e495a3b6cc89/**'
+#      - 'policies/Kubernetes_클러스터_컨테이너는_읽기_전용_루트_파일_시스템에서_실행되어야_함_df49d893-a74c-421d-bc95-c663042e5b80/**'
+#      - 'policies/Kubernetes_클러스터_Pod_및_컨테이너는_허용된_SELinux_옵션만_사용해야_함_e1e6c427-07d9-46ab-9689-bfa85431e636/**'
+#      - 'policies/컨테이너_CPU_및_메모리_리소스_제한이_Kubernetes_클러스터에_지정된_제한을_초과하지_않는지_확인_e345eecc-fa47-480f-9e88-67dcc122b164/**'
+#      - 'policies/비밀은_지정된_기간(일)보다_오랫동안_활성화_상태가_아니어야_함_e8d99835-8a06-45ae-a8e0-87a91941ccfe/**'
+#      - 'policies/Kubernetes_클러스터_Pod_및_컨테이너는_승인된_사용자_및_그룹_ID로만_실행해야_합니다._f06ddb64-5fa3-4b77-b166-acb36f7f6042/**'
+#      - 'policies/Kubernetes_클러스터_Pod_FlexVolume_볼륨은_허용되는_드라이버만_사용해야_합니다._f4a8fce0-2dd5-4c21-9a36-8f0ec809d663/**'
+#      - 'policies/인증서가_지정된_기간(일)_내에_만료되지_않아야_함_f772fb64-8e40-40ad-87bc-7706e1949427/**'
+#      - 'policies/Kubernetes_클러스터_컨테이너는_허용된_ProcMountType만_사용해야_합니다._f85eb0dd-92ee-40e9-8a76-db25a507d6d3/**'
+#      - 'policies/Kubernetes_클러스터에서_허용되는_컨테이너_이미지만_확인_febd0533-8e55-448f-b837-bd0e06f16469/**'
+#      - 'policies/타원_곡선_암호화를_사용하는_키에는_지정된_곡선_이름이_있어야_함_ff25f3c8-b739-4538-9d07-3d6d25cfb255/**'
+#      - 'initiatives/Azure_Cosmos_DB_처리량_정책을_사용하도록_설정_cb5e1e90-7c33-491c-a15b-24885c915752/**'
+#      - 'initiatives/Virtual_Machine_Scale_Sets에_Azure_Monitor_사용_75714362-cae7-409e-9b99-a8e5075b7fad/**'
+#      - 'initiatives/Azure_Defender가_SQL_Servers_및_SQL_Managed_Instances에서_사용_설정되도록_구성_9cb3cc7a-b39b-4b82-bc89-e5a5d9ff7b97/**'
+#      - 'initiatives/VM에_대해_Azure_Monitor_사용_55f3eceb-5573-4f18-9695-226972c6d74a/**'
+#      - 'initiatives/_미리_보기_가상_머신에_Azure_Monitor_및_Azure_Security_에이전트를_자동으로_설치하도록_머신_구성_a15f3269-2e10-458c-87a4-d5989e678a73/**'
+#      - 'initiatives/_미리_보기_Windows_컴퓨터는_Azure_컴퓨팅_보안_기준의_요구_사항을_충족해야_합니다._be7a78aa-3e10-4153-a5fd-8c6506dbc821/**'
+#      - 'initiatives/필수_구성_요소를_배포하여_가상_머신에서_게스트_구성_정책을_사용하도록_설정_12794019-7a00-42cf-95c2-882eed337cc8/**'
+#      - 'initiatives/안전하지_않은_암호_보안_설정이_있는_머신_감사_095e4ed9-c835-4ab6-9439-b5644362a06c/**'
+#      - 'initiatives/Linux_기반_워크로드에_대한_Kubernetes_클러스터_Pod_보안_기준_표준_a8640138-9b0a-4a28-b8cb-1666c838647d/**'
+#      - 'initiatives/Linux_기반_워크로드에_대한_Kubernetes_클러스터_Pod_보안_제한_표준_42b8ef37-b724-4e24-bbc8-7a7708edfe00/**'
+#      - 'initiatives/Linux_Virtual_Machines에_Azure_Monitor_에이전트를_구성하고_데이터_수집_규칙에_연결_118f04da-0375-44d1-84e3-0fd9e1849403/**'
+#      - 'initiatives/Windows_Virtual_Machines에_Azure_Monitor_에이전트를_구성하고_데이터_수집_규칙에_연결_9575b8b7-78ab-4281-b53b-d3c1ace2260b/**'
+#      - 'initiatives/_미리_보기_가상_머신에서_SQL_에이전트용_Azure_Defender_구성_39a366e6-fdde-4f41-bbf8-3757f46d1611/**'
+#      - 'initiatives/_미리_보기_신뢰할_수_있는_시작_지원_VM에서_게스트_증명을_사용하도록_필수_구성_요소_구성_281d9e47-d14d-4f05-b8eb-18f2c4a034ff/**'
+#      - 'initiatives/CIS_Microsoft_Azure_Foundations_Benchmark_v1.1.0_1a5bb27d-173f-493e-9568-eb56638dde4d/**'
+#      - 'initiatives/FedRAMP_Moderate_e95f5a9f-57ad-4d03-bb0b-b1d16db93693/**'
+#      - 'initiatives/CIS_Microsoft_Azure_Foundations_Benchmark_v1.3.0_612b5213-9160-4969-8578-1518bd2a000c/**'
+#      - 'initiatives/_미리_보기_CMMC_수준_3_b5629c75-5c77-4422-87b9-2509e680f8de/**'
+#      - 'initiatives/FedRAMP_High_d5264498-16f4-418a-b659-fa7ef418175f/**'
+#      - 'initiatives/Azure_Security_Benchmark_1f3afdf9-d0c9-4c3d-847f-89da613e70a8/**'
+#      - 'initiatives/캐나다_연방_PBMM_4c4a5f27-de81-430b-b4e5-9cbd50595a87/**'
+#      - 'initiatives/ISO_27001_2013_89c6cddc-1c73-4ac1-b19c-54d1a15a42f2/**'
+#      - 'initiatives/PCI_v3.2.1_2018_496eeda9-8f2f-4d5e-8dfd-204f0a92ed41/**'
+#      - 'initiatives/NIST_SP_800-53_Rev._4_cf25b9c1-bd23-4eb6-bd2c-f4f3ac644a5f/**'
+#      - 'initiatives/IRS1075_2016년_9월_105e0327-6175-4eb2-9af4-1fba43bdb39d/**'
+#      - 'initiatives/_미리_보기_NIST_SP_800-171_R2_03055927-78bd-4236-86c0-f36125a10dc9/**'
+#      - 'initiatives/뉴질랜드_ISM_제한됨_d1a462af-7e6d-4901-98ac-61570b4ed22a/**'
+#      - 'initiatives/_미리_보기_MPAA(Motion_Picture_Association_of_America)_92646f03-e39d-47a9-9e24-58d60ef49af8/**'
+#      - 'initiatives/HITRUST/HIPAA_a169a624-5599-4385-a696-c8d643089fab/**'
+#      - 'initiatives/_미리_보기_오스트레일리아_정부_ISM_보호_27272c0b-c225-4cc3-b8b0-f2534b093077/**'
+#      - 'initiatives/_미리_보기_SWIFT_CSP-CSCF_v2020_3e0c67fc-8c7c-406c-89bd-6b6bdc986a22/**'
+#      - 'initiatives/UK_OFFICIAL_및_UK_NHS_3937f550-eedd-4639-9c5e-294358be442e/**'
+#      - 'initiatives/모든_네트워크_보안_그룹에_대해_흐름_로그를_구성하고_사용하도록_설정해야_함_62329546-775b-4a3d-a4cb-eb4bb990d2c0/**'
+#      - 'initiatives/오픈_소스_관계형_데이터베이스에서_고급_위협_보호를_사용하도록_구성합니다._e77fc0b3-f7e9-4c58-bc13-cb753ed8e46e/**'
+#      - 'initiatives/_미리_보기_NIST_SP_800-53_Rev._5_179d1daa-458f-4e47-8086-2a68d0d6c38f/**'
+#      - .github/workflows/manage-azure-policy-fd729d48.yml
+jobs:
+  apply-azure-policy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS_fd729d48}}
+        allow-no-subscriptions: true
+    - name: Create or Update Azure Policies
+      uses: azure/manage-azure-policy@v0
+      with:
+        paths: |
+          policies/재해_복구가_구성되어_있지_않은_가상_머신_감사_0015ea4d-51ff-4ce3-8d8c-f3f8f0179a56/**
+          policies/Synapse_작업_영역에서_취약성_평가를_사용하도록_설정해야_함_0049a6b3-a662-4f3e-8635-39cf44ace45a/**
+          policies/Azure_Data_Factory의_SQL_Server_Integration_Services_통합_런타임을_가상_네트워크에_조인해야_함_0088bc63-6dee-4a9c-9d29-91cfdc848952/**
+          policies/배치_계정에서_프라이빗_엔드포인트_연결을_사용하도록_설정해야_합니다._009a0c92-f5b4-4776-9b66-4ed2b4775563/**
+          policies/Virtual_Machines에_대해_Azure_Backup을_사용하도록_설정해야_합니다._013e242c-8828-4970-87b3-ab247555486d/**
+          policies/_미리_보기_Windows_Arc_컴퓨터에_Azure_Security_에이전트를_설치해야_합니다._0367cfc4-90b3-46ba-a8a6-ddd5d3514878/**
+          policies/Cognitive_Services_계정은_네트워크_액세스를_제한해야_합니다._037eea7a-bd0a-46c5-9a66-03aea78705d3/**
+          policies/Azure_Kubernetes_Service_프라이빗_클러스터를_사용하도록_설정해야_함_040732e8-d947-40b8-95d6-854c95024bf8/**
+          policies/지정된_애플리케이션이_설치된_Linux_머신_감사_0447bc18-e2f7-4c0d-aa20-bff034275be1/**
+          policies/스토리지_계정_키는_만료되지_않아야_합니다._044985bb-afe1-42cd-8a36-9d5d42424537/**
+          policies/Azure_Cosmos_DB_허용되는_위치_0473574d-2d43-4217-aefe-941fcdf7e684/**
+          policies/SQL_Managed_Instance는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_048248b0-55cd-46da-b1ff-39efd52db260/**
+          policies/_미리_보기_Linux_가상_머신에_네트워크_트래픽_데이터_수집_에이전트를_설치해야_함_04c4380f-3fae-46e8-96c9-30193528f602/**
+          policies/공유_대시보드에_인라인_콘텐츠가_포함된_markdown_타일이_있어서는_안_됩니다._04c655fe-0ac7-48ae-9a32-3a2e208c7624/**
+          policies/Service_Bus에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_04d53d87-841c-4f23-8a5b-21564380b55e/**
+          policies/Azure_API_for_FHIR은_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_051cba44-2429-45b9-9649-46cec11c7119/**
+          policies/Linux_VM용_Log_Analytics_확장_배포_053d3325-282c-4e5c-b944-24faffd30d77/**
+          policies/Azure_Front_Door_Service_서비스에_대해_WAF(Web_Application_Firewall)를_사용하도록_설정해야_함_055aa869-bc98-4af8-bafc-23f1ab6ffe2c/**
+          policies/프라이빗_엔드포인트를_PostgreSQL_서버에서_사용할_수_있어야_합니다._0564d078-92f5-4f97-8398-b9f58a51f70b/**
+          policies/SQL_Server에_대한_취약성_평가_설정에는_검사_보고서를_수신할_메일_주소를_포함해야_합니다._057d6cfe-9c4f-4a6d-bc60-14420ea1f1a9/**
+          policies/Azure_Data_Lake_Store의_리소스_로그를_사용하도록_설정해야_함_057ef27e-665e-4328-8ea3-04b3122bd9fb/**
+          policies/프라이빗_DNS_영역을_사용하도록_Azure_파일_동기화_구성_06695360-db88-47f6-b976-7500d4297475/**
+          policies/관리_되는_디스크를_사용_하지_않는_Vm_감사_06a78e20-9358-41c9-923c-fb736d382a4d/**
+          policies/Cognitive_Services_계정은_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_0725b4dd-7e76-479c-a735-68e7ee23d5ca/**
+          policies/CORS에서_모든_리소스가_함수_앱에_액세스하도록_허용하지_않아야_합니다._0820b7b9-23aa-4725-a1ce-ae4558f718e5/**
+          policies/배포_-_Windows_가상_머신에서_사용하도록_Log_Analytics_확장_구성_0868462e-646c-4fe3-9ced-a733534b6a2c/**
+          policies/DSC_구성이_비규격인_Windows_머신_감사_08a2f2d2-94b2-4a7b-aa3b-bb3f523ee6fd/**
+          policies/Azure_Edge_하드웨어_센터_디바이스에서_이중_암호화_지원을_사용하도록_설정해야_합니다._08a6b96f-576e-47a2-8511-119a212d344d/**
+          policies/공용_네트워크_액세스를_사용하지_않도록_데이터_팩터리_구성_08b1442b-7789-4130-8506-4f99a97226a7/**
+          policies/Search_Service에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_08ba64b8-738f-4918-9686-730d2ed79c7d/**
+          policies/적응형_네트워크_강화_권장_사항은_인터넷에_연결된_가상_머신에_적용해야_합니다._08e6af2d-db70-460a-bfe9-d5bd474ba9d6/**
+          policies/구독에_둘_이상의_소유자를_할당해야_합니다._09024ccc-0c5f-475e-9457-b7c0d9ed487b/**
+          policies/가상_머신은_Compute_및_Storage_리소스_간에_임시_디스크,_캐시_및_데이터_흐름을_암호화해야_합니다._0961003e-5a0a-4549-abde-af6a37f2724d/**
+          policies/동일한_위치에_있는_기존_Recovery_Services_자격_증명_모음에_대해_지정된_태그가_없는_가상_머신의_백업_구성_09ce66bc-1220-4153-8104-e3f51c936913/**
+          policies/프라이빗_엔드포인트를_MariaDB_서버에서_사용할_수_있어야_합니다._0a1302fb-a631-4106-9753-f3d494733990/**
+          policies/클러스터에_AKS(Azure_Kubernetes_Service)용_Azure_Policy_추가_기능을_설치하고_사용하도록_설정해야_함_0a15ec92-a229-4763-bb14-0ea34a568f8d/**
+          policies/_미리_보기_SQL_Server는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_합니다._0a370ff3-6cab-4e85-8995-295fd854c5b8/**
+          policies/리소스_위치가_리소스_그룹_위치와_일치하는지_감사_0a914e76-4921-4c19-b460-a2d36003525a/**
+          policies/오픈_소스_관계형_데이터베이스용_Azure_Defender를_사용하도록_설정해야_합니다._0a9fbe0d-c5c4-4da8-87d8-f4fd77338835/**
+          policies/Azure_Container_Instance_컨테이너_그룹은_암호화에_고객_관리형_키를_사용해야_합니다._0aa61e00-0a01-4a3c-9945-e93cffedf0e6/**
+          policies/프라이빗_DNS_영역을_사용하도록_Azure_Web_PubSub_서비스_구성_0b026355-49cb-467b-8ac4-f777874e175a/**
+          policies/심각도가_높은_경고에_대해_구독_소유자에게_메일_알림을_사용하도록_설정해야_합니다._0b15565f-aa9e-48ba-8619-45960f2c314d/**
+          policies/키_자격_증명_모음은_제거_방지_기능을_사용하도록_설정되어야_함_0b60c0b2-2dc2-4e1c-b5c9-abbed971de53/**
+          policies/Azure_Cosmos_DB_처리량을_제한해야_합니다._0b7ef78e-a035-4f23-b9bd-aff122a1b1cf/**
+          policies/API_앱에서_클라이언트_인증서(들어오는_클라이언트_인증서)_가_켜기_로_설정되어_있는지_확인하세요._0c192fe8-9cbb-4516-85b3-0ade8bd03886/**
+          policies/Automation_계정에서_프라이빗_엔드포인트_연결을_사용하도록_설정해야_합니다._0c2b3618-68a8-4034-a150-ff4abc873462/**
+          policies/Private_Link를_사용하도록_설정된_Application_Insights_구성_요소는_Profiler_및_디버거에_Bring_Your_Own_Storage_계정을_사용해야_합니다._0c4bd2e8-8872-4f37-a654-03f6f38ddc76/**
+          policies/SQL_Server는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_0d134df8-db83-46fb-ad72-fe0c9428c8dd/**
+          policies/IoT_Hub의_프라이빗_엔드포인트를_사용하도록_설정해야_합니다._0d40b058-9f95-4a19-93e3-9b0330baa2a3/**
+          policies/함수_앱에서_관리_ID를_사용해야_합니다._0da106f2-4ca3-48e8-bc85-c638fe6aea8f/**
+          policies/대상_네트워크_보안_그룹을_사용하여_흐름_로그_리소스_배포_0db34a60-64f4-4bf6-bd44-f95c16cf34b9/**
+          policies/수정_-_공용_네트워크_액세스를_사용하지_않도록_Azure_파일_동기화_구성_0e07b2e9-6cd9-4c40-9ccb-52817b95133b/**
+          policies/Kubernetes_서비스에_권한_있는_IP_범위를_정의해야_합니다._0e246bcf-5f6f-4f87-bc6f-775d4712c7ea/**
+          policies/함수_앱에_대해_원격_디버깅을_해제해야_합니다._0e60b895-3786-45da-8377-9c6b4b6ac5f9/**
+          policies/Key_Vault용_Azure_Defender를_사용하도록_설정해야_함_0e6763cc-5078-4e64-889d-ff4d9a839047/**
+          policies/Azure_Database_for_MariaDB에_대해_지역_중복_백업을_사용하도록_설정해야_함_0ec47710-77ff-4a3d-9181-6aa50af424d0/**
+          policies/프라이빗_엔드포인트를_사용하여_Batch_계정_구성_0ef5aac7-c064-427a-b87b-d47b3ddcaf73/**
+          policies/_미리_보기_분산_추적을_사용하도록_설정되지_않은_Azure_Spring_Cloud_인스턴스_감사_0f2d8593-4667-4932-acca-6a9f187af109/**
+          policies/Azure_Monitor_Private_Link_범위는_개인_링크를_사용해야_합니다._0fc55270-f8bf-4feb-b7b8-5e7e7eacc6a6/**
+          policies/Azure_Cognitive_Search_서비스에서_프라이빗_링크를_사용해야_함_0fda3595-9f2b-4592-8675-4231d6fa82fe/**
+          policies/컨테이너_레지스트리에_대해_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_0fdf0491-d080-4575-b627-ad0e843cba0f/**
+          policies/CORS에서_모든_도메인이_API_for_FHIR에_액세스하도록_허용하지_않아야_함_0fea8f8a-4169-495d-8307-30ec335f387d/**
+          policies/사용자_지정_구독_소유자_역할이_없어야_합니다._10ee2ea2-fb4d-45b8-a7e9-a2e770044cd9/**
+          policies/수정_-_공용_네트워크_액세스를_사용하지_않도록_Azure_IoT_Hubs_구성_114eec6e-5e59-4bad-999d-6eceeb39d582/**
+          policies/Dependency_Agent_배포_감사_-_VM_이미지(OS)가_나열_취소됨_11ac78e3-31bc-4f0c-8434-37ab963cea07/**
+          policies/_미리_보기_Recovery_Services_자격_증명_모음은_Private_Link를_사용해야_합니다._11e3da8c-1d68-4392-badd-0ff3c43ab5b0/**
+          policies/Windows_머신이_보안_옵션_-_시스템_설정_에_대한_요구_사항을_충족해야_함_12017595-5a75-4bb1-9d97-4c2c939ea3c3/**
+          policies/Windows_머신이_보안_옵션_-_네트워크_보안_에_대한_요구_사항을_충족해야_함_1221c620-d201-468c-81e7-2817e6107e84/**
+          policies/적응형_애플리케이션_제어_정책의_허용_목록_규칙을_업데이트해야_합니다._123a3936-f020-408a-ba0c-47873faf1534/**
+          policies/WAF(웹_애플리케이션_방화벽)는_Application_Gateway에_대해_지정된_모드를_사용해야_함_12430be1-6cc8-4527-a9a8-e3d38f250096/**
+          policies/_미리_보기_Azure_Data_Factory_연결된_서비스에서_비밀을_저장하는_데_Key_Vault를_사용해야_함_127ef6d7-242f-43b3-9eef-947faf1725d0/**
+          policies/Azure_Defender_for_Kubernetes가_사용_설정되도록_구성_133047bf-1369-41e3-a3be-74a11ed1395a/**
+          policies/_미리_보기_취약성_평가_공급자를_수신하도록_머신_구성_13ce0167-8ca6-4048-8e6b-f996402e3c1b/**
+          policies/지정한_기간(일)_내에_만료되는_인증서가_포함된_Windows_머신_감사_1417908b-4bff-46ee-a2a6-4acc899320ab/**
+          policies/로컬_인증_방법을_사용하지_않도록_Cognitive_Services_계정_구성_14de9e63-1b31-492e-a5a3-c3f7fd57f555/**
+          policies/_미리_보기_Azure_Security_에이전트를_자동으로_설치하도록_지원되는_Windows_머신_구성_1537496a-b1e8-482b-a06a-1cc2415cdc7b/**
+          policies/Cloud_Services(확장_지원)_역할_인스턴스에_Log_Analytics_에이전트를_설치해야_합니다._15fdbc87-8a47-4ee9-a2aa-9a2ea1f37554/**
+          policies/Azure_Batch_풀에는_디스크_암호화를_사용하도록_설정해야_합니다._1760f9d4-7206-436e-a28f-d9f3a5c8a227/**
+          policies/관리형_애플리케이션의_연결_배포_17763ad9-70c0-4794-9397-53d765932634/**
+          policies/_ASC_프라이빗_미리_보기_VM에서_Azure_Monitor_할당을_사용하도록_시스템이_할당한_관리_ID_구성_17b3de92-f710-4cf4-aa55-0e7859f1ed7b/**
+          policies/SQL_데이터베이스에_투명한_데이터_암호화를_사용하도록_설정해야_합니다._17k78e20-9358-41c9-923c-fb736d382a12/**
+          policies/PostgreSQL_서버는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_18adea5e-f416-4d0f-8aa8-d24321e3e274/**
+          policies/Application_Insights_구성_요소는_Azure_Active_Directory_기반이_아닌_수집을_차단해야_합니다._199d5677-e4d9-4264-9465-efe1839c06bd/**
+          policies/Windows_머신이_시스템_감사_정책_-_로그온-로그오프_에_대한_요구_사항을_충족해야_함_19be9779-c776-4dfa-8a15-a2fd5dc843d6/**
+          policies/_미리_보기_Azure_Key_Vault_관리형_HSM은_공용_네트워크_액세스를_비활성화해야_합니다._19ea9d63-adee-4431-a95e-1913c6c1c75f/**
+          policies/Azure_Monitor_로그_프로필은_범주_쓰기,_삭제_및_작업_에_대한_로그를_수집해야_합니다._1a4e592a-6a6e-44a5-9814-e36264ca96e7/**
+          policies/Azure_Event_Grid_토픽은_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._1adadefe-5f21-44f7-b931-a59b54ccdb45/**
+          policies/SQL_Managed_Instance에서_취약성_평가를_사용하도록_설정해야_합니다._1b7aa243-30e4-4c9e-bca8-d0d3022b634a/**
+          policies/Azure_SQL_Database에서_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_1b8ca024-1d5c-4dec-8995-b1a932b41780/**
+          policies/프라이빗_엔드포인트로_Azure_Web_PubSub_서비스_구성_1b9c0b58-fc7b-42c8-8010-cdfa1d1b8544/**
+          policies/Application_Insights_구성_요소는_공용_네트워크에서_로그_수집_및_쿼리를_차단해야_합니다._1bc02227-0cb6-4e11-8f53-eb0b22eab7e8/**
+          policies/API_앱의_일부로_사용되는_경우_PHP_버전_이_최신_상태인지_확인하세요._1bc1795e-d44a-4d48-9b3b-6fff0fd5f9ba/**
+          policies/Azure_Service_Bus_네임스페이스는_프라이빗_링크를_사용해야_함_1c06e275-d63d-4540-b761-71f364c2111d/**
+          policies/Windows_Virtual_Machines용_Dependency_Agent_배포_1c210e94-a481-4beb-95fa-1571b434fb04/**
+          policies/_미리_보기_지원되는_가상_머신에서_vTPM을_사용하도록_설정해야_합니다._1c30f9cd-b84c-49cc-aa2c-9288447cc3b3/**
+          policies/로컬_인증을_사용하지_않도록_Azure_Event_Grid_항목_구성_1c8144d9-746a-4501-b08c-093c8d29ad04/**
+          policies/_미리_보기_지원되는_Windows_가상_머신에_게스트_증명_확장을_설치해야_합니다._1cb4d9c2-f88f-4069-bee0-dba239a57b09/**
+          policies/Azure_Data_Factory의_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._1cf164be-6819-4a50-b8fa-4bcaa4f98fb6/**
+          policies/Azure_파일_동기화는_프라이빗_링크를_사용해야_합니다._1d320205-c6a1-4ac6-873d-46224024e8e2/**
+          policies/비밀을_사용하지_않고_지정된_GitOps_구성으로_Kubernetes_클러스터_구성_1d61c4d2-aef2-432b-87fc-7f96b019b7e1/**
+          policies/Virtual_Machines을_새_Azure_Resource_Manager_리소스로_마이그레이션해야_합니다._1d84d5fb-01f6-4d12-ba4f-4a26081d403d/**
+          policies/리소스에_태그_및_값_필요_1e30110a-5ceb-460c-a204-c1c3969c6d62/**
+          policies/Cloud_Services(확장_지원)_역할_인스턴스에는_Endpoint_Protection_솔루션이_설치되어_있어야_합니다._1e378679-f122-4a96-a739-a7729c46e1aa/**
+          policies/프라이빗_DNS_영역을_사용하도록_Azure_Synapse_작업_영역_구성_1e5ed725-f16c-478b-bd4b-7bfa2f7940b9/**
+          policies/키_자격_증명_모음은_일시_삭제를_사용하도록_설정되어야_함_1e66c121-a66a-4b1f-9b83-0fd99bf0fc2d/**
+          policies/Linux_컴퓨터는_Log_Analytics에_Log_Analytics가_설치되어_있어야_합니다._1e7fed80-8321-4605-b42c-65fc300f23a3/**
+          policies/Azure_API_for_FHIR은_프라이빗_링크를_사용해야_합니다._1ee56206-5dd1-42ab-b02d-8aae8b1634ce/**
+          policies/_미리_보기_Linux_Arc_컴퓨터에_Azure_Security_에이전트를_설치해야_합니다._1f300abb-f5a0-41c3-a163-91bd3ed35de7/**
+          policies/SQL_Server에_대해_Azure_Active_Directory_관리자를_프로비저닝해야_합니다._1f314764-cb73-4fc9-b863-8eca98ac36e9/**
+          policies/Azure_Monitor_로그_클러스터는_고객_관리형_키로_암호화해야_합니다._1f68a601-6e6d-4e42-babf-3f643a047ea2/**
+          policies/이벤트_허브에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_1f6e93e8-6b31-41b1-83f6-36e449a42579/**
+          policies/Key_Vault를_사용_설정하도록_Azure_Defender_구성_1f725891-01c0-420a-9059-4fa46cb770b7/**
+          policies/머신에_Endpoint_Protection을_설치해야_함_1f7c564c-0a90-4d44-b7e1-9d456cffaee8/**
+          policies/Azure_Cosmos_DB_계정은_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_1f905d99-2ab7-462c-a6b0-f709acca6c8f/**
+          policies/Logic_Apps_통합_서비스_환경은_고객_관리형_키로_암호화되어야_함_1fafeaf6-7927-4059-a50a-8eb2a7a6f2b5/**
+          policies/Azure_HDInsight_클러스터는_호스트에서_암호화를_사용하여_미사용_데이터를_암호화해야_함_1fd32ebd-e4c3-4e13-a54a-d7422d4d95f6/**
+          policies/VM_Image_Builder_템플릿은_Private_Link를_사용해야_함_2154edb9-244f-4741-9970-660785bccdaa/**
+          policies/VPN_게이트웨이는_지점_및_사이트_간_사용자에_대해_Azure_AD(Azure_Active_Directory)_인증만_사용해야_합니다._21a6bc25-125e-4d13-b82d-2e19b7208ab7/**
+          policies/Azure_파일_동기화의_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._21a8cd35-125e-4d13-b82d-2e19b7208bb7/**
+          policies/Azure_SignalR_Service는_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_21a9766a-82a5-4747-abb5-650b6dbba6d0/**
+          policies/가상_머신에서_관리_포트를_닫아야_합니다._22730e10-96f6-4aac-ad84-9383d35b5917/**
+          policies/Azure_Cache_for_Redis에_보안_연결만_사용하도록_설정해야_함_22bee202-a82f-4305-9a2a-6d7f44d4dedb/**
+          policies/DNS를_사용_설정하도록_Azure_Defender_구성_2370a3c1-4a25-4283-a91a-c9c1a145fb2f/**
+          policies/암호_사용_최소_기간이_1일로_설정되지_않은_Windows_머신_감사_237b38db-ca4d-4259-9e47-7882441ca2c0/**
+          policies/Stream_Analytics에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_237e0f7e-b0e8-4ec4-ad46-8c12cb66d673/**
+          policies/공용_네트워크_액세스를_사용하지_않도록_Azure_Automation_계정_구성_23b36a7c-9d26-4288-a8fd-c1d2fa284d8c/**
+          policies/Azure_Kubernetes_Service의_리소스_로그를_사용하도록_설정해야_합니다._245fc9df-fa96-4414-9a0b-3738c2f7341c/**
+          policies/지정된_Log_Analytics_작업_영역으로_스트림할_Azure_활동_로그_구성_2465583e-4e78-4c15-b6be-a36cbc7c8b0f/**
+          policies/Azure_Database_for_PostgreSQL_서버에_대해_인프라_암호화를_사용하도록_설정해야_함_24fba194-95d6-48c0-aea7-f65bf859c598/**
+          policies/Data_Lake_Storage_Gen1에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_25763a0a-5783-4f14-969e-79d4933eb74b/**
+          policies/프라이빗_엔드포인트가_있는_Azure_HDInsight_클러스터_구성_2676090a-4baf-46ac-9085-4ac02cc50e3e/**
+          policies/Virtual_Machine_Scale_Sets에_Endpoint_Protection_솔루션을_설치해야_합니다._26a828e1-e88f-464e-bbb3-c134a282b9de/**
+          policies/Bach_계정에서_메트릭_경고_규칙을_구성해야_합니다._26ee67a2-f81a-4ba8-b9ce-8550bd5ee1a7/**
+          policies/자동_관리_사용_-_Azure_가상_머신_모범_사례_270610db-8c04-438a-a739-e8e6745b22d3/**
+          policies/모든_네트워크_보안_그룹에_대해_흐름_로그를_사용하도록_설정해야_함_27960feb-a23c-4577-8d36-ef8b5f35e0be/**
+          policies/Windows_Server에_대한_기본_Microsoft_IaaSAntimalware_확장_배포_2835b622-407b-4114-9198-6f7064cbe0dc/**
+          policies/공용_네트워크_액세스를_사용하지_않도록_Azure_SQL_Server_구성_28b0b1e5-17ba-4963-a7a4-5a1ab4400a0b/**
+          policies/App_Service용_Azure_Defender를_사용하도록_설정해야_함_2913021d-f2fd-4f3d-b958-22354e2bdbcb/**
+          policies/프라이빗_엔드포인트를_사용하여_BotService_리소스_구성_29261f8e-efdb-4255-95b8-8215414515d6/**
+          policies/Service_Bus_프리미엄_네임스페이스는_암호화에_고객_관리형_키를_사용해야_함_295fc8b1-dc9f-4f53-9c61-3f313ceab40a/**
+          policies/리소스에_태그_및_값_추가_2a0e14a6-b0a6-4fab-991a-187a4f81c498/**
+          policies/스토리지_계정은_가상_네트워크_규칙을_사용하여_네트워크_액세스를_제한해야_합니다._2a1a9cdf-e04d-429a-8416-3bfb72a1b26f/**
+          policies/Windows_머신이_시스템_감사_정책_-_정책_변경_에_대한_요구_사항을_충족해야_함_2a7a701e-dff3-4da9-9ec5-42cb98594c0b/**
+          policies/_미리_보기_가상_머신에서_Azure_Defender_SQL_에이전트_구성_2ada9901-073c-444a-9a9a-91865174f0aa/**
+          policies/Synapse_작업_영역_감사_설정에_중요한_활동을_캡처하기_위해_구성된_작업_그룹이_있어야_함_2b18f286-371e-4b80-9887-04759970c0d3/**
+          policies/웹앱에서_관리_ID를_사용해야_합니다._2b9ad585-36bc-4615-b300-fd4435808332/**
+          policies/SCM_사이트에_대한_로컬_인증을_사용하지_않도록_App_Service_슬롯을_구성합니다._2c034a29-2a5f-4857-b120-f800fe5549ae/**
+          policies/연결되지_않은_디스크는_암호화되어야_합니다._2c89a2e5-7285-40fe-afe0-ae8654b92fb2/**
+          policies/App_Service_Environment_앱은_공용_인터넷을_통해_연결할_수_없습니다._2d048aca-6479-4923-88f5-e2ac295d9af3/**
+          policies/App_Service는_가상_네트워크_서비스_엔드포인트를_사용해야_함_2d21331d-a4c2-4def-a9ad-ee4e1e023beb/**
+          policies/Azure_IoT_Hub의_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._2d6830fb-07eb-48e7-8c4d-2a442b35f0fb/**
+          policies/_미리_보기_Azure_IoT_Hub는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_합니다._2d7e144b-159c-44fc-95c1-ac3dbf5e6e54/**
+          policies/Azure_Synapse_작업_영역의_관리형_작업_영역_가상_네트워크를_사용하도록_설정해야_함_2d9dbfa3-927b-4cf0-9d0f-08747f971650/**
+          policies/로컬_인증을_사용하지_않도록_Azure_Event_Grid_파트너_네임스페이스_구성_2dd0e8b9-4289-4bb0-b813-1883298e9924/**
+          policies/_미리_보기_Azure_Recovery_Services_자격_증명_모음에서_백업_데이터를_암호화하려면_고객_관리형_키를_사용해야_합니다._2e94d99a-8a36-4563-bc77-810d8893b671/**
+          policies/Linux_Virtual_Machines를_데이터_수집_규칙에_연결하도록_연결_구성_2ea82cdd-f2e8-4500-af75-67a2e084ca74/**
+          policies/Network_Watcher_흐름_로그에_트래픽_분석이_사용되도록_설정되어야_합니다._2f080164-9f4d-497e-9db6-416dc9f7b48a/**
+          policies/Windows_머신이_보안_옵션_-_시스템_개체_에_대한_요구_사항을_충족해야_함_2f262ace-812a-4fd0-b731-b38ba9e9708d/**
+          policies/_미리_보기_Windows_가상_머신에_네트워크_트래픽_데이터_수집_에이전트를_설치해야_함_2f2ee1de-44aa-4762-b6bd-0893fc3f306d/**
+          policies/_미리_보기_Azure_Security_에이전트를_자동으로_설치하도록_지원되는_Linux_Arc_컴퓨터_구성_2f47ec78-4301-4655-b78e-b29377030cdc/**
+          policies/스토리지용_Azure_Defender를_사용하도록_설정해야_함_308fbb08-4ab8-4e67-9b29-592e93fb94fa/**
+          policies/공용_네트워크_액세스를_사용하지_않도록_Azure_Cache_for_Redis_구성_30b3dfa5-a70d-4c8e-bed6-0083858f663d/**
+          policies/로컬_인증을_사용하지_않도록_Azure_Automation_계정_구성_30d1d58e-8f96-47a5-8564-499a3f3cca81/**
+          policies/관리자_그룹에_지정한_구성원이_없는_Windows_머신_감사_30f71ea1-ac77-4f26-9fc5-2d926bbd4ba7/**
+          policies/_미리_보기_나열된_가상_머신_이미지의_Log_Analytics_확장을_사용하도록_설정해야_합니다._32133ab0-ee4b-4b44-98d6-042180979d50/**
+          policies/API_앱은_콘텐츠_디렉터리에_Azure_파일_공유를_사용해야_합니다._324c7761-08db-4474-9661-d1039abc92ee/**
+          policies/Azure_SQL_Database는_최소_TLS_버전_1.2를_사용해야_함_32e6bbec-16b6-44c2-be37-c5b672d103cf/**
+          policies/Linux_게스트_구성_확장을_배포하여_Linux_VM에서_게스트_구성_할당을_사용하도록_설정_331e8ea8-378a-410f-a2e5-ae22f38bb0da/**
+          policies/App_Service_앱은_Azure_Virtual_Network에_대한_아웃바운드_비RFC_1918_트래픽을_사용해야_합니다._33228571-70a4-4fa1-8ca1-26d0aba8d6ef/**
+          policies/MySQL_서버는_가상_네트워크_서비스_엔드포인트를_사용해야_함_3375856c-3824-4e0e-ae6a-79e011dd4c47/**
+          policies/Windows_머신이_보안_옵션_-_감사_에_대한_요구_사항을_충족해야_함_33936777-f2ac-45aa-82ec-07958ec9ade4/**
+          policies/동일한_위치에_있는_기존_Recovery_Services_자격_증명_모음에_대해_지정된_태그가_있는_가상_머신의_백업_구성_345fa903-145c-4fe1-8bcd-93ec2adccde8/**
+          policies/Azure_Synapse_작업_영역은_승인된_대상에_대한_아웃바운드_데이터_트래픽만_허용해야_합니다._3484ce98-c0c5-4c83-994b-c5ac24785218/**
+          policies/스토리지_계정은_네트워크_액세스를_제한해야_합니다._34c877ad-507e-4c82-993e-3452a6e0ad3c/**
+          policies/Logic_Apps의_리소스_로그를_사용하도록_설정해야_함_34f95f76-5386-4de7-b824-0d8478470c9d/**
+          policies/Windows_머신이_시스템_감사_정책_-_개체_액세스_에_대한_요구_사항을_충족해야_함_35781875-8026-4628-b19b-f6efb4d88a1d/**
+          policies/CORS에서_모든_리소스가_API_앱에_액세스하도록_허용하지_않아야_함_358c20a6-3f9e-4f0e-97ff-c6ce485e2aac/**
+          policies/Windows_머신이_Windows_방화벽_속성_에_대한_요구_사항을_충족해야_함_35d9882c-993d-44e6-87d2-db66ce21b636/**
+          policies/게이트웨이_서브넷은_네트워크_보안_그룹을_사용하여_구성해서는_안_됩니다._35f9c03a-cc27-418e-9c0c-539ff999d010/**
+          policies/스토리지_계정에_Advanced_Threat_Protection_배포_361c2074-3595-4e5d-8cab-4f21dffc835c/**
+          policies/계정_변수_자동화는_암호화되어야_합니다._3657f5a0-770e-44a3-b44e-9431ba1e9735/**
+          policies/Azure_Defender가_SQL_Server에서_사용_설정되도록_구성_36d49e87-48c4-4f2e-beed-ba4ed02b71f5/**
+          policies/수정_-_공용_네트워크_액세스를_사용하지_않도록_Azure_Event_Grid_토픽_구성_36ea4b4b-0f7f-4a54-89fa-ab18f555a172/**
+          policies/배포_-_프라이빗_엔드포인트를_사용하여_Azure_Event_Grid_도메인_구성_36f4658a-848a-467b-881c-e6fa20cf75fc/**
+          policies/Storage_계정을_새_Azure_Resource_Manager_리소스로_마이그레이션해야_합니다._37e0d2fe-28a5-43d6-a273-67d37d1f5606/**
+          policies/IoT_Hub의_리소스_로그를_사용하도록_설정해야_함_383856f8-de7f-44a2-81fc-e5135b5c2aa4/**
+          policies/Windows_게스트_구성_확장을_배포하여_Windows_VM에서_게스트_구성_할당을_사용하도록_설정_385f5831-96d4-41db-9a3c-cd3af78aaae6/**
+          policies/Azure_Synapse_작업_영역은_공용_네트워크_액세스를_사용하지_않도록_해야_합니다._38d8df46-cf4e-4073-8e03-48c24b29de0d/**
+          policies/함수_앱에서_FTPS만_요구해야_합니다._399b2637-a50f-4f95-96f8-3a145476eb15/**
+          policies/Synapse_관리형_프라이빗_엔드포인트는_승인된_Azure_Active_Directory_테넌트의_리소스에만_연결해야_합니다._3a003702-13d2-4679-941b-937e58c443f0/**
+          policies/Azure_Database_for_MySQL_서버에_대해_인프라_암호화를_사용하도록_설정해야_함_3a58212a-c829-4f13-9872-6371df2fd0b4/**
+          policies/Windows_머신이_관리_템플릿_-_제어판_에_대한_요구_사항을_충족해야_함_3aa2661b-02d7-4ba6-99bc-dc36b10489fd/**
+          policies/Azure_Active_Directory_Domain_Services_관리_도메인은_TLS_1.2_전용_모드를_사용해야_합니다._3aa87b5a-7813-4b57-8a43-42dd9df5aaa7/**
+          policies/프라이빗_엔드포인트를_사용하여_Azure_Synapse_작업_영역_구성_3b3b0c27-08d2-4b32-879d-19930bee3266/**
+          policies/특정_보안_작업의_활동_로그_경고가_있어야_함_3b980d31-7904-4bb7-8575-5665739a8052/**
+          policies/Windows_Virtual_Machine_Scale_Sets용_Dependency_Agent_배포_3be22e3b-d919-47aa-805e-8985dbeb0ad9/**
+          policies/PostgreSQL_서버는_가상_네트워크_서비스_엔드포인트를_사용해야_함_3c14b034-bcb6-4905-94e7-5b8e98a47b65/**
+          policies/배포_-_Windows_가상_머신에서_사용하도록_Log_Analytics_확장_집합_구성_3c1b3629-c8f8-4bf6-862c-037cb9094038/**
+          policies/Virtual_Machine_Scale_Sets에서_보안_구성의_취약성을_수정해야_합니다._3c735d8a-a4ba-4a3a-b7cf-db7754cf57f4/**
+          policies/시스템_할당_관리_ID를_추가하여_ID가_없는_가상_머신에서_게스트_구성_할당을_사용하도록_설정_3cf2ab00-13f1-4d0c-8971-2ac904541a7e/**
+          policies/관리자_그룹에_추가_계정이_있는_Windows_머신_감사_3d2a3320-2a72-4c67-ac5f-caa40fbee2b2/**
+          policies/Search_Services에_대한_진단_설정을_이벤트_허브에_배포_3d5da587-71bd-41f5-ac95-dd3330c2d58d/**
+          policies/App_Configuration은_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._3d9f5e4c-9947-4579-9539-2a7695fbc187/**
+          policies/지정한_Windows_PowerShell_모듈이_설치되지_않은_Windows_머신_감사_3e4e2bd5-15a2-4628-b3e1-58977e9793f3/**
+          policies/Azure_Monitor_솔루션_보안_및_감사_가_배포되어야_합니다._3e596b57-105f-48a6-be97-03e9243bad6e/**
+          policies/Windows_머신이_보안_옵션_-_네트워크_액세스_에_대한_요구_사항을_충족해야_함_3ff60f98-7fa4-410a-9f7f-0b00f5afdbdd/**
+          policies/Storage_계정에_보안_전송을_사용하도록_설정해야_합니다._404c3081-a854-4457-ae30-26a93ef643f9/**
+          policies/Windows_컴퓨터는_Log_Analytics에_Log_Analytics가_설치되어_있어야_합니다._4078e558-bda6-41fb-9b3c-361e8875200d/**
+          policies/Azure_Machine_Learning_작업_영역은_Private_Link를_사용해야_함_40cec1dd-a100-4920-b15b-3024fe8901ab/**
+          policies/없는_경우_구독에서_태그_상속_40df99da-1232-49b1-a39a-6da8d878f469/**
+          policies/Azure_Monitor는_모든_지역의_활동_로그를_수집해야_합니다._41388f1c-2db0-4c25-95b2-35d7f5ccbfa9/**
+          policies/Azure_Kubernetes_Service_클러스터의_에이전트_노드_풀에_대한_임시_디스크_및_캐시는_호스트에서_암호화되어야_함_41425d9f-d1a5-499a-9932-f8ed8453932c/**
+          policies/보류_중인_다시_부팅이_있는_Windows_VM_감사_4221adbc-5c0f-474f-88b7-037a99e6114c/**
+          policies/WAF(웹_애플리케이션_방화벽)는_Azure_Front_Door_Service에_대해_지정된_모드를_사용해야_함_425bea59-a659-4cbb-8d31-34499bd030b8/**
+          policies/배치_계정의_리소스_로그를_사용하도록_설정해야_함_428256e6-1fac-4f48-a757-df34c2b3336d/**
+          policies/프라이빗_DNS_영역을_사용하도록_Azure_Monitor_Private_Link_범위_구성_437914ee-c176-4fff-8986-7e05eb971365/**
+          policies/Azure_Machine_Learning_작업_영역은_공용_네트워크_액세스를_비활성화해야_합니다._438c38d2-3772-465a-a9cc-7a6666a275ce/**
+          policies/Windows_머신이_시스템_감사_정책_-_계정_로그온_에_대한_요구_사항을_충족해야_함_43bb60fe-1d7e-4b82-9e93-496bfc99e7d5/**
+          policies/프라이빗_DNS_영역을_사용하도록_Azure_HDInsight_클러스터_구성_43d6e3bd-fc6a-4b44-8b4d-2151d8736a11/**
+          policies/오픈_소스_관계형_데이터베이스를_사용하도록_Azure_Defender를_구성합니다._44433aa3-7ec2-4002-93ea-65c65ff0310a/**
+          policies/Azure_SignalR_Service는_Private_Link_사용_SKU를_사용해야_함_464a1620-21b5-448d-8ce6-d4ac6d1bc49a/**
+          policies/Virtual_Machine_Scale_Sets에_자동_OS_이미지_패치_필요_465f0161-0087-490a-9ad9-ad6217f4f43a/**
+          policies/Cognitive_Services_계정은_고객_소유_스토리지를_사용해야_합니다._46aa9b05-0e60-4eae-a88b-1e9d374fa515/**
+          policies/_미리_보기_IoT_Hub_Device_Provisioning_Service_데이터는_CMK(고객_관리형_키)를_사용하여_암호화해야_합니다._47031206-ce96-41f8-861b-6a915f3de284/**
+          policies/Azure_Cache_for_Redis는_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_470baccb-7e51-4549-8b1a-3e5be069f663/**
+          policies/스토리지_계정에_인프라_암호화가_있어야_함_4733ea7b-a883-42fe-8cac-97454c2a9e4a/**
+          policies/Azure_Cosmos_DB_키_기반_메타데이터_쓰기_권한을_사용하지_않도록_설정해야_합니다._4750c32b-89c0-46af-bfcb-2e4541a818d5/**
+          policies/구독에_Log_Analytics_에이전트의_자동_프로비저닝을_사용하도록_설정해야_함_475aae12-b88a-4572-8b36-9b712b2b3a17/**
+          policies/머신에서_안전한_애플리케이션을_정의하기_위해_적응형_애플리케이션_제어를_사용하도록_설정해야_합니다._47a6b606-51aa-4496-8bb7-64b11cf66adc/**
+          policies/공용_네트워크_액세스를_사용하지_않도록_Cognitive_Services_계정_구성_47ba1dd7-28d9-4b07-a8d5-9813bed64e0c/**
+          policies/게스트_구성_할당에_프라이빗_엔드포인트를_사용해야_함_480d0f91-30af-4a76-9afb-f5710ac52b09/**
+          policies/Azure_Database_for_PostgreSQL에_대해_지역_중복_백업을_사용하도록_설정해야_함_48af4db5-9b8b-401c-8e74-076be876a430/**
+          policies/Azure_Automation_계정에는_로컬_인증_방법이_비활성화되어_있어야_합니다._48c5f1cb-14ad-4797-8e3b-f78ab3f8d700/**
+          policies/Windows_머신이_보안_옵션_-_사용자_계정_컨트롤_에_대한_요구_사항을_충족해야_함_492a29ed-d143-4f03-b6a4-705ce081b463/**
+          policies/웹앱의_일부로_사용되는_경우_Java_버전_이_최신_상태인지_확인하세요._496223c3-ad65-4ecd-878a-bae78737e9ed/**
+          policies/데이터_팩터리의_프라이빗_엔드포인트_구성_496ca26b-f669-4322-a1ad-06b7b5e41882/**
+          policies/시스템이_할당한_관리_ID를_추가하여_사용자가_할당한_ID가_있는_VM에서_게스트_구성_할당을_사용하도록_설정_497dff13-db2a-4c0f-8603-28fa3b331ab6/**
+          policies/리소스_그룹에_태그_및_값_추가_49c88fc8-6fd1-46fd-a676-f12d1d3a4c71/**
+          policies/Azure_Media_Services_프라이빗_링크를_사용해야_합니다._4a591bf5-918e-4a5f-8dad-841863140d61/**
+          policies/Azure_Event_Grid_토픽은_프라이빗_링크를_사용해야_함_4b90e17e-8448-49db-875e-bd83fb6f804f/**
+          policies/암호_사용_최대_기간이_70일로_설정되지_않은_Windows_머신_감사_4ceb8dc2-559c-478b-a15b-733fbf1e3738/**
+          policies/함수_앱은_콘텐츠_디렉터리에_Azure_파일_공유를_사용해야_합니다._4d0bc837-6eff-477e-9ecd-33bf8d4212a5/**
+          policies/웹앱에서_FTPS를_요구해야_합니다._4d24b6d4-5e53-4a4f-a7f4-618fa573ee4b/**
+          policies/Linux_Virtual_Machines용_Dependency_Agent_배포_4da21710-ce6f-4e06-8cdb-5cc4c93ffbee/**
+          policies/서버용_Azure_Defender를_사용하도록_설정해야_함_4da35fc9-c9e7-4960-aec9-797fe7d9051d/**
+          policies/Data_Lake_Analytics에_대한_진단_설정을_이벤트_허브에_배포_4daddf25-4823-43d4-88eb-2419eb6dcc08/**
+          policies/로컬_인증을_사용하지_않도록_Batch_계정_구성_4dbc2f5c-51cf-4e38-9179-c7028eed2274/**
+          policies/Cloud_Services(확장_지원)_역할_인스턴스에_시스템_업데이트가_설치되어_있어야_합니다._4df26ba8-026d-45b0-9521-bffa44d741d2/**
+          policies/배포_-_배치_계정에_연결되는_프라이빗_엔드포인트의_프라이빗_DNS_영역_구성_4ec38ebc-381f-45ee-81a4-acbc4be878f8/**
+          policies/Azure_데이터_팩터리는_고객_관리형_키로_암호화해야_함_4ec52d6d-beb7-40c4-9a9e-fe753254690e/**
+          policies/구독에_최대_3명의_소유자를_지정해야_합니다._4f11b553-d42e-4e3a-89be-32ca364cad4c/**
+          policies/구독에_보안_문제에_대한_연락처_메일_주소가_있어야_함_4f4f78b8-e367-4b10-a341-d9a4ad5cf1c7/**
+          policies/리소스에_태그_추가_4f9dc7db-30c1-420c-b61a-e1d640128d26/**
+          policies/_미리_보기_스토리지_계정_공용_액세스를_허용하지_않아야_함_4fa4b6c0-31ca-4c0d-b10d-24b96f62a751/**
+          policies/취약성_평가_솔루션을_가상_머신에서_사용하도록_설정해야_합니다._501541f7-f7e7-4cd6-868c-4190fdad3ac9/**
+          policies/Azure_Security_Center_규정_준수에_대한_워크플로_자동화_배포_509122b9-ddd9-47ba-a5f1-d0dac20be63c/**
+          policies/모든_Azure_가상_네트워크_게이트웨이_연결에_사용자_지정_IPsec/IKE_정책을_적용해야_합니다._50b83b09-03da-41c1-b656-c293c914862b/**
+          policies/컴퓨터의_SQL_서버가_사용_설정되도록_Azure_Defender_구성_50ea7265-7d8c-429e-9a7d-ca1f410191c3/**
+          policies/Bot_Service는_고객_관리형_키를_사용하여_암호화해야_합니다._51522a96-0869-4791-82f3-981000c2c67f/**
+          policies/Bot_Service에서_격리_모드를_사용하도록_설정해야_합니다._52152f42-0dda-40d9-976e-abb1acdd611e/**
+          policies/Kubernetes용_Azure_Defender를_사용하도록_설정해야_함_523b5cd1-3e23-492f-a539-13118b6d1e3a/**
+          policies/컨테이너_레지스트리에서_내보내기를_사용하지_않도록_설정해야_합니다_524b0254-c285-4903-bee6-bb8126cde579/**
+          policies/Azure_Web_PubSub_Service는_프라이빗_링크를_사용해야_함_52630df9-ca7e-442b-853b-c6ce548b31a2/**
+          policies/스토리지_계정_대상에_대해_SQL_감사가_있는_Synapse_작업_영역의_보존_기간을_90일_이상으로_구성해야_함_529ea018-6afc-4ed4-95bd-7c9ee47b00bc/**
+          policies/PostgreSQL_데이터베이스_서버에_대해_연결_제한을_사용하도록_설정해야_합니다._5345bb39-67dc-4960-a1bf-427e16b9a0bd/**
+          policies/Azure_SignalR_Service는_프라이빗_링크를_사용해야_함_53503636-bcc9-4748-9663-5348217f160f/**
+          policies/Cosmos_DB_데이터베이스_계정은_로컬_인증_방법을_사용하지_않도록_설정해야_합니다_5450f5bd-9c72-4390-a9c4-a7aba4edfdd2/**
+          policies/App_Service_앱은_프라이빗_링크를_지원하는_SKU를_사용해야_합니다._546fe8d2-368d-4029-a418-6af48a7f61e5/**
+          policies/_미리_보기_Azure_Key_Vault에서_공용_네트워크_액세스를_사용할_수_없음_55615ac9-af46-4a59-874e-391cc3dfb490/**
+          policies/프라이빗_DNS_영역을_사용하도록_Azure_Monitor_Arc_프라이빗_링크_범위_55c4db33-97b0-437b-8469-c4f4498f5df9/**
+          policies/Application_Gateway에_대해_WAF(웹_애플리케이션_방화벽)를_사용하도록_설정해야_함_564feb30-bf6a-4854-b4bb-0d2d2d1e6c66/**
+          policies/Azure_Automation_계정은_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_56a5ee18-2ae6-4810-86f7-18e39ce5629b/**
+          policies/Azure_Synapse_작업_영역의_IP_방화벽_규칙을_제거해야_함_56fd377d-098c-4f02-8406-81eb055902b8/**
+          policies/FTP_배포에서_로컬_인증을_사용하지_않도록_App_Service를_구성합니다._572e342c-c920-4ef5-be2e-1ed3c6a51dc5/**
+          policies/CORS에서_모든_리소스가_웹_애플리케이션에_액세스하도록_허용하지_않아야_합니다._5744710e-cc2f-4ee8-8809-3b11e89f4bc9/**
+          policies/Windows_웹_서버는_보안_통신_프로토콜을_사용하도록_구성해야_함_5752e6d6-1206-46d8-8ab1-ecc2f71a8112/**
+          policies/_미리_보기_게스트_증명_확장을_자동으로_설치하도록_지원되는_Linux_가상_머신_확장_집합을_구성합니다._57c2e3f0-98cf-4c3b-aa6b-e8f70726e74e/**
+          policies/로컬_인증을_사용하지_않도록_Azure_Event_Hub_네임스페이스_구성_57f35901-8389-40bb-ac49-3ba4f86d889d/**
+          policies/프라이빗_엔드포인트를_사용하여_디스크_액세스_리소스_구성_582bd7a6-a5f6-4dc6-b9dc-9cb81fe0d4c5/**
+          policies/Windows_머신이_시스템_감사_정책_-_자세한_추적_에_대한_요구_사항을_충족해야_함_58383b73-94a9-4414-b382-4146eb02611b/**
+          policies/CosmosDB_계정은_프라이빗_링크를_사용해야_함_58440f8a-10c5-4151-bdce-dfbaad4a20b7/**
+          policies/Windows_직렬_콘솔을_사용하도록_설정되지_않은_Windows_머신_감사_58c460e9-7573-4bb2-9676-339c2f2486bb/**
+          policies/_미리_보기_Azure_가상_머신에서_누락된_시스템_업데이트에_대한_정기_검사를_구성합니다._59efceea-0c96-497e-a4a1-4eb2290dac15/**
+          policies/_미리_보기_Azure_Key_Vault_관리형_HSM은_프라이빗_링크를_사용해야_합니다._59fee2f4-d439-4f1b-9b9a-982e1474bfd8/**
+          policies/이전_24개_암호의_재사용을_허용하는_Windows_머신_감사_5b054a0d-39e2-4d53-bea3-9734cad2c69b/**
+          policies/공용_네트워크_액세스를_사용하지_않도록_Azure_Web_PubSub_서비스_구성_5b1213e4-06e4-4ccc-81de-4201f2f7131a/**
+          policies/컨테이너_레지스트리는_고객_관리형_키로_암호화해야_함_5b9159ae-1701-4a6f-9a7a-aa9c8ddd0580/**
+          policies/웹앱에서_클라이언트_인증서(들어오는_클라이언트_인증서)_가_켜기_로_설정되어_있는지_확인하세요._5bb220d9-2698-4ee4-8404-b9c30c9df609/**
+          policies/가상_머신_확장_집합에서_나열된_가상_머신_이미지의_Log_Analytics_확장을_사용하도록_설정해야_합니다._5c3bc7b8-a64c-4e08-a9cd-7ff0f31e1138/**
+          policies/쓰기_권한이_있는_외부_계정을_구독에서_제거해야_합니다._5c607a2e-c700-4744-8254-d77e7c9eb5e4/**
+          policies/공용_네트워크_액세스를_사용하지_않도록_Azure_Synapse_작업_영역_구성_5c8cad01-ef30-4891-b230-652dadb4876a/**
+          policies/Azure_Event_Hub_네임스페이스에_로컬_인증_방법을_사용하지_않도록_설정_5d4e3c65-4873-47be-94f3-6f8b953a3598/**
+          policies/프라이빗_엔드포인트를_사용하여_Azure_Cache_for_Redis_구성_5d8094d7-7340-465a-b6fd-e60ab7e48920/**
+          policies/트래픽_분석에_특정_작업_영역을_사용하도록_네트워크_보안_그룹_구성_5e1cd26a-5090-4fdb-9d6a-84a90335e22d/**
+          policies/PostgreSQL_유연한_서버에_대해_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_5e1de0e3-42cb-4ebc-a86d-61d0c619ca48/**
+          policies/SCM_사이트에_대한_로컬_인증을_사용하지_않도록_App_Service를_구성합니다._5e97b776-f380-4722-a9a3-e7f0be029e79/**
+          policies/Linux_Virtual_Machine_Scale_Sets용_Log_Analytics_확장_배포_5ee9e9ed-0b42-41b7-8c9c-3cfb2fbe2069/**
+          policies/_미리_보기_Key_Vault의_프라이빗_엔드포인트를_구성해야_함_5f0bc445-3935-4915-9981-011aa2b46147/**
+          policies/Azure_Machine_Learning_작업_영역은_사용자가_할당한_관리_ID를_사용해야_합니다._5f0c7d88-c7de-45b8-ac49-db49e72eaa78/**
+          policies/Azure_Container_Registry_이미지의_취약성을_수정해야_합니다._5f0f936f-2f01-4bf5-b6be-d423792fa562/**
+          policies/읽기_권한이_있는_외부_계정을_구독에서_제거해야_합니다._5f76cf89-fbf2-47fd-a3f4-b891fa780b60/**
+          policies/_미리_보기_Azure_Security_에이전트를_자동으로_설치하도록_지원되는_Linux_가상_머신_구성_5f8eb305-9c9f-4abe-9bb0-df220d9faba2/**
+          policies/리소스에_태그_추가_또는_바꾸기_5ffd78d9-436d-4b41-a421-5baa819e3008/**
+          policies/_미리_보기_게스트_증명_확장을_자동으로_설치하도록_지원되는_Linux_가상_머신을_구성합니다._6074e9a3-c711-4856-976d-24d51f9e065b/**
+          policies/스토리지_계정은_가상_네트워크_서비스_엔드포인트를_사용해야_함_60d21c4f-21a3-4d94-85f4-b924e6aeeda4/**
+          policies/SQL_서버에_Advanced_Data_Security_배포_6134c3db-786f-471e-87bc-8f479dc890f6/**
+          policies/Windows_컴퓨터에서_표준_시간대를_구성합니다._6141c932-9384-44c6-a395-59e4c057d7c9/**
+          policies/App_Configuration의_프라이빗_엔드포인트_구성_614ffa75-862c-456e-ad8b-eaa1b0844b07/**
+          policies/Bot_Service_엔드포인트는_유효한_HTTPS_URI여야_합니다._6164527b-e1ee-4882-8673-572f425f5e0a/**
+          policies/Service_Fabric_클러스터에는_ClusterProtectionLevel_속성이_EncryptAndSign으로_설정되어_있어야_합니다._617c02be-7f02-4efd-8836-3180d47b6c68/**
+          policies/구독에_태그_추가_또는_바꾸기_61a4d60b-7326-440e-8051-9f94394d4dd1/**
+          policies/Log_Analytics_에이전트가_예상대로_연결되지_않은_Windows_머신_감사_6265018c-d7e2-432f-a75d-094d5f6f4465/**
+          policies/Azure_SignalR_Service_리소스를_수정하여_공용_네트워크_액세스를_사용하지_않도록_설정_62a3ae95-8169-403e-a2d2-b82141448092/**
+          policies/_미리_보기_Linux_가상_머신_확장_집합에_Azure_Security_에이전트를_설치해야_합니다._62b52eae-c795-44e3-94e8-1b3d264766fb/**
+          policies/Windows_머신_네트워크_연결_감사_630ac30f-a234-4533-ac2d-e0df77acda51/**
+          policies/Linux_머신에_대한_인증에_SSH_키가_필요함_630c64f9-8b6b-4c64-b511-6544ceff6fd6/**
+          policies/App_Services는_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_63a0ac64-5d5f-4569-8a3d-df67cc1ce9d7/**
+          policies/Azure_HDInsight_클러스터는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_64d314f6-6062-4780-a861-c23e8951bee5/**
+          policies/_미리_보기_Azure_Defender_프로필을_사용하도록_Azure_Kubernetes_Service_클러스터_구성_64def556-fbad-4622-930e-72d1d5589bf5/**
+          policies/머신에서_SQL_Server용_Azure_Defender를_사용하도록_설정해야_함_6581d072-105e-4418-827f-bd446d56421b/**
+          policies/관리_인증서_대신_서비스_주체를_사용하여_구독을_보호해야_합니다._6646a0bd-e110-40ca-bb97-84fcee63c414/**
+          policies/_미리_보기_Azure_Security_에이전트를_자동으로_설치하도록_지원되는_Linux_가상_머신_확장_집합을_구성합니다._6654c8c4-e6f8-43f8-8869-54327af7ce32/**
+          policies/Cognitive_Services_계정은_고객_관리형_키로_데이터_암호화를_사용하도록_설정해야_함_67121cc7-ff39-4ab8-b7e3-95b84dab487d/**
+          policies/Azure_IoT_Hub_서비스_API에_대해_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._672d56b3-23a7-4a3c-a233-b77ed7777518/**
+          policies/_미리_보기_지원되는_Linux_가상_머신에_게스트_증명_확장을_설치해야_합니다._672fe5a1-2fcd-42d7-b85d-902b6e28c6ff/**
+          policies/Windows_머신이_관리_템플릿_-_네트워크_에_대한_요구_사항을_충족해야_함_67e010c1-640d-438e-a3a5-feaccb533a98/**
+          policies/_미리_보기_Azure_Data_Factory_연결된_서비스_리소스_종류가_허용_목록에_있어야_함_6809a3d0-d354-42fb-b955-783d207c62a8/**
+          policies/App_Service_프라이빗_링크를_사용해야_함_687aa49d-0982-40f8-bf6b-66d1da97a04b/**
+          policies/Azure_Arc_사용_Windows_서버에서_Log_Analytics_확장_구성_69af7d4a-7b18-4044-93a9-2651498ef203/**
+          policies/관리자_그룹에_지정한_구성원이_있는_Windows_머신_감사_69bf4abd-ca1e-4cf6-8b5a-762d42e61d4f/**
+          policies/프라이빗_DNS_영역을_사용하도록_BotService_리소스_구성_6a4e6f44-f2af-4082-9702-033c9e88b9f8/**
+          policies/더_이상_사용되지_않는_계정을_구독에서_제거해야_합니다._6b1cbf55-e8b6-442f-ba4c-7246b6381474/**
+          policies/Service_Bus에_대한_진단_설정을_이벤트_허브에_배포_6b51af03-9277-49a9-a3f8-1c69c9ff7403/**
+          policies/컴퓨터의_SQL_Server는_발견한_취약성을_해결해야_합니다._6ba6d016-e7c3-4842-b8f2-4992ebc0d72d/**
+          policies/리소스_종류를_사용할_수_없습니다._6c112d4e-5bc7-47ae-a041-ea2d9dccd749/**
+          policies/Log_Analytics_작업_영역은_공용_네트워크에서_로그_수집_및_쿼리를_차단해야_합니다._6c53d030-cc64-46f0-906d-2bc061cd1334/**
+          policies/배포_-_Azure_Kubernetes_Service의_진단_설정을_Log_Analytics_작업_영역으로_구성_6c66c325-74c8-42fd-a286-a74b0e2939d8/**
+          policies/함수_앱은_HTTPS를_통해서만_액세스할_수_있어야_합니다._6d555dd1-86f2-4f1c-8ed7-5abae7c6cbab/**
+          policies/프라이빗_DNS_영역으로_Azure_Automation_계정_구성_6dd01e4f-1be1-4e80-9d0b-d109e04cb064/**
+          policies/Security_Center가_기본_작업_영역을_사용하여_구독에서_Log_Analytics_에이전트를_자동_프로비저닝하도록_합니다._6df2fee6-a9ed-4fef-bced-e13be1b25f1c/**
+          policies/심각도가_높은_경고에_대해_메일_알림을_사용하도록_설정해야_합니다._6e2593d9-add6-4083-9c9b-4b7d2188c899/**
+          policies/스토리지_계정은_Private_Link를_사용해야_합니다._6edd7eda-6dd8-40f7-810d-67160c639cd9/**
+          policies/Batch_계정은_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._6f68b69f-05fe-49cd-b361-777ee9ca7e35/**
+          policies/스토리지_계정의_진단_설정을_Log_Analytics_작업_영역으로_구성_6f8f98a4-f108-47cb-8e98-91a0d85cd474/**
+          policies/스토리지_계정은_암호화에_고객_관리형_키를_사용해야_함_6fac406b-40ca-413b-bf8e-0bf964659c25/**
+          policies/통합_문서는_사용자가_제어하는_스토리지_계정에_저장해야_합니다._6fc8115b-2008-441f-8c61-9b722c1e537f/**
+          policies/배포_-_프라이빗_엔드포인트를_사용하여_Azure_Event_Grid_토픽_구성_6fcec95c-fbdf-45e8-91e1-e3175d9c9eca/**
+          policies/웹앱의_일부로_사용되는_경우_Python_버전_이_최신_상태인지_확인하세요._7008174a-fd10-4ef0-817e-fc820a951d73/**
+          policies/로컬_인증을_사용하지_않도록_Azure_SignalR_Service_구성_702133e5-5ec5-4f90-9638-c78e22f13b39/**
+          policies/OS_및_데이터_디스크는_고객_관리형_키로_암호화해야_합니다._702dd420-7fcc-42c5-afe8-4026edd20fe0/**
+          policies/_미리_보기_Azure_Defender의_확장을_설치하도록_Azure_Arc_지원_Kubernetes_클러스터_구성_708b60a6-d253-4fe0-9114-4be4c00f012c/**
+          policies/Cognitive_Services_계정은_로컬_인증_방법을_사용하지_않도록_설정해야_합니다_71ef260a-8f18-47b7-abcb-62d0673d94dc/**
+          policies/함수_앱의_일부로_사용되는_경우_Python_버전_이_최신_상태인지_확인하세요._7238174a-fd10-4ef0-817e-fc820a951d73/**
+          policies/웹앱의_일부로_사용되는_경우_PHP_버전_이_최신_상태인지_확인하세요._7261b898-8a84-4db8-9e04-18527132abb3/**
+          policies/_미리_보기_Windows_컴퓨터는_Azure_컴퓨팅_보안_기준의_요구_사항을_충족해야_합니다._72650e9f-97bc-4b2a-ab5f-9781a9fcecbc/**
+          policies/리소스_그룹에_태그_추가_726aca4c-86e9-4b04-b0c5-073027359532/**
+          policies/로컬_인증_방법을_사용하지_않도록_App_구성_저장소_구성_72bc14af-4ab8-43af-b4e4-38e7983f9a1f/**
+          policies/App_Service_앱을_가상_네트워크에_삽입해야_합니다._72d04c29-f87d-4575-9731-419ff16a2757/**
+          policies/Azure_Synapse_작업_영역은_Private_Link를_사용해야_합니다._72d11df1-dd8a-41f7-8925-b05b960ebafc/**
+          policies/공용_네트워크_액세스를_사용하지_않도록_App_Configuration_구성_73290fa2-dfa7-4bbb-945d-a5e23b75df2c/**
+          policies/Azure_Security_Center_권장_사항에_대한_워크플로_자동화_배포_73d6ab6c-2475-4850-afd6-43795f3492ef/**
+          policies/Linux_컴퓨터에는_허용된_로컬_계정만_있어야_합니다._73db37c4-f180-4b0f-ab2c-8ee96467686b/**
+          policies/API_Management_서비스는_가상_네트워크를_지원하는_SKU를_사용해야_함_73ef9241-5d81-4cd4-b483-8443d1730fe5/**
+          policies/스토리지_계정은_허용된_SKU별로_제한해야_합니다._7433c107-6db4-4ad1-b57a-a76dce0154a1/**
+          policies/저장소를_사용_설정하도록_Azure_Defender_구성_74c30959-af11-47b3-9ed2-a26e03f427a3/**
+          policies/API_앱의_일부로_사용되는_경우_Python_버전_이_최신_상태인지_확인하세요._74c3584d-afae-46f7-a20a-6f8adba71a16/**
+          policies/배치_계정에_대해_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._74c5a0ae-5e48-4738-b093-65e23a060488/**
+          policies/공용_IP_주소는_Azure_DDoS_Protection_표준에_대해_리소스_로그를_사용하도록_설정되어_있어야_함_752154a7-1e0f-45c6-a880-ac75a7e4f648/**
+          policies/프라이빗_DNS_영역을_사용하도록_Azure_Migrate_리소스_구성_7590a335-57cf-4c95-babd-ecbc8fafeb1f/**
+          policies/프라이빗_엔드포인트를_MySQL_서버에서_사용할_수_있어야_합니다._7595c971-233d-4bcf-bd18-596129188c49/**
+          policies/Linux_Virtual_Machine_Scale_Sets용_Dependency_Agent_배포_765266ab-e40e-4c61-bcb2-5a5275d0b7c0/**
+          policies/Azure_SQL_Database에서_프라이빗_엔드포인트_연결을_사용하도록_설정해야_함_7698e800-9299-47a6-b3b6-5a0fee576eed/**
+          policies/Azure_Cognitive_Search_서비스는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_76a56461-9dc0-40f0-82f5-2453283afa2f/**
+          policies/관리_테넌트에_대한_범위_위임_감사_76bed37b-484f-430f-a009-fd7592dff818/**
+          policies/Azure_구독에는_활동_로그에_대한_로그_프로필이_있어야_합니다._7796937f-307b-4598-941c-67d3a05ebfe7/**
+          policies/_미리_보기_Azure_Data_Factory에서_원본_제어에_Git_리포지토리를_사용해야_함_77d40665-3120-4348-b539-3192ec808307/**
+          policies/지정한_서브넷의_트래픽을_허용하려면_Azure_SQL_Database에서_가상_네트워크_방화벽_규칙을_사용하도록_설정해야_함_77e8b146-0078-4fb2-b002-e112381199f0/**
+          policies/Azure_Cache_for_Redis는_프라이빗_링크를_사용해야_함_7803067c-7d34-46e3-8c79-0ca68fc4036d/**
+          policies/감사_Azure_Machine_Learning_컴퓨팅_클러스터_및_인스턴스가_가상_네트워크_뒤에_있습니다._7804b5c7-01dc-4723-969b-ae300cc07ff1/**
+          policies/Azure_SQL_Managed_Instance_Azure_Active_Directory_인증만_사용하도록_설정해야_합니다._78215662-041e-49ed-a9dd-5385911b3a1f/**
+          policies/프라이빗_엔드포인트를_사용하여_Azure_Machine_Learning_작업_영역_구성_7838fd83-5cbb-4b5d-888c-bfa240972597/**
+          policies/Azure_Cosmos_DB는_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_797b37f7-06b8-444c-b1ad-fc62867f335a/**
+          policies/로컬_인증을_사용하지_않도록_컨테이너_레지스트리를_구성합니다._79fdfe03-ffcb-4e55-b4d0-b925b8241759/**
+          policies/App_Configuration에_연결된_프라이빗_엔드포인트의_프라이빗_DNS_영역_구성_7a860e27-9ca2-4fc6-822d-c2d248c300df/**
+          policies/관리_테넌트_ID가_Azure_Lighthouse를_통해_온보딩하도록_허용_7a8a51a3-ad87-4def-96f3-65a1839242b6/**
+          policies/Azure_Attestation_공급자는_프라이빗_엔드포인트를_사용해야_함_7b256a2d-058b-41f8-bed9-3f870541c40a/**
+          policies/Virtual_Machine_Scale_Sets의_리소스_로그를_사용하도록_설정해야_함_7c1b1214-f927-48bf-8882-84f0af6588b1/**
+          policies/공용_네트워크_액세스를_비활성화하도록_API_Management_서비스_구성_7ca8c8ac-3a6e-493d-99ba-c5fa35347ff2/**
+          policies/_미리_보기_자동으로_보안_부팅을_사용하도록_지원되는_Windows_가상_머신_구성_7cb1b219-61c6-47e0-b80c-4472cadeeb5f/**
+          policies/Azure_Cache_for_Redis가_가상_네트워크_내에_있어야_함_7d092e0a-7acd-40d2-a975-dca21cae48c4/**
+          policies/Azure_Kubernetes_Service_클러스터의_운영_체제와_데이터_디스크를_모두_고객_관리형_키로_암호화해야_합니다._7d7be79c-23ba-4033-84dd-45e2a5ccdd67/**
+          policies/프라이빗_엔드포인트로_Service_Bus_네임스페이스_구성_7d890f7f-100c-473d-baa1-2777e2266535/**
+          policies/Azure_SQL_데이터베이스_서버에_대한_진단_설정을_Log_Analytics_작업_영역으로_구성_7ea8a143-05e3-4553-abfe-f56bef8b0b70/**
+          policies/Azure_Arc_프라이빗_링크_범위는_프라이빗_엔드포인트로_구성해야_합니다._7eab1da3-2bf0-4ff0-8303-1a4277c380e8/**
+          policies/감사_진단_설정_7f89b1eb-583c-429a-8828-af049802c1d9/**
+          policies/Azure_SQL_Database_서버용_Azure_Defender를_사용하도록_설정해야_함_7fe3b40f-802b-4cdd-8bd4-fd799c948cc2/**
+          policies/SQL_감사_설정에_중요한_활동을_캡처하도록_구성된_작업_그룹이_있어야_함_7ff426e2-515f-405a-91c8-4f2333442eb5/**
+          policies/_미리_보기_Azure_Security_에이전트를_자동으로_설치하도록_지원되는_Windows_가상_머신_확장_집합을_구성합니다._808a7dc4-49f2-4e7b-af75-d14e561c244a/**
+          policies/배포_-_Azure_Security_Center_경고에_대한_제거_규칙_구성_80e94a21-c6cd-4c95-a2c7-beb5704e61c0/**
+          policies/Azure_Database_for_MySQL에서_사용하도록_Advanced_Threat_Protection_구성_80ed5239-4122-41ed-b54a-6f1fa7552816/**
+          policies/App_Service_Environment는_가장_강력한_TLS_암호_그룹을_사용하여_구성해야_합니다._817dcf37-e83d-4999-a472-644eada2ea1e/**
+          policies/공용_네트워크_액세스를_사용하지_않도록_App_Services_구성_81dff7c0-4020-4b58-955d-c076a2136b56/**
+          policies/Azure_Data_Explorer_미사용_암호화는_고객_관리형_키를_사용해야_함_81e74cea-30fd-40d5-802f-d72103c2aaaa/**
+          policies/Azure_Database_for_MySQL에_대해_지역_중복_백업을_사용하도록_설정해야_함_82339799-d096-41ae-8538-b108becf0970/**
+          policies/Azure_Web_PubSub_Search_서비스는_프라이빗_링크를_지원하는_SKU를_사용해야_합니다._82909236-25f3-46a6-841c-fe1020f95ae1/**
+          policies/Windows_머신이_시스템_감사_정책_-_시스템_에_대한_요구_사항을_충족해야_함_8316fa92-d69c-4810-8124-62414f560dcf/**
+          policies/기본_정책을_사용하여_새_Recovery_Services_자격_증명_모음에_대해_지정된_태그가_있는_가상_머신의_백업_구성_83644c87-93dd-49fe-bf9f-6aff8fd0834e/**
+          policies/Event_Hub_네임스페이스는_이중_암호화를_사용하도록_설정해야_합니다._836cd60e-87f3-4e6a-a27c-29d687f01a4c/**
+          policies/이벤트_허브의_리소스_로그를_사용하도록_설정해야_함_83a214f7-d01a-484b-91a9-ed54470c9a6a/**
+          policies/네트워크_인터페이스에_공용_IP를_사용할_수_없습니다._83a86a26-fd1f-447c-b59d-e51f44264114/**
+          policies/MySQL_서버는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_83cef61d-dbd1-4b20-a4fc-5fbc7da10833/**
+          policies/관리_디스크에서_공용_네트워크_액세스를_사용할_수_없어야_함_8405fdab-1faf-48aa-b702-999c9c172094/**
+          policies/공용_네트워크_액세스를_사용하지_않도록_관리_디스크_구성_8426280e-b5be-43d9-979e-653d12a08638/**
+          policies/_미리_보기_Linux_Azure_Arc_머신에_Log_Analytics_확장을_설치해야_합니다._842c54e8-c2f9-4d79-ae8d-38d8b8019373/**
+          policies/지정한_도메인에_가입되지_않는_Windows_머신_감사_84662df4-0e37-44a6-9ce1-c9d2150db18c/**
+          policies/App_Service_슬롯에는_SCM_사이트_배포에_대해_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._847ef871-e2fe-4e6e-907e-4adbf71de5cf/**
+          policies/_미리_보기_Azure_Key_Vault_관리형_HSM에서_공용_네트워크_액세스를_비활성화하도록_구성_84d327c3-164a-4685-b453-900478614456/**
+          policies/Windows_머신이_Windows_구성_요소_에_대한_요구_사항을_충족해야_함_8537fe96-8cbe-43de-b0ef-131bc72bc22a/**
+          policies/공용_네트워크_액세스를_사용하지_않도록_IoT_Hub_디바이스_프로비저닝_서비스_인스턴스_구성_859dfc91-ea35-43a6-8256-31271c363794/**
+          policies/_미리_보기_Azure_Data_Factory_통합_런타임에_코어_수_제한이_있어야_함_85bb39b5-2f66-49f8-9306-77da3ac5130f/**
+          policies/Azure_Cosmos_DB_계정에_방화벽_규칙이_있어야_함_862e97cf-49fc-4a5c-9de4-40d4e2e7c8eb/**
+          policies/Azure_Event_Grid_파트너_네임스페이스에는_로컬_인증_방법이_비활성화되어_있어야_합니다._8632b003-3545-4b29-85e6-b2b96773df1e/**
+          policies/SQL_DB_투명한_데이터_암호화_배포_86a912f6-9a06-4e26-b447-11b16ba8659f/**
+          policies/머신에_시스템_업데이트를_설치해야_합니다._86b3d65f-7626-441e-b690-81a8b71cff60/**
+          policies/프라이빗_엔드포인트의_프라이빗_DNS_영역을_구성하여_Azure_Data_Factory에_연결_86cd96e1-1745-420d-94d4-d3f2fe415aa4/**
+          policies/Azure_Data_Box_작업에서_고객_관리형_키를_사용하여_디바이스_잠금_해제_암호를_암호화해야_함_86efb160-8de7-451d-bc08-5d475b0aadae/**
+          policies/App_Service가_FTP_배포에_대해_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._871b205b-57cf-4e1e-a234-492616998bf7/**
+          policies/리소스에_태그_필요_871b6d14-10aa-478d-b590-94f262ecfa99/**
+          policies/Windows_머신이_시스템_감사_정책_-_권한_사용_에_대한_요구_사항을_충족해야_함_87845465-c458-45f3-af66-dcd62176f397/**
+          policies/Windows_머신이_보안_옵션_-_디바이스_에_대한_요구_사항을_충족해야_함_8794ff4f-1a35-4e18-938f-0b22055067cd/**
+          policies/Azure_Stream_Analytics_작업에서_데이터를_암호화하려면_고객_관리형_키를_사용해야_합니다._87ba29ef-1ab3-4d82-b763-87fcd4f531f7/**
+          policies/API_앱의_일부로_사용되는_경우_Java_버전_이_최신_상태인지_확인하세요._88999f4c-376a-45c8-bcb3-4058f713cf39/**
+          policies/네트워크_인터페이스가_IP_전달을_사용하지_않아야_합니다._88c0b9da-ce96-4b03-9635-f29a937e2900/**
+          policies/스토리지_계정_대상에_대해_감사가_있는_SQL_서버의_보존_기간을_90일_이상으로_구성해야_함_89099bee-89e0-4b26-a5f4-165451757743/**
+          policies/수정_-_공용_네트워크_액세스를_사용하지_않도록_Azure_Event_Grid_도메인_구성_898e9824-104c-4965-8e0e-5197588fa5d4/**
+          policies/Azure_Arc_프라이빗_링크_범위가_공용_네트워크_액세스를_비활성화해야_합니다._898f2439-3333-4713-af25-f1d78bc50556/**
+          policies/App_Configuration은_프라이빗_링크를_지원하는_SKU를_사용해야_합니다._89c8a434-18f0-402c-8147-630a8dea54e0/**
+          policies/로컬_인증을_사용하지_않도록_Azure_Event_Grid_도메인_구성_8ac2748f-3bf1-4c02-a3b6-92ae68cf75b1/**
+          policies/Azure_Container_Instance_컨테이너_그룹은_가상_네트워크에_배포해야_합니다._8af8f826-edcb-4178-b35f-851ea6fea615/**
+          policies/Azure_Data_Factory는_프라이빗_링크를_사용해야_함_8b0323be-cc25-4b61-935d-002c3798c6ea/**
+          policies/_미리_보기_Azure_Monitor_에이전트에_대한_Azure_Security_Center_파이프라인을_자동으로_만들도록_컴퓨터_구성_8b5ad9ab-3d44-4a6e-9ac3-75b04ea5fd28/**
+          policies/Azure_Event_Grid_도메인에는_로컬_인증_방법이_비활성화되어_있어야_합니다._8bfadddb-ee1c-4639-8911-a38cb8e0b3bd/**
+          policies/Azure_Media_Services_계정은_공용_네트워크_액세스를_비활성화해야_합니다._8bfe3603-0888-404a-87ff-5c1b6b4cc5e3/**
+          policies/웹앱을_실행하는_데_사용되는_경우_HTTP_버전_이_최신_상태인지_확인하세요._8c122334-9d20-4eb8-89ea-ac9a705b74ae/**
+          policies/스토리지_계정은_공유_키_액세스를_차단해야_합니다._8c6a50c6-9ffd-4ae7-986f-5fa6111f9a54/**
+          policies/API_앱에서_최신_TLS_버전을_사용해야_합니다._8cb6aa8b-9e41-4f4e-aa25-089a7ac2581e/**
+          policies/리소스_그룹에_태그_및_값_필요_8ce3da23-7156-49e4-b145-24f95f9dcb46/**
+          policies/_미리_보기_Azure_Arc_사용_Kubernetes_클러스터에_Azure_Defender의_확장이_설치되어_있어야_함_8dfab9c4-fe7b-49ad-85e4-1e9be085358f/**
+          policies/Log_Analytics_작업_영역_및_자동화_계정을_구성하여_로그_및_모니터링_중앙_집중화_8e3e61b3-0b32-22d5-4edf-55f87fdb5955/**
+          policies/컴퓨터에서_Endpoint_Protection_상태_문제를_해결해야_합니다._8e42c1f2-a2ab-49bc-994a-12bcd0dc4ac2/**
+          policies/Security_Center가_사용자_지정_작업_영역을_사용하여_구독에서_Log_Analytics_에이전트를_자동_프로비저닝하도록_합니다._8e7da0a5-0a0e-4bbc-bfc0-7773c018b616/**
+          policies/서버를_사용_설정하도록_Azure_Defender_구성_8e86a5b6-b9bd-49d1-8e21-4bb8a0862222/**
+          policies/프라이빗_엔드포인트_연결을_사용하도록_Azure_SQL_Server_구성_8e8ca470-d980-4831-99e6-dc70d9f6af87/**
+          policies/로컬_인증을_사용하지_않도록_Azure_Service_Bus_네임스페이스_구성_910711a6-8aa2-4f15-ae62-1e5b2ed3ef9e/**
+          policies/프라이빗_엔드포인트로_Event_Hub_네임스페이스_구성_91678b7c-d721-4fc5-b179-3cdf74e96b1c/**
+          policies/App_Services의_리소스_로그를_사용하도록_설정해야_함_91a78b24-f231-4a8a-8da9-02c35b2b6510/**
+          policies/Azure_Arc_사용_Windows_서버에서_종속성_에이전트_구성_91cb9edd-cd92-4d2f-b2f2-bdd8d065a3d4/**
+          policies/구독에서_쓰기_권한이_있는_계정에_MFA를_사용하도록_설정해야_합니다._9297c21d-2ed6-4474-b48f-163f75654ce3/**
+          policies/스토리지_계정은_테넌트_간_개체_복제를_방지해야_합니다._92a89a79-6c52-4a7e-a03f-61306fc49312/**
+          policies/신뢰할_수_있는_루트에_지정한_인증서가_포함되지_않은_Windows_머신_감사_934345e1-4dfb-4c70-90d7-41990dc9608b/**
+          policies/_미리_보기_프라이빗_DNS_영역_사용을_위해_Azure_Recovery_Services_자격_증명_모음_구성_942bd215-1a66-44be-af65-6a1c0318dbe2/**
+          policies/Log_Analytics_작업_영역에서_Azure_로그_검색_알림은_고객_관리_키를_사용해야_합니다._94c1f94d-33b0-4062-bd04-1cdc3e7eece2/**
+          policies/Windows_머신이_시스템_감사_정책_-_계정_관리_에_대한_요구_사항을_충족해야_함_94d9aca8-3757-46df-aa51-f218c5f11954/**
+          policies/가상_네트워크는_Azure_DDoS_Protection_표준으로_보호되어야_함_94de2ad3-e0c1-4caf-ad78-5d47bbc83d3d/**
+          policies/배포_-_Azure_Key_Vault의_진단_설정을_Log_Analytics_작업_영역으로_구성_951af2fa-529b-416e-ab6e-066fd85ac459/**
+          policies/_미리_보기_자동으로_보안_부팅을_사용하도록_지원되는_Linux_가상_머신_구성_95406fc3-1f69-47b0-8105-4c03b276ec5c/**
+          policies/Automation_계정은_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_955a914f-bf86-4f0e-acd5-e0766b0efcb6/**
+          policies/웹앱에서_인증을_사용하도록_설정해야_합니다._95bccee9-a7f8-4bec-9ee9-62c3473701fc/**
+          policies/리소스_그룹에_태그_필요_96670d01-0a4d-4649-9c89-2d3abc0a5025/**
+          policies/App_Configuration에서_고객_관리형_키를_사용해야_함_967a4b4b-2da9-43c1-b7d0-f98d0d74d0b1/**
+          policies/Windows_머신이_관리_템플릿_-_시스템_에_대한_요구_사항을_충족해야_함_968410dc-5ca0-4518-8a5b-7b55f0530ea9/**
+          policies/구독에_태그_추가_96d9a89c-0d67-41fc-899d-2b9599f76a24/**
+          policies/HPC_Cache_계정은_암호화에_고객_관리형_키를_사용해야_합니다._970f84d8-71b6-4091-9979-ace7e3fb6dbb/**
+          policies/_미리_보기_지원되는_Windows_가상_머신에서_보안_부팅을_사용하도록_설정해야_합니다._97566dd7-78ae-4997-8b36-1c7bfe0d8121/**
+          policies/Azure_Event_Grid_도메인은_프라이빗_링크를_사용해야_함_9830b652-8523-49cc-b1b3-e17dce1127ca/**
+          policies/Azure_Network_Security_Groups에_대한_진단_설정을_Log_Analytics_작업_영역으로_구성_98a2e215-5382-489e-bd29-32e7190a39ba/**
+          policies/기본_정책을_사용하여_새_Recovery_Services_자격_증명_모음에_대해_제공된_태그가_없는_가상_머신의_백업_구성_98d0b9f8-fd90-49c9-88e2-d3baf3b0dd86/**
+          policies/_미리_보기_게스트_증명_확장을_자동으로_설치하도록_지원되는_Windows_가상_머신을_구성합니다._98ea2fc7-6fc6-4fd1-9d8d-6331154da071/**
+          policies/API_앱을_실행하는_데_사용되는_경우_HTTP_버전_이_최신_상태인지_확인하세요._991310cd-e9f3-47bc-b7b6-f57b557d07db/**
+          policies/Azure_Kubernetes_Service_클러스터에는_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._993c2fcd-2b29-49d2-9eb0-df2c3a730c32/**
+          policies/Azure_Batch_계정은_고객_관리형_키를_사용하여_데이터를_암호화해야_합니다._99e9ccd8-3db9-4592-b0d1-14b1715a4d8a/**
+          policies/API_앱에서_FTPS만_요구해야_합니다._9a1b8c48-453a-4044-86c3-d8bfd823e4f5/**
+          policies/Azure_SQL_Database의_진단_설정을_이벤트_허브에_적용_9a7c7a7d-49e5-4213-bea8-6a502b6272e0/**
+          policies/Azure_Data_Explorer에_대해_가상_네트워크_삽입을_사용하도록_설정해야_함_9ad2fd1f-b25f-47a2-aa01-1a5a779e6413/**
+          policies/Microsoft_IaaSAntimalware_확장을_Windows_Server에_배포해야_합니다._9b597639-28e4-48eb-b506-56b05d366257/**
+          policies/프라이빗_엔드포인트로_IoT_Hub_디바이스_프로비저닝_서비스_인스턴스_구성_9b75ea5b-c796-4c99-aaaf-21c204daac43/**
+          policies/공용_네트워크_액세스를_사용하지_않도록_설정하도록_Azure_Cognitive_Search_서비스_구성_9cee519f-d9c1-4fd9-9f79-24ec3449ed30/**
+          policies/함수_앱의_일부로_사용되는_경우_Java_버전_이_최신_상태인지_확인하세요._9d0b6ea4-93e2-4578-bf2f-6bb17d22b4bc/**
+          policies/Azure_Arc_사용_Linux_서버에서_Log_Analytics_확장_구성_9d2b61b4-1d14-4a63-be30-d4498e7ad2cf/**
+          policies/_미리_보기_프라이빗_엔드포인트로_Azure_Key_Vault_구성_9d4fad1f-5189-4a42-b29e-cf7929c6b6df/**
+          policies/가상_머신과_연결된_네트워크_보안_그룹에_대해서_모든_네트워크_포트를_제한해야_합니다._9daedab3-fb2d-461e-b861-71790eead4f6/**
+          policies/관리형_애플리케이션의_애플리케이션_정의는_고객이_제공한_스토리지_계정을_사용해야_함_9db7917b-1607-4e7d-a689-bca978dd0633/**
+          policies/리소스_그룹에서_태그_및_값_추가_9ea02ca2-71db-412d-8b00-7c7ca9fcd32d/**
+          policies/Private_Link_연결을_사용하도록_스토리지_계정_구성_9f766f00-8d11-464e-80e1-4091d7874074/**
+          policies/로컬_인증을_사용하지_않도록_Azure_IoT_Hub_구성_9f8ba900-a70f-486e-9ffc-faf907305376/**
+          policies/Azure_Cognitive_Search_서비스는_Private_Link를_지원하는_SKU를_사용해야_합니다._a049bf77-880b-470f-ba6d-9f21c530cf83/**
+          policies/허용되는_리소스_종류_a08ec900-254a-4555-9bf5-e42af04b5c5c/**
+          policies/Cloud_Services(확장_지원)_역할_인스턴스는_안전하게_구성되어야_합니다._a0c11ca4-5828-4384-a2f2-fd7444dd5b4d/**
+          policies/공용_네트워크_액세스를_비활성화하도록_Azure_Machine_Learning_작업_영역_구성_a10ee784-7409-4941-b091-663697637c0f/**
+          policies/Security_Center_표준_가격_책정_계층을_선택해야_합니다._a1181c5f-672a-477a-979a-7d58aa086233/**
+          policies/Service_Bus_네임스페이스에서_RootManageSharedAccessKey를_제외한_모든_권한_부여_규칙을_제거해야_합니다._a1817ec0-a368-432a-8057-8371e17ac6ee/**
+          policies/_미리_보기_Azure_Kubernetes_Service_클러스터에는_Azure_Defender_프로필이_활성화되어_있어야_합니다._a1840de2-8088-4ea8-b153-b4c723e9cb01/**
+          policies/이벤트_허브_네임스페이스는_암호화에_고객_관리형_키를_사용해야_함_a1ad735a-e96f-45d2-a7b2-9a4932cab7ec/**
+          policies/Logic_Apps에_대한_진단_설정을_이벤트_허브에_배포_a1dae6c7-13f3-48ea-a149-ff8442661f60/**
+          policies/_미리_보기_지원되는_Linux_가상_머신_확장_집합에_게스트_증명_확장을_설치해야_합니다._a21f8c92-9e22-4f09-b759-50500d1d2dda/**
+          policies/Azure_Key_Vault_관리되는_HSM의_리소스_로그를_사용하도록_설정해야_합니다._a2a5b911-5617-447e-a49e-59dbe0e0434b/**
+          policies/암호_최소_길이를_14자로_제한하지_않는_Windows_머신_감사_a2d0e922-65d0-40c4-8f87-ea6da2d307a2/**
+          policies/_미리_보기_가상_머신을_기본_Azure_Security_Center_데이터_수집_규칙에_연결하도록_연결_구성_a2ea54a3-9707-45e3-8230-bbda8309d17e/**
+          policies/Azure_Arc_프라이빗_링크_범위를_사용하도록_Azure_Arc_사용_서버_구성_a3461c8c-6c9d-4e42-a644-40ba8a1abf49/**
+          policies/공용_네트워크_액세스를_사용하지_않도록_컨테이너_레지스트리_구성_a3701552-92ea-433e-9d17-33b7f1208fc9/**
+          policies/Azure_Security_Center를_모니터링하려면_가상_머신_확장_집합에_Log_Analytics_에이전트를_설치해야_함_a3a6ea0c-e018-4933-9ef0-5aaa1501449b/**
+          policies/Azure_Monitor_에이전트를_사용하여_Linux_Virtual_Machines_구성_a4034bc6-ae50-406d-bf76-50f4ee5a7811/**
+          policies/사용자_지정_RBAC_규칙의_사용_감사_a451c1ef-c6ca-483d-87ed-f49761e3ffb5/**
+          policies/웹_애플리케이션은_HTTPS를_통해서만_액세스할_수_있어야_합니다._a4af4a39-4135-47fb-b175-47fbdf85311d/**
+          policies/Azure_Security_Center를_모니터링하려면_가상_머신에_Log_Analytics_에이전트를_설치해야_함_a4fe33eb-e377-4efb-ab31-0784311bc499/**
+          policies/프라이빗_DNS_영역을_사용하도록_CosmosDB_계정_구성_a63cc0bd-cda4-4178-b705-37dc439d3e0f/**
+          policies/_미리_보기_Azure_Key_Vault에서_프라이빗_링크를_사용해야_함_a6abeaec-4d90-4a02-805f-6b26c4d3fbe9/**
+          policies/Azure_Database_for_MariaDB에서_사용하도록_Advanced_Threat_Protection_구성_a6cf7411-da9e-49e2-aec0-cba0250eaf8c/**
+          policies/배포_-_Azure_Key_Vault_관리되는_HSM에서_사용할_수_있도록_이벤트_허브에_대한_진단_설정을_구성합니다._a6d2c800-5230-4a40-bff3-8268b4987d42/**
+          policies/HTTPS_비밀을_사용하여_지정된_GitOps_구성으로_Kubernetes_클러스터_구성_a6f560f4-f582-4b67-b123-a37dcd1bf7ea/**
+          policies/로컬_인증_방법을_사용하지_않도록_Machine_Learning_컴퓨팅_구성_a6f9a2d0-cff7-4855-83ad-4cd750666512/**
+          policies/SQL_Server에_대한_감사를_사용하도록_설정해야_합니다._a6fb4358-5bf4-4ad7-ba82-2cd2f41ce5e9/**
+          policies/가상_머신에_Log_Analytics_확장이_설치되어_있어야_합니다._a70ca396-0a34-413a-88e1-b956c1e683be/**
+          policies/Azure_Media_Services_계정은_Private_Link를_지원하는_API를_사용해야_합니다._a77d8bb4-8d22-4bc1-a884-f582a705b480/**
+          policies/Azure_DDoS_Protection_표준을_사용하도록_설정해야_합니다._a7aca53f-2ed4-4466-a25e-0b45ade68efd/**
+          policies/Data_Lake_Store_계정에서_암호화_필요_a7ff3161-0087-490a-9ad9-ad6217f4f43a/**
+          policies/SQL_Managed_Instance는_최소_TLS_버전_1.2를_사용해야_함_a8793640-60f7-487c-b5c3-1d37215905c4/**
+          policies/Azure_Kubernetes_Service_클러스터에_Azure_Policy_추가_기능_배포_a8eff44f-8c92-45c3-a3fb-9880802d67a7/**
+          policies/SQL_Managed_Instance는_GRS_백업_중복을_사용하지_않아야_함_a9934fd7-29f2-4e6d-ab3d-607ea38e9079/**
+          policies/가상_네트워크를_만들_때_Network_Watcher_배포_a9b99dd8-06c5-4317-8629-9d86a3c6e7d9/**
+          policies/구독에서_소유자_권한이_있는_계정에_MFA를_사용하도록_설정해야_합니다._aa633080-8b72-40c4-a2d7-d00c03e80bed/**
+          policies/프라이빗_DNS_영역을_사용하도록_IoT_Hub_디바이스_프로비저닝_인스턴스_구성_aaa64d2d-2fa3-45e5-b332-0b031b9b30e8/**
+          policies/Azure_SQL_Database_Azure_Active_Directory_인증만_사용하도록_설정해야_합니다._abda6d70-9778-44e7-84a8-06713e6db027/**
+          policies/보호되지_않는_Azure_SQL_서버에_대해_SQL용_Azure_Defender를_사용하도록_설정해야_합니다._abfb4388-5bf4-4ad7-ba82-2cd2f41ceae9/**
+          policies/보호되지_않는_SQL_Managed_Instance에_대해_SQL용_Azure_Defender를_사용하도록_설정해야_합니다._abfb7388-5bf4-4ad7-ba99-2cd2f41cebb9/**
+          policies/_미리_보기_SQL_Managed_Instance는_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_합니다._ac01ad65-10e5-46df-bdd9-6b0cad13e1d2/**
+          policies/구독에서_Azure_Security_Center_사용_ac076320-ddcf-4066-b451-6154267e8ad2/**
+          policies/Azure_Site_Recovery를_통해_복제를_사용하여_가상_머신에서_재해_복구_구성_ac34a73f-9fa5-4067-9247-a3ecae514468/**
+          policies/Kubernetes_서비스에서_RBAC(역할_기반_액세스_제어)를_사용해야_합니다._ac4a19c2-fa67-49b4-8ae5-0b2e78c49457/**
+          policies/_미리_보기_프라이빗_DNS_영역을_사용하도록_Azure_Key_Vault_구성_ac673a9a-f77d-4846-b2d8-a57f8e1c01d4/**
+          policies/_미리_보기_공용_네트워크_액세스를_사용하지_않도록_Key_Vault_구성_ac673a9a-f77d-4846-b2d8-a57f8e1c01dc/**
+          policies/감사를_사용하도록_Synapse_작업_영역_구성_ac7891a4-ac7a-4ba0-9ae9-c923e5a225ee/**
+          policies/BotService_리소스는_프라이빗_링크를_사용해야_함_ad5621d6-a877-4407-aa93-a950b428315e/**
+          policies/SQL_Server는_가상_네트워크_서비스_엔드포인트를_사용해야_함_ae5d2f14-d830-42b6-9899-df6cfe9c71a3/**
+          policies/머신에_게스트_구성_확장을_설치해야_함_ae89ebca-1c92-4898-ac2c-9f63decb045c/**
+          policies/Azure_Event_Grid_항목에는_로컬_인증_방법이_비활성화되어_있어야_합니다._ae9fb87f-8a17-4428-94a4-8135d431055c/**
+          policies/App_Service가_SCM_사이트_배포에_대해_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._aede300b-d67f-480a-ae26-4b3dfb1a1fdc/**
+          policies/Azure_Spring_Cloud가_네트워크_삽입을_사용해야_함_af35e2a4-ef96-44e7-a9ae-853dd97032c4/**
+          policies/Azure_Security_Center에서_누락된_Endpoint_Protection_모니터링_af6cd1bd-1635-48cb-bde7-5b15693900b9/**
+          policies/_미리_보기_백업용_프라이빗_DNS_영역을_사용하도록_Recovery_Services_자격_증명_모음_구성_af783da1-4ad1-42be-800d-d19c70038820/**
+          policies/_미리_보기_머신에는_공격_경로를_노출_시킬_수_있는_포트를_닫아야_합니다._af99038c-02fd-4a2f-ac24-386b62bf32de/**
+          policies/활동_로그는_1년_이상_보존되어야_합니다._b02aacc0-b073-424e-8298-42b22829ee0a/**
+          policies/App_구성_저장소에는_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._b08ab3ca-1062-4db3-8803-eec9cae605d6/**
+          policies/Azure_HDInsight_클러스터는_가상_네트워크에_삽입해야_합니다._b0ab5b05-1c98-40f7-bb9e-dc568e41b501/**
+          policies/배포_-_프라이빗_엔드포인트의_프라이빗_DNS_영역을_구성하여_Azure_SignalR_Service에_연결_b0e86710-7fb7-4a6c-a064-32e9b829509e/**
+          policies/가상_머신의_관리_포트는_Just-In-Time_네트워크_액세스_제어로_보호해야_합니다._b0f33259-77d7-4c9e-aac6-3aabcfae693c/**
+          policies/_미리_보기_Linux_Virtual_Machines는_보안_부팅을_사용해야_합니다._b1bb3592-47b8-4150-8db0-bfdcc2c8965b/**
+          policies/SQL_Database는_GRS_백업_중복을_사용하지_않아야_함_b219b9cf-f672-4f96-9ab0-f5a3ac5e1c13/**
+          policies/이벤트_허브_네임스페이스에서_RootManageSharedAccessKey를_제외한_모든_권한_부여_규칙을_제거해야_합니다._b278e460-7cfc-4451-8294-cccc40a940d7/**
+          policies/구독에서_태그_상속_b27a0cbd-a167-4dfa-ae64-4337be671140/**
+          policies/프라이빗_DNS_영역을_사용하도록_App_Services_구성_b318f84a-b872-429b-ac6d-a01b96814452/**
+          policies/프라이빗_엔드포인트를_사용하여_Azure_파일_동기화_구성_b35dddd9-daf7-423b-8375-5a5b86806d5a/**
+          policies/배포_-_Azure_Key_Vault_관리되는_HSM에서_사용할_수_있도록_Log_Analytics_작업_영역에_대한_진단_설정을_구성합니다._b3884c81-31aa-473d-a9bb-9466fe0ec2a0/**
+          policies/App_Service를_사용하도록_Azure_Defender_구성_b40e7bcd-a1e5-47fe-b9cf-2f534d0bfb7d/**
+          policies/Search_서비스의_리소스_로그를_사용하도록_설정해야_함_b4330a05-a843-4bc8-bf9a-cacce50c67f4/**
+          policies/Windows_머신이_보안_옵션_-_종료_에_대한_요구_사항을_충족해야_함_b4a4d1eb-0263-441b-84cb-a44073d8372d/**
+          policies/프라이빗_DNS_영역을_사용하도록_Azure_Media_Services_구성_b4a7f6c1-585e-4177-ad5b-c2c93f4bb991/**
+          policies/Azure_Stack_Edge_디바이스는_이중_암호화를_사용해야_함_b4ac1030-89c5-4697-8e00-28b5ba6a8811/**
+          policies/PostgreSQL_서버에_대해_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._b52376f7-9612-48a1-81cd-1ffe4b61032c/**
+          policies/Service_Fabric_클러스터는_클라이언트_인증에_대해서만_Azure_Active_Directory를_사용해야_합니다._b54ed75b-3e1a-44ac-a333-05ba39b99ff0/**
+          policies/스토리지_계정_암호화_범위에서_고객_관리_키를_사용하여_미사용_데이터를_암호화해야_합니다_b5ec538c-daa0-4006-8596-35468b9148e8/**
+          policies/Cosmos_DB_계정에_대한_Advanced_Threat_Protection_배포_b5f04e03-92a3-4b09-9410-2cc5e5047656/**
+          policies/App_Services의_진단_로그를_사용하도록_설정해야_합니다._b607c5de-e7d9-4eee-9e5c-83f1bcee4fa0/**
+          policies/프라이빗_엔드포인트로_CosmosDB_계정_구성_b609e813-3156-4079-91fa-a8494c1471c4/**
+          policies/프라이빗_엔드포인트를_사용하여_Azure_Cognitive_Search_서비스_구성_b698b005-b660-4837-b833-a7aaab26ddba/**
+          policies/Network_Watcher를_사용하도록_설정해야_합니다._b6e2945c-0b7b-40f5-9233-7a5323b5cdc6/**
+          policies/Resource_Manager를_사용_설정하도록_Azure_Defender_구성_b7021b2b-08fd-4dc0-9de7-3c6ece09faf9/**
+          policies/배포_-_Log_Analytics_작업_영역에_대한_SQL_Database의_진단_설정_구성_b79fa14e-238a-4c2d-b376-442ce508fc84/**
+          policies/API_앱은_HTTPS를_통해서만_액세스할_수_있어야_합니다._b7ddfbdc-1260-477d-91fd-98bd9be789a6/**
+          policies/Event_Hub_네임스페이스는_프라이빗_링크를_사용해야_함_b8564268-eb4a-4337-89be-a19db070c59d/**
+          policies/Logic_Apps에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_b889a06c-ec72-4b03-910a-cb169ee18721/**
+          policies/특정_관리_작업의_활동_로그_경고가_있어야_함_b954148f-4c11-4c38-8221-be76711e194a/**
+          policies/Azure_SQL_데이터베이스를_사용_설정하도록_Azure_Defender_구성_b99b73e7-074b-4089-9395-b7236f094491/**
+          policies/Azure_Machine_Learning_작업_영역은_고객_관리형_키로_암호화해야_함_ba769a63-b8cc-4b2d-abf6-ac33c7204be8/**
+          policies/배포_-_프라이빗_DNS_영역을_사용하도록_Azure_Event_Grid_토픽_구성_baf19753-7502-405f-8745-370519b20483/**
+          policies/_미리_보기_Windows_가상_머신에_Azure_Security_에이전트를_설치해야_합니다._bb2c6c6d-14bc-4443-bef3-c6be0adc6076/**
+          policies/네트워크_보안_그룹을_사용하여_인터넷에_연결되지_않은_가상_머신을_보호해야_합니다._bb91dfba-c30d-4263-9add-9c2384e659a6/**
+          policies/프라이빗_DNS_영역을_사용하도록_디스크_액세스_리소스_구성_bc05b96c-0b36-4ca9-82f0-5c53f96ce05a/**
+          policies/가상_머신에서_IP_전달을_사용하지_않도록_설정해야_합니다._bd352bd5-2853-4985-bf0d-73806b4a5744/**
+          policies/컨테이너_레지스트리에_Private_Link를_지원하는_SKU가_있어야_함_bd560fc0-3c69-498a-ae9f-aa8eb7de0e13/**
+          policies/_미리_보기_누락된_시스템_업데이트가_있는지_주기적으로_확인하도록_머신을_구성해야_합니다._bd876905-5b84-4f73-ab2d-2e7a7c4568d9/**
+          policies/Azure_Defender_for_DNS를_사용하도록_설정해야_합니다._bdc59948-5574-49b3-bb91-76b7c986428d/**
+          policies/지정한_기간(일)_내에_다시_시작되지_않은_Windows_머신_감사_beb6ccee-b6b8-4e91-9801-a5fa4260a104/**
+          policies/Windows_Defender_Exploit_Guard를_머신에서_사용하도록_설정해야_함_bed48b13-6647-468e-aa2f-1af1d3f4dd40/**
+          policies/Key_Vault에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_bef3f64c-5290-43b7-85b0-9b254eef4c47/**
+          policies/스토리지_계정에_대해_지역_중복_스토리지를_사용하도록_설정해야_함_bf045164-79ba-4215-8f95-f8048dc1780b/**
+          policies/암호_복잡성_설정을_사용하도록_설정하지_않는_Windows_머신_감사_bf16e0bb-31e1-4646-8202-60a235cc7e74/**
+          policies/Azure_Web_PubSub_서비스는_공용_네트워크_액세스를_비활성화해야_합니다._bf45113f-264e-4a87-88f9-29ac8a0aca6a/**
+          policies/배포_-_프라이빗_엔드포인트를_사용하여_Azure_IoT_Hubs_구성_bf684997-3909-404e-929c-d4a38ed23b2e/**
+          policies/_미리_보기_Azure_Arc_지원_서버에서_누락된_시스템_업데이트에_대한_정기_검사를_구성합니다._bfea026e-043f-4ff4-9d1b-bf301ca7ff46/**
+          policies/스토리지_계정_암호화_범위는_미사용_데이터에_이중_암호화를_사용해야_합니다._bfecdea6-31c4-4045-ad42-71b9dc87247d/**
+          policies/SSH_비밀을_사용하여_지정된_GitOps_구성으로_Kubernetes_클러스터_구성_c050047b-b21b-4822-8a2d-c1e37c3c0c6a/**
+          policies/Azure_Automation_계정에서_프라이빗_엔드포인트_연결_구성_c0c3130e-7dda-4187-aed0-ee4a472eaa60/**
+          policies/승인된_VM_확장만_설치해야_합니다._c0e996f8-39cf-4af9-9f45-83fbde810432/**
+          policies/사용자_지정_공급자의_연결_배포_c15c281f-ea5c-44cd-90b8-fc3c14d13f0c/**
+          policies/모든_네트워크_보안_그룹에_대해_흐름_로그를_구성해야_함_c251913d-7d24-4958-af87-478ed3b9ba41/**
+          policies/컨테이너_레지스트리용_Azure_Defender를_사용하도록_설정해야_함_c25d9a16-bc35-4e15-a7e5-9db606bf9ed4/**
+          policies/Azure_Data_Box_작업에서_디바이스의_미사용_데이터에_대한_이중_암호화를_사용하도록_설정해야_함_c349d81b-9985-44ae-a8da-ff98d108ede8/**
+          policies/Azure_Key_Vault_관리되는_HSM에_제거_방지를_사용하도록_설정해야_합니다._c39ba22d-4428-4149-b981-70acb31fc383/**
+          policies/Azure_Defender_for_Resource_Manager를_사용하도록_설정해야_합니다._c3d20c29-b36d-48fe-808b-99a87530ad99/**
+          policies/Virtual_Machine_Scale_Sets에_대한_시스템_업데이트를_설치해야_합니다._c3f317a7-a95c-4547-b7e7-11017ebdf2fe/**
+          policies/보호_서명을_자동으로_업데이트하려면_Azure용_Microsoft_Antimalware를_구성해야_합니다._c43e4a30-77cb-48ab-a4dd-93f175c63b57/**
+          policies/_미리_보기_Container_Registry는_가상_네트워크_서비스_엔드포인트를_사용해야_함_c4857be7-912a-4c75-87e6-e30292bcdf78/**
+          policies/프라이빗_DNS_영역을_사용하도록_Cognitive_Services_계정_구성_c4bc6f10-cb41-49eb-b000-d5ab82e2a091/**
+          policies/API_앱에서_관리_ID를_사용해야_합니다._c4d441f8-f9d9-4a9e-9cef-e82117cb3eef/**
+          policies/API_앱에서_인증을_사용하도록_설정해야_합니다._c4ebc54a-46e1-481a-bee2-d4411e95d828/**
+          policies/특정_정책_작업의_활동_로그_경고가_있어야_함_c5447c04-a4d7-4ba8-a263-c9ee321a6858/**
+          policies/프라이빗_엔드포인트를_사용하여_Azure_Media_Services_구성_c5632066-946d-4766-9544-cd79bcc1286e/**
+          policies/Azure_Defender가_SQL_관리형_인스턴스에서_사용_설정되도록_구성_c5a62eb0-c65a-4220-8a4d-f70dd4ca95dd/**
+          policies/지정된_애플리케이션이_설치된_Windows_머신_감사_c5b85cba-6e6f-4de4-95e1-f0233cd712ac/**
+          policies/지정한_표준_시간대로_설정되지_않은_Windows_머신_감사_c633f6a2-7f8b-4d9e-9456-02f0f04f5505/**
+          policies/지정한_Windows_PowerShell_실행_정책이_없는_Windows_머신_감사_c648fbbb-591c-4acd-b465-ce9b176ca173/**
+          policies/Recovery_Services_자격_증명_모음에_대한_진단_설정을_리소스_특정_범주의_Log_Analytics_작업_영역에_배포합니다._c717fb0c-d118-4c43-ab3d-ece30ac81fb3/**
+          policies/함수_앱에서_인증을_사용하도록_설정해야_합니다._c75248c1-ea1d-4a9c-8fc9-29a6aabd5da8/**
+          policies/배치_계정에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_c84e5349-db6d-4769-805e-e14037dab9b5/**
+          policies/Azure_HDInsight는_프라이빗_링크를_사용해야_합니다._c8cc2f85-e019-4065-9fa3-5e6a2b2dde56/**
+          policies/MySQL_유연한_서버에_대해_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_c9299215-ae47-4f50-9c54-8a392f68a052/**
+          policies/Data_Lake_Analytics의_리소스_로그를_사용하도록_설정해야_함_c95c74d9-38fe-4f0d-af86-0c7d626a315c/**
+          policies/배포_-_프라이빗_DNS_영역을_사용하도록_Azure_IoT_Hubs_구성_c99ce9c1-ced7-4c3e-aca0-10e69ce0cb02/**
+          policies/_미리_보기_게스트_증명_확장을_자동으로_설치하도록_지원되는_Windows_가상_머신_확장_집합을_구성합니다._c9b2ae08-09e2-4f0e-bb43-b60bf0135bdf/**
+          policies/네트워크_보안_그룹에_대한_진단_설정_배포_c9c29499-c1d1-4195-99bd-2ec9e3a9dc89/**
+          policies/스토리지_계정은_신뢰할_수_있는_Microsoft_서비스의_액세스를_허용해야_합니다._c9d007d0-c057-4772-b18c-01e546713bcd/**
+          policies/App_Configuration은_프라이빗_링크를_사용해야_함_ca610c1d-041c-4332-9d88-7ed3094967c7/**
+          policies/Azure_Monitor_에이전트를_사용하여_Windows_Virtual_Machines_구성_ca817e41-e85a-4783-bc7f-dc532d36235e/**
+          policies/관리_디스크는_플랫폼_관리형_및_고객_관리형_키를_둘_다_사용하여_이중_암호화해야_합니다._ca91455f-eace-4f96-be59-e6e2c35b4816/**
+          policies/Windows_머신이_보안_옵션_-_Microsoft_네트워크_서버_에_대한_요구_사항을_충족해야_함_caf2d518-f029-4f6b-833b-d7081702f253/**
+          policies/웹_애플리케이션에_대해_원격_디버깅을_해제해야_합니다._cb510bfd-1cba-4d9f-a230-cb0976f4bb71/**
+          policies/_미리_보기_SQL_데이터베이스에서_중요한_데이터를_분류해야_합니다._cc9835f2-9f6b-4cc8-ab4a-f8ef615eb349/**
+          policies/허용된_가상_머신_크기_SKU_cccc23c7-8427-4f53-ad12-b6a63eb452b3/**
+          policies/레거시_v2_API에_대한_액세스를_허용하는_Azure_Media_Services_계정은_차단되어야_합니다._ccf93279-9c91-4143-a841-8d1f21505455/**
+          policies/리소스_그룹에서_태그_상속_cd3aa116-8754-49c9-a813-ad46512ece54/**
+          policies/Cognitive_Services에서_프라이빗_링크를_사용해야_함_cddd188c-4b82-4c48-a19d-ddf74ee66a01/**
+          policies/Azure_Security_Center_데이터에_대해_이벤트_허브에_내보내기_배포_cdfcce10-4578-4ecd-9703-530938e4abcb/**
+          policies/Key_Vault의_리소스_로그를_사용하도록_설정해야_함_cf820ca0-f99e-4f3e-84fb-66e913812d21/**
+          policies/Azure_Service_Bus_네임스페이스에_로컬_인증_방법을_사용하지_않도록_설정_cfb11c26-f069-4c14-8e36-56c394dae5af/**
+          policies/_미리_보기_Azure_Security_에이전트를_자동으로_설치하도록_지원되는_Windows_Arc_컴퓨터_구성_d01f3018-de9f-4d75-8dae-d12c1875da9f/**
+          policies/컨테이너_레지스트리는_무제한_네트워크_액세스를_허용해서는_안_됩니다._d0793b48-0edc-4296-a390-4c75d1bdfd71/**
+          policies/리소스_그룹에_태그_추가_또는_바꾸기_d157c373-a6c4-483d-aaad-570756956268/**
+          policies/PostgreSQL_데이터베이스_서버에_대해_SSL_강제_연결을_사용하도록_설정해야_합니다._d158790f-bfb0-486c-8631-2dc6b4e8e6af/**
+          policies/_미리_보기_프라이빗_엔드포인트를_이용하여_Azure_Key_Vault_관리형_HSM_구성_d1d6d8bb-cc7c-420f-8c7d-6f6f5279a844/**
+          policies/가상_머신의_게스트_구성_확장은_시스템이_할당한_관리_ID를_사용하여_배포해야_함_d26f7642-7545-4e18-9b75-8c9bbdee3a9a/**
+          policies/배포_-_프라이빗_DNS_영역을_사용하도록_Azure_Event_Grid_도메인_구성_d389df0a-e0d7-4607-833c-75a6fdac2c2d/**
+          policies/Azure_SQL_Database에_대해_장기_지역_중복_백업을_사용하도록_설정해야_함_d38fc420-0735-4ef3-ac11-c806f651a570/**
+          policies/지정된_애플리케이션이_설치되지_않은_Linux_머신_감사_d3b823c9-e0fc-4453-9fb2-8213b7338523/**
+          policies/로그_수집_및_쿼리를_위해_공용_네트워크_액세스를_사용하지_않도록_Azure_Log_Analytics_작업_영역_구성_d3ba9c42-9dd5-441a-957c-274031c750c0/**
+          policies/컨테이너_레지스트리를_사용_설정하도록_Azure_Defender_구성_d3d1e68e-49d4-4b56-acff-93cef644b432/**
+          policies/가상_머신은_승인된_가상_네트워크에_연결되어야_함_d416745a-506c-48b6-8ab1-83cb814bcaa3/**
+          policies/관리_디스크는_고객_관리형_키_암호화에_대해_디스크_암호화_집합의_특정_세트를_사용해야_합니다._d461a302-a187-421a-89ac-84acdb4edc04/**
+          policies/Windows_머신이_보안_옵션_-_대화형_로그온_에_대한_요구_사항을_충족해야_함_d472d2c9-d6a3-4500-9f5f-b15f123005aa/**
+          policies/Application_Insights의_Azure_Monitor_로그는_Log_Analytics_작업_영역에_연결해야_합니다._d550e854-df1a-4de9-bf44-cd894b39a95e/**
+          policies/Data_Lake_Analytics에_대한_진단_설정을_Log_Analytics_작업_영역에_배포_d56a5a7c-72d7-42bc-8ceb-3baf4c0eae03/**
+          policies/머신에서_Log_Analytics_에이전트_상태_문제를_해결해야_합니다._d62cfe2b-3ab0-4d41-980d-76803b58ca65/**
+          policies/Event_Hub는_가상_네트워크_서비스_엔드포인트를_사용해야_함_d63edb4a-c612-454d-b47d-191a724fcbf0/**
+          policies/App_Service_Environment는_TLS_1.0_및_1.1을_사용하지_않도록_설정해야_합니다._d6545c6b-dd9d-4265-91e6-0b451e2f1c50/**
+          policies/_미리_보기_Microsoft_Azure_Arc_머신에_Log_Analytics_확장을_설치해야_합니다._d69b1763-b96d-40b8-a2d9-ca31e9fd0d3e/**
+          policies/Windows_머신이_보안_옵션_-_Microsoft_네트워크_클라이언트_에_대한_요구_사항을_충족해야_함_d6c69680-54f0-4349-af10-94dd05f4225e/**
+          policies/프라이빗_엔드포인트를_사용하여_Azure_Arc_Private_Link_범위_구성_d6eeba80-df61-4de5-8772-bc1b7852ba6b/**
+          policies/IoT_Hub_디바이스_프로비저닝_서비스_인스턴스는_공용_네트워크_액세스를_사용하지_않도록_설정해야_함_d82101f3-f3ce-4fc5-8708-4c09f4009546/**
+          policies/프라이빗_엔드포인트를_사용하여_컨테이너_레지스트리_구성_d85c6833-7d33-4cf5-a915-aaa2de84405f/**
+          policies/MySQL_서버에_대해_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._d9844e8a-1437-4aeb-a32c-0c992f056095/**
+          policies/Azure_HDInsight_클러스터는_전송_중_암호화를_사용하여_Azure_HDInsight_클러스터_노드_간_통신을_암호화해야_함_d9da03a1-f3c3-412a-9709-947156872263/**
+          policies/해독_가능한_암호화를_사용하여_암호를_저장하지_않는_Windows_머신_감사_da0f98fe-a24b-4ad5-af69-bd0400233661/**
+          policies/공용_네트워크_액세스를_사용하지_않도록_CosmosDB_계정_구성_da69ba51-aaf1-41e5-8651-607cd0b37088/**
+          policies/Azure_Media_Services_콘텐츠_키_정책은_토큰_인증을_사용해야_합니다._daccf7e4-9808-470c-a848-1c5b582a1afb/**
+          policies/Azure_Database_for_PostgreSQL_서버에서_사용하도록_Advanced_Threat_Protection_구성_db048e65-913c-49f9-bb5f-1084184671d3/**
+          policies/배치_계정에_대한_진단_설정을_이벤트_허브에_배포_db51110f-0865-4a6e-b274-e2e07a5b2cd7/**
+          policies/프라이빗_엔드포인트로_Cognitive_Services_계정_구성_db630ad5-52e9-4f4d-9c44-53912fe40053/**
+          policies/로컬_인증을_사용하지_않도록_Cosmos_DB_데이터베이스_계정_구성_dc2d41d1-4ab1-4666-a3e1-3d51c43e0049/**
+          policies/통합_서비스_환경에_Logic_Apps를_배포해야_함_dc595cb1-1cde-45f6-8faf-f88874e1c0e1/**
+          policies/컨테이너_레지스트리에는_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._dc921057-6b28-4fbe-9b83-f7bec05db6c2/**
+          policies/웹앱은_콘텐츠_디렉터리에_Azure_파일_공유를_사용해야_합니다._dcbc65aa-59f3-4239-8978-3bb869d82604/**
+          policies/로그_수집_및_쿼리를_위해_공용_네트워크_액세스를_사용하지_않도록_Azure_애플리케이션_Insights_구성_요소_구성_dddfa1af-dcd6-42f4-b5b0-e1db01e0b405/**
+          policies/공용_네트워크_액세스를_비활성화하도록_Azure_Arc_프라이빗_링크_범위를_구성합니다._de0bc8ea-76e2-4fe2-a288-a07556d0e9c4/**
+          policies/Azure_Arc_사용_Linux_서버에서_종속성_에이전트_구성_deacecc0-9f84-44d2-bb82-46f32d766d43/**
+          policies/_미리_보기_Azure_Recovery_Services_자격_증명_모음은_백업용_프라이빗_링크를_사용해야_합니다._deeddb44-9f94-4903-9fa0-081d524406e3/**
+          policies/IoT_Hub_디바이스_프로비저닝_서비스_인스턴스는_프라이빗_링크를_사용해야_함_df39c015-56a4-45de-b4a3-efe77bed320d/**
+          policies/API_Management_서비스는_공용_네트워크_액세스를_비활성화해야_합니다._df73bd95-24da-4a4f-96b9-4e8b94b402bd/**
+          policies/MariaDB_서버는_가상_네트워크_서비스_엔드포인트를_사용해야_함_dfbd9a64-6114-48de-a47d-90574dc2e489/**
+          policies/프라이빗_DNS_영역을_사용하도록_Azure_Cache_for_Redis_구성_e016b22b-e0eb-436d-8fd7-160c4eaed6e2/**
+          policies/Synapse_작업_영역에서_감사를_사용하도록_설정해야_함_e04e5000-cd89-451d-bb21-a14d24ff9c73/**
+          policies/Windows_머신이_사용자_권한_할당_에_대한_요구_사항을_충족해야_함_e068b215-0026-4354-b347-8fb2766f73a2/**
+          policies/Cosmos_DB는_가상_네트워크_서비스_엔드포인트를_사용해야_함_e0a2b1a3-f7f9-4569-807f-2a9edebdf4d9/**
+          policies/Windows_머신이_관리_템플릿_-_MSS(레거시)_에_대한_요구_사항을_충족해야_함_e0a7e899-2ce2-4253-8a13-d808fdeb75af/**
+          policies/Log_Analytics_작업_영역은_Azure_Active_Directory_기반이_아닌_수집을_차단해야_합니다._e15effd4-2278-4c65-a0da-4d6f6d1890e2/**
+          policies/_미리_보기_Windows_가상_머신_확장_집합에_Azure_Security_에이전트를_설치해야_합니다._e16f967a-aa57-4f5e-89cd-8d1434d0a29a/**
+          policies/머신에서_보안_구성의_취약성을_수정해야_합니다._e1e5fd5d-3e4c-4ce1-8661-7d1873ae6b15/**
+          policies/함수_앱을_실행하는_데_사용되는_경우_HTTP_버전_이_최신_상태인지_확인하세요._e2c1c086-2d84-4019-bff3-c44ccd95113c/**
+          policies/Virtual_Machine_Scale_Sets의_Dependency_Agent_배포_감사_-_VM_이미지(OS)가_나열_취소됨_e2dd799a-a932-4e9d-ac17-d473bc3c6c10/**
+          policies/Azure_VPN_Gateway에서는_기본_SKU를_사용할_수_없습니다._e345b6c3-24bd-4c93-9bbb-7e5e49a17b78/**
+          policies/구독에서_읽기_권한이_있는_계정에_MFA를_사용하도록_설정해야_합니다._e3576e28-8b17-4677-84c3-db2990658d64/**
+          policies/_미리_보기_자동으로_vTPM을_사용하도록_지원되는_가상_머신_구성_e494853f-93c3-4e44-9210-d12f61a64b34/**
+          policies/허용_되는_위치_e56962a6-4747-49cd-b67b-bf8b01975c4c/**
+          policies/passwd_파일_권한이_0644로_설정되지_않은_Linux_머신_감사_e6955644-301c-44b5-a4c4-528577de6861/**
+          policies/지정된_서비스가_설치되어_실행_중_이지_않은_Windows_머신_감사_e6ebf138-3d71-4935-a13b-9c7fdddd94df/**
+          policies/서브넷을_네트워크_보안_그룹과_연결해야_합니다._e71308d3-144b-4262-b144-efdc3cc90517/**
+          policies/리소스_그룹이_허용된_위치_e765b5de-1225-4ba3-bd56-1ac6695af988/**
+          policies/MySQL_데이터베이스_서버에_대해_SSL_강제_연결을_사용하도록_설정해야_합니다._e802a67a-daf5-4436-9ea6-f6d821dd0c5d/**
+          policies/프라이빗_엔드포인트를_사용하여_Azure_Monitor_Private_Link_범위_구성_e8185402-357b-4768-8058-f620bc0ae6b5/**
+          policies/_미리_보기_Linux_가상_머신에_Azure_Security_에이전트를_설치해야_합니다._e8794316-d918-4565-b57d-6b38a06381a0/**
+          policies/컨테이너_보안_구성의_취약성을_수정해야_합니다._e8cbc669-f12d-49eb-93e7-9273119e9933/**
+          policies/Data_Lake_Storage_Gen1에_대한_진단_설정을_이벤트_허브에_배포_e8d096bc-85de-4c5f-8cfb-857bd1b9d62d/**
+          policies/컨테이너_레지스트리는_프라이빗_링크를_사용해야_함_e8eef0a8-67cf-4eb4-9386-14b0e78733d4/**
+          policies/트래픽_분석을_사용하도록_네트워크_보안_그룹_구성_e920df7f-9a64-4066-9b58-52684c02a091/**
+          policies/프라이빗_DNS_영역을_사용하도록_컨테이너_레지스트리_구성_e9585a95-5b8c-4d03-b193-dc7eb5ac4c32/**
+          policies/_미리_보기_Azure_Recovery_Services_자격_증명_모음에서_프라이빗_엔드포인트_구성_e95a8a5c-0987-421f-84ab-df4d88ebf7d1/**
+          policies/Machine_Learning_컴퓨팅에는_로컬_인증_방법이_비활성화되어야_합니다._e96a9a5f-07ca-471b-9bc5-6a0f33cbd68f/**
+          policies/HTTPS_입력이_있는_Azure_Media_Services_작업은_입력_URI를_허용된_URI_패턴으로_제한해야_합니다._e9914afe-31cd-4b8a-92fa-c887f847d477/**
+          policies/API_앱에_대해_원격_디버깅을_해제해야_합니다._e9c8d085-d9cc-4b17-9cdc-059f1f01f19e/**
+          policies/Azure_Monitor_로그_클러스터는_인프라_암호화를_사용하도록_설정하고_만들어야_합니다(이중_암호화)._ea0dfaed-95fb-448c-934e-d6e713ce393d/**
+          policies/없는_경우_리소스_그룹에서_태그_상속_ea3f2387-9b95-492a-a190-fcdc54f7b070/**
+          policies/Key_Vault는_가상_네트워크_서비스_엔드포인트를_사용해야_함_ea4d6841-2173-4317-9747-ff522a45120f/**
+          policies/암호가_없는_계정에서_원격_연결을_허용하는_Linux_머신_감사_ea53dbee-c6c9-4f0e-9f9e-de0039b78023/**
+          policies/Windows_Virtual_Machines를_데이터_수집_규칙에_연결하도록_연결_구성_eab1f514-22e3-42e3-9a1f-e1dc9199355c/**
+          policies/함수_앱은_클라이언트_인증서(들어오는_클라이언트_인증서)_가_사용하도록_설정되어_있어야_함_eaebaea7-8013-4ceb-9d14-7eb32271373c/**
+          policies/App_Service_Environment는_최신_버전으로_프로비전해야_합니다._eb4d34ab-0929-491c-bbf3-61e13da19f9a/**
+          policies/PostgreSQL_데이터베이스_서버에_대해_로그_검사점을_사용하도록_설정해야_합니다._eb6f77b9-bd53-4e35-a23d-7f65d5f0e43d/**
+          policies/PostgreSQL_데이터베이스_서버에_대해_로그_연결을_사용하도록_설정해야_합니다._eb6f77b9-bd53-4e35-a23d-7f65d5f0e442/**
+          policies/PostgreSQL_데이터베이스_서버에_대한_연결_끊김을_기록해야_합니다._eb6f77b9-bd53-4e35-a23d-7f65d5f0e446/**
+          policies/PostgreSQL_데이터베이스_서버에_대해_로그_기간을_사용하도록_설정해야_합니다._eb6f77b9-bd53-4e35-a23d-7f65d5f0e8f3/**
+          policies/Service_Bus_네임스페이스는_이중_암호화를_사용하도록_설정해야_합니다._ebaf4f25-a4e8-415f-86a8-42d9155bef0b/**
+          policies/소유자_권한이_있는_사용되지_않는_계정은_구독에서_제거해야_합니다._ebb62a0c-3560-49e1-89ed-27e074e9f8ad/**
+          policies/지정된_애플리케이션이_설치되지_않은_Windows_머신_감사_ebb67efd-3c46-49b0-adfe-5599eb944998/**
+          policies/Azure_Data_Explorer에서_이중_암호화를_사용하도록_설정해야_함_ec068d99-e9c7-401f-8cef-5bdde4e6ccf1/**
+          policies/App_Service_슬롯이_FTP_배포에_대해_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._ec71c0bc-6a45-4b1f-9587-80dc83e6898c/**
+          policies/프라이빗_DNS_영역을_사용하도록_Event_Hub_네임스페이스_구성_ed66d4f5-8220-45dc-ab4a-20d1749c74e6/**
+          policies/Key_Vault의_진단_설정을_이벤트_허브에_배포_ed7c8c13-51e7-49d1-8a43-8490431a0da2/**
+          policies/Stream_Analytics에_대한_진단_설정을_이벤트_허브에_배포_edf3780c-3d70-40fe-b17e-ab72013dafca/**
+          policies/프라이빗_DNS_영역을_사용하도록_Azure_Machine_Learning_작업_영역_구성_ee40564d-486e-4f68-a5ca-7a621edae0fb/**
+          policies/Azure_Cognitive_Search_서비스는_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._ee980b6d-0eca-4501-8d54-f6290fd512c3/**
+          policies/Windows_머신이_보안_옵션_-_계정_에_대한_요구_사항을_충족해야_함_ee984370-154a-4ee8-9726-19d900e56fc0/**
+          policies/SQL_Server에서_취약성_평가를_사용하도록_설정해야_합니다._ef2a8f2a-b3d9-49cd-a8a8-9a3aaaf647d9/**
+          policies/프라이빗_엔드포인트를_Azure_SignalR_Service로_구성_ef45854f-b33f-49a3-8041-9057e915d88f/**
+          policies/API_Management_서비스에서_가상_네트워크를_사용해야_합니다._ef619a2c-cc4d-4d03-b2ba-8c94a834d85b/**
+          policies/이벤트_허브에_대한_진단_설정을_이벤트_허브에_배포_ef7b61ef-b8e4-4c91-8e78-6946c6b0023f/**
+          policies/Azure_Arc_사용_서버는_Azure_Arc_프라이빗_링크_범위로_구성해야_합니다._efa3f296-ff2b-4f38-bc0d-5ef12c965b68/**
+          policies/Virtual_Machine_Scale_Sets에_Log_Analytics_확장을_설치해야_함_efbde977-ba53-4479-b8e9-10b957924fbf/**
+          policies/웹앱에서_최신_TLS_버전을_사용해야_합니다._f0e6e85b-9b9f-4a4b-b67b-f730d42f1b0b/**
+          policies/프라이빗_DNS_영역을_사용하도록_Service_Bus_네임스페이스_구성_f0fcf93c-c063-4071-9668-c47474bd3564/**
+          policies/Azure_Security_Center_경고에_대한_워크플로_자동화_배포_f1525828-9a90-4fcf-be48-268cdd02361e/**
+          policies/가상_네트워크는_지정된_가상_네트워크_게이트웨이를_사용해야_함_f1776c76-f58c-4245-a8d0-2b207198dc8b/**
+          policies/Windows_머신이_보안_설정_-_계정_정책_에_대한_요구_사항을_충족해야_함_f2143251-70de-4e81-87a8-36cee5a2f29d/**
+          policies/디스크_액세스_리소스는_프라이빗_링크를_사용해야_함_f39f5f49-4abf-44de-8c70-0756997bfb51/**
+          policies/가상_시스템을_지정된_작업_영역에_연결해야_합니다._f47b5582-33ec-4c5c-87c0-b010a6b2e917/**
+          policies/이벤트_허브_인스턴스에_대한_권한_부여_규칙을_정의해야_합니다._f4826e5f-6a27-407c-ae3e-9582eb39891d/**
+          policies/FTP_배포에_대한_로컬_인증을_사용하지_않도록_App_Service_슬롯을_구성합니다._f493116f-3b7f-4ab3-bf80-0c2af35e46c2/**
+          policies/Azure_Data_Explorer에서_디스크_암호화를_사용하도록_설정해야_함_f4b53539-8df9-40e4-86c6-6b607703bd4e/**
+          policies/감사를_사용하도록_SQL_server_구성_f4c68484-132f-41f9-9b6d-3e4b1cb55036/**
+          policies/_미리_보기_Virtual_Machines_게스트_증명_상태가_정상이어야_합니다._f6358610-e532-4236-b178-4c65865eb262/**
+          policies/_미리_보기_지원되는_Windows_가상_머신_확장_집합에_게스트_증명_확장을_설치해야_합니다._f655e522-adff-494d-95c2-52d4f6d56a42/**
+          policies/인터넷_연결_가상_머신은_네트워크_보안_그룹과_함께_보호되어야_합니다._f6de0be7-9a8a-4b8a-b349-43cf02d22f7c/**
+          policies/암호_없는_계정이_있는_Linux_머신_감사_f6ec09a3-78bf-4f8f-99dc-6c77182d0f99/**
+          policies/Azure_SignalR_Service에서_로컬_인증_방법을_사용하지_않도록_설정해야_합니다._f70eecba-335d-4bbc-81d5-5b17b03d498f/**
+          policies/Windows_머신이_보안_옵션_-_복구_콘솔_에_대한_요구_사항을_충족해야_함_f71be03e-e25b-4d0f-b8bc-9b3e309b66c0/**
+          policies/_미리_보기_Azure_Data_Factory_연결된_서비스에서_시스템이_할당한_관리_ID_인증(지원되는_경우)을_사용해야_함_f78ccdb4-7bf4-4106-8647-270491d2978a/**
+          policies/Windows_컴퓨터에는_허용된_로컬_계정만_있어야_합니다._f79fef0d-0050-4c18-a303-5babb9c14ac7/**
+          policies/Azure_Synapse_작업_영역은_고객_관리형_키를_사용하여_미사용_데이터를_암호화해야_함_f7d52b2d-e161-4dfa-a82b-55e564167385/**
+          policies/소유자_권한이_있는_외부_계정을_구독에서_제거해야_합니다._f8456c1c-aa66-4dfb-861a-25d127b775c9/**
+          policies/Service_Bus의_리소스_로그를_사용하도록_설정해야_함_f8d36e2f-389b-4ee4-898d-21aeb69a0f45/**
+          policies/Azure_Event_Grid_도메인은_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._f8f774be-6aee-492a-9e29-486ef81f3a68/**
+          policies/Azure_Stream_Analytics의_리소스_로그를_사용하도록_설정해야_함_f9be5368-9bf5-4b84-9e0a-7850da98bb46/**
+          policies/함수_앱에서_최신_TLS_버전을_사용해야_합니다._f9d614c5-c173-4d56-95a7-b4437057d193/**
+          policies/로그_암호화를_위해_Azure_Monitor의_저장된_쿼리를_고객_스토리지_계정에_저장해야_합니다._fa298e57-9444-42ba-bf04-86e8470e32c7/**
+          policies/App_Service_Environment에서_내부_암호화를_사용하도록_설정해야_합니다._fb74e86f-d351-4b8d-b034-93da7391c01f/**
+          policies/Kubernetes_서비스를_취약하지_않은_Kubernetes_버전으로_업그레이드해야_합니다._fb893a29-21bb-418c-a157-e99480ec364c/**
+          policies/활동_로그가_있는_컨테이너를_포함하는_스토리지_계정은_BYOK로_암호화해야_합니다._fbb99e8e-e444-4da0-9ff1-75c92f5a85b2/**
+          policies/프라이빗_DNS_영역을_사용하도록_Azure_Cognitive_Search_서비스_구성_fbc14a67-53e4-4932-abcc-2049c6706009/**
+          policies/가상_머신_및_가상_머신_확장_집합에서는_호스트에서_암호화를_사용하도록_설정해야_합니다._fc4d8e41-e223-45ea-9bf5-eada37891d87/**
+          policies/_미리_보기_모든_인터넷_트래픽은_배포된_Azure_Firewall을_통해_라우팅되어야_합니다._fc5e4038-4584-4632-8c85-c0448d374b2c/**
+          policies/_미리_보기_Linux_머신이_Azure_컴퓨팅_보안_기준에_대한_요구_사항을_충족해야_함_fc9b3da7-8347-4380-8e70-0a0361d8dedd/**
+          policies/SQL_Server_확장이_설치되도록_SQL_Server를_실행하는_Arc_지원_컴퓨터를_구성합니다._fd2d1a6e-6d95-4df2-ad00-504bf0273406/**
+          policies/MariaDB_서버에_대해_공용_네트워크_액세스를_사용하지_않도록_설정해야_합니다._fdccbe47-f3e3-4213-ad5d-ea459b2fa077/**
+          policies/CORS에서_모든_도메인이_FHIR_서비스에_액세스하도록_허용하지_않아야_함_fe1c9040-c46a-4e81-9aea-c7850fbb3aa6/**
+          policies/Cognitive_Services_계정은_관리_ID를_사용해야_합니다._fe3fd216-4f83-4fc1-8984-2bbec80a3418/**
+          policies/SQL_데이터베이스는_발견한_취약성을_해결해야_합니다._feedbf84-6b99-488c-acc2-71c829aa5ffc/**
+          policies/Azure_Security_Center_데이터에_대해_Log_Analytics_작업_영역에_내보내기_배포_ffb6f416-7bd2-4488-8828-56585fef2be9/**
+          policies/Bot_Service는_로컬_인증_방법을_비활성화해야_합니다._ffea632e-4e3a-4424-bf78-10e179bb2e1a/**
+          policies/Kubernetes_클러스터_Pod_hostPath_볼륨은_허용된_호스트_경로만_사용해야_합니다._098fc59e-46c7-4d99-9b16-64990e543d75/**
+          policies/_미리_보기_인증서에_지정된_최대_유효_기간이_있어야_함_0a075868-4c26-42ef-914c-5bc007359560/**
+          policies/인증서는_허용된_키_유형을_사용해야_함_1151cede-290b-4ba0-8b38-0ad145ac888f/**
+          policies/인증서에_지정된_수명_작업_트리거가_있어야_함_12ef42cb-9903-4e39-9c26-422d29570417/**
+          policies/Kubernetes_클러스터는_취약한_이미지_배포를_차단해야_합니다._13cd7ae3-5bc0-4ac4-a62d-4f7c120b9759/**
+          policies/Key_Vault_키에_만료_날짜가_있어야_함_152b15f7-8e1f-4c1f-ab71-8c010ba5dbc0/**
+          policies/Kubernetes_클러스터_Pod는_허용된_볼륨_유형만_사용해야_함_16697877-1118-4fb1-9b65-9898ec2509ec/**
+          policies/Kubernetes_클러스터는_HTTPS를_통해서만_액세스할_수_있어야_합니다._1a5b4dca-0b6f-4cf5-907c-56316bc1bf3d/**
+          policies/Kubernetes_클러스터는_컨테이너_권한_상승을_허용해서는_안_됨_1c6e92c9-99f0-4e55-9cf2-0c234dc48f99/**
+          policies/_미리_보기_지정된_Azure_Machine_Learning_컴퓨팅에_대한_전체_로그에_사용할_로그_필터_식_및_데이터_저장소_구성_1d413020-63de-11ea-bc55-0242ac130003/**
+          policies/Kubernetes_클러스터는_ClusterRole/system_aggregate-to-edit의_엔드포인트_편집_권한을_허용하지_않아야_합니다._1ddac26b-ed48-4c30-8cc5-3a68c79b8001/**
+          policies/서비스가_Kubernetes_클러스터의_허용된_포트에서만_수신_대기하도록_확인_233a2a17-77ca-4fb1-9b6b-69223d272a44/**
+          policies/비밀에_지정된_최대_유효_기간이_있어야_함_342e8053-e12e-4c44-be01-c3c2f318400f/**
+          policies/_미리_보기_지정된_Azure_Machine_Learning_컴퓨팅에_대해_작업이_실행되기_전에_호출되는_승인_엔드포인트_구성_3948394e-63de-11ea-bc55-0242ac130003/**
+          policies/Kubernetes_클러스터에서_내부_부하_분산_장치_적용_3fc4dc25-5baf-40d8-9b05-7fe74c1bc64e/**
+          policies/Kubernetes_클러스터는_자동_탑재_API_자격_증명을_사용하지_않도록_설정해야_합니다._423dd1ba-798e-40e4-9c4d-b6902674b423/**
+          policies/컨테이너가_Kubernetes_클러스터의_허용된_포트에서만_수신_대기하도록_확인_440b515e-a580-421e-abeb-b159a61ddcbc/**
+          policies/Kubernetes_클러스터에서_Pod에_레이블_적용_46592696-4c7b-4bf3-9e45-6c2763bdc0a6/**
+          policies/Kubernetes_클러스터_컨테이너는_호스트_프로세스_ID_또는_호스트_IPC_네임스페이스를_공유해서는_안_됨_47a1ee2f-2a2a-4576-bf2a-e0e36709c2b8/**
+          policies/키에_지정된_최대_유효_기간이_있어야_함_49a22571-d204-4c91-a7b6-09b1a586fbc9/**
+          policies/Kubernetes_클러스터_컨테이너는_허용된_AppArmor_프로필만_사용해야_합니다._511f5417-5d12-434d-ab2e-816901e72a5e/**
+          policies/_미리_보기_지정된_Azure_Machine_Learning_컴퓨팅에_대해_허용된_모듈_작성자_구성_53c70b02-63dd-11ea-bc55-0242ac130003/**
+          policies/Kubernetes_클러스터_컨테이너는_금지된_sysctl_인터페이스를_사용해서는_안_됩니다._56d0a13f-712f-466b-8416-56fb354fb823/**
+          policies/_미리_보기_지정된_Azure_Machine_Learning_컴퓨팅에_대해_허용된_레지스트리_구성_5853517a-63de-11ea-bc55-0242ac130003/**
+          policies/키는_HSM(하드웨어_보안_모듈)으로_지원되어야_함_587c79fe-dd04-4a5e-9d0b-f89598c7261b/**
+          policies/키는_만료_전_지정된_기간(일)보다_많은_일_수가_남아_있어야_함_5ff38825-c5d8-47c5-b70e-069a21955146/**
+          policies/_미리_보기_지정된_Azure_Machine_Learning_컴퓨팅의_학습_코드에_대한_코드_서명_구성_6a6f7384-63de-11ea-bc55-0242ac130003/**
+          policies/비밀에_콘텐츠_형식이_설정되어_있어야_함_75262d3e-ba4a-4f43-85f8-9f72c090e5e3/**
+          policies/키는_지정한_암호화_유형_RSA_또는_EC여야_함_75c4f823-d65c-4f29-a733-01d0077fdbcb/**
+          policies/_미리_보기_지정된_Azure_Machine_Learning_컴퓨팅에_대해_허용된_Python_패키지_구성_77eeea86-7e81-4a7d-9067-de844d096752/**
+          policies/RSA_암호화를_사용하는_키에는_지정된_최소_키_크기가_있어야_함_82067dbb-e53b-4e06-b631-546d197452d9/**
+          policies/Kubernetes_클러스터_Pod는_승인된_호스트_네트워크와_포트_범위만_사용해야_함_82985f06-dc18-4a48-bc1c-b9f4f0098cfe/**
+          policies/인증서는_지정된_통합_인증_기관에서_발급해야_함_8e826246-c976-48f6-b03e-619bb92b3d82/**
+          policies/Kubernetes_클러스터에서_권한_있는_컨테이너를_허용하지_않음_95edb821-ddaf-4404-9732-666045e056b4/**
+          policies/Kubernetes_클러스터_컨테이너는_허용된_seccomp_프로필만_사용해야_합니다._975ce327-682c-4f2e-aa46-b9598289b86c/**
+          policies/Key_Vault_비밀에는_만료_날짜가_있어야_함_98728c90-32c7-4049-8429-847dc0f4fe37/**
+          policies/Kubernetes_클러스터는_기본_네임스페이스를_사용하지_않아야_합니다._9f061a12-e40d-4183-a00e-171812443373/**
+          policies/인증서는_지정된_비통합_인증_기관에서_발급해야_함_a22f4a40-01d3-4c7d-8071-da157eeff341/**
+          policies/Kubernetes_클러스터는_특정_보안_기능을_사용하지_않아야_합니다._a27c700f-8a22-44ec-961c-41625264370b/**
+          policies/비밀은_만료_전_지정된_기간(일)보다_많은_일_수가_남아_있어야_함_b0eb591a-5e70-4534-a8bf-04b9c489584a/**
+          policies/타원_곡선_암호화를_사용하는_인증서에는_허용되는_곡선_이름이_있어야_함_bd78111f-4953-4367-9fd5-7e08808b54bf/**
+          policies/Kubernetes_클러스터_컨테이너는_허용된_기능만_사용해야_합니다._c26596ff-4d70-4e6a-9a30-c2506bd2f80c/**
+          policies/키는_지정된_기간(일)보다_오랫동안_활성화_상태가_아니어야_함_c26e4b24-cf98-4c67-b48b-5a25c4c69eb9/**
+          policies/RSA_암호화를_사용하는_인증서에는_지정된_최소_키_크기가_있어야_함_cee51871-e572-4576-855c-047c820360f0/**
+          policies/Kubernetes_클러스터는_CAP_SYS_ADMIN_보안_기능을_부여하지_않아야_합니다._d2e7ea85-6b44-4317-a0be-1b951587f626/**
+          policies/Kubernetes_클러스터_서비스는_허용된_외부_IP만_사용해야_함_d46c275d-1680-448d-b2ec-e495a3b6cc89/**
+          policies/Kubernetes_클러스터_컨테이너는_읽기_전용_루트_파일_시스템에서_실행되어야_함_df49d893-a74c-421d-bc95-c663042e5b80/**
+          policies/Kubernetes_클러스터_Pod_및_컨테이너는_허용된_SELinux_옵션만_사용해야_함_e1e6c427-07d9-46ab-9689-bfa85431e636/**
+          policies/컨테이너_CPU_및_메모리_리소스_제한이_Kubernetes_클러스터에_지정된_제한을_초과하지_않는지_확인_e345eecc-fa47-480f-9e88-67dcc122b164/**
+          policies/비밀은_지정된_기간(일)보다_오랫동안_활성화_상태가_아니어야_함_e8d99835-8a06-45ae-a8e0-87a91941ccfe/**
+          policies/Kubernetes_클러스터_Pod_및_컨테이너는_승인된_사용자_및_그룹_ID로만_실행해야_합니다._f06ddb64-5fa3-4b77-b166-acb36f7f6042/**
+          policies/Kubernetes_클러스터_Pod_FlexVolume_볼륨은_허용되는_드라이버만_사용해야_합니다._f4a8fce0-2dd5-4c21-9a36-8f0ec809d663/**
+          policies/인증서가_지정된_기간(일)_내에_만료되지_않아야_함_f772fb64-8e40-40ad-87bc-7706e1949427/**
+          policies/Kubernetes_클러스터_컨테이너는_허용된_ProcMountType만_사용해야_합니다._f85eb0dd-92ee-40e9-8a76-db25a507d6d3/**
+          policies/Kubernetes_클러스터에서_허용되는_컨테이너_이미지만_확인_febd0533-8e55-448f-b837-bd0e06f16469/**
+          policies/타원_곡선_암호화를_사용하는_키에는_지정된_곡선_이름이_있어야_함_ff25f3c8-b739-4538-9d07-3d6d25cfb255/**
+          initiatives/Azure_Cosmos_DB_처리량_정책을_사용하도록_설정_cb5e1e90-7c33-491c-a15b-24885c915752/**
+          initiatives/Virtual_Machine_Scale_Sets에_Azure_Monitor_사용_75714362-cae7-409e-9b99-a8e5075b7fad/**
+          initiatives/Azure_Defender가_SQL_Servers_및_SQL_Managed_Instances에서_사용_설정되도록_구성_9cb3cc7a-b39b-4b82-bc89-e5a5d9ff7b97/**
+          initiatives/VM에_대해_Azure_Monitor_사용_55f3eceb-5573-4f18-9695-226972c6d74a/**
+          initiatives/_미리_보기_가상_머신에_Azure_Monitor_및_Azure_Security_에이전트를_자동으로_설치하도록_머신_구성_a15f3269-2e10-458c-87a4-d5989e678a73/**
+          initiatives/_미리_보기_Windows_컴퓨터는_Azure_컴퓨팅_보안_기준의_요구_사항을_충족해야_합니다._be7a78aa-3e10-4153-a5fd-8c6506dbc821/**
+          initiatives/필수_구성_요소를_배포하여_가상_머신에서_게스트_구성_정책을_사용하도록_설정_12794019-7a00-42cf-95c2-882eed337cc8/**
+          initiatives/안전하지_않은_암호_보안_설정이_있는_머신_감사_095e4ed9-c835-4ab6-9439-b5644362a06c/**
+          initiatives/Linux_기반_워크로드에_대한_Kubernetes_클러스터_Pod_보안_기준_표준_a8640138-9b0a-4a28-b8cb-1666c838647d/**
+          initiatives/Linux_기반_워크로드에_대한_Kubernetes_클러스터_Pod_보안_제한_표준_42b8ef37-b724-4e24-bbc8-7a7708edfe00/**
+          initiatives/Linux_Virtual_Machines에_Azure_Monitor_에이전트를_구성하고_데이터_수집_규칙에_연결_118f04da-0375-44d1-84e3-0fd9e1849403/**
+          initiatives/Windows_Virtual_Machines에_Azure_Monitor_에이전트를_구성하고_데이터_수집_규칙에_연결_9575b8b7-78ab-4281-b53b-d3c1ace2260b/**
+          initiatives/_미리_보기_가상_머신에서_SQL_에이전트용_Azure_Defender_구성_39a366e6-fdde-4f41-bbf8-3757f46d1611/**
+          initiatives/_미리_보기_신뢰할_수_있는_시작_지원_VM에서_게스트_증명을_사용하도록_필수_구성_요소_구성_281d9e47-d14d-4f05-b8eb-18f2c4a034ff/**
+          initiatives/CIS_Microsoft_Azure_Foundations_Benchmark_v1.1.0_1a5bb27d-173f-493e-9568-eb56638dde4d/**
+          initiatives/FedRAMP_Moderate_e95f5a9f-57ad-4d03-bb0b-b1d16db93693/**
+          initiatives/CIS_Microsoft_Azure_Foundations_Benchmark_v1.3.0_612b5213-9160-4969-8578-1518bd2a000c/**
+          initiatives/_미리_보기_CMMC_수준_3_b5629c75-5c77-4422-87b9-2509e680f8de/**
+          initiatives/FedRAMP_High_d5264498-16f4-418a-b659-fa7ef418175f/**
+          initiatives/Azure_Security_Benchmark_1f3afdf9-d0c9-4c3d-847f-89da613e70a8/**
+          initiatives/캐나다_연방_PBMM_4c4a5f27-de81-430b-b4e5-9cbd50595a87/**
+          initiatives/ISO_27001_2013_89c6cddc-1c73-4ac1-b19c-54d1a15a42f2/**
+          initiatives/PCI_v3.2.1_2018_496eeda9-8f2f-4d5e-8dfd-204f0a92ed41/**
+          initiatives/NIST_SP_800-53_Rev._4_cf25b9c1-bd23-4eb6-bd2c-f4f3ac644a5f/**
+          initiatives/IRS1075_2016년_9월_105e0327-6175-4eb2-9af4-1fba43bdb39d/**
+          initiatives/_미리_보기_NIST_SP_800-171_R2_03055927-78bd-4236-86c0-f36125a10dc9/**
+          initiatives/뉴질랜드_ISM_제한됨_d1a462af-7e6d-4901-98ac-61570b4ed22a/**
+          initiatives/_미리_보기_MPAA(Motion_Picture_Association_of_America)_92646f03-e39d-47a9-9e24-58d60ef49af8/**
+          initiatives/HITRUST/HIPAA_a169a624-5599-4385-a696-c8d643089fab/**
+          initiatives/_미리_보기_오스트레일리아_정부_ISM_보호_27272c0b-c225-4cc3-b8b0-f2534b093077/**
+          initiatives/_미리_보기_SWIFT_CSP-CSCF_v2020_3e0c67fc-8c7c-406c-89bd-6b6bdc986a22/**
+          initiatives/UK_OFFICIAL_및_UK_NHS_3937f550-eedd-4639-9c5e-294358be442e/**
+          initiatives/모든_네트워크_보안_그룹에_대해_흐름_로그를_구성하고_사용하도록_설정해야_함_62329546-775b-4a3d-a4cb-eb4bb990d2c0/**
+          initiatives/오픈_소스_관계형_데이터베이스에서_고급_위협_보호를_사용하도록_구성합니다._e77fc0b3-f7e9-4c58-bc13-cb753ed8e46e/**
+          initiatives/_미리_보기_NIST_SP_800-53_Rev._5_179d1daa-458f-4e47-8086-2a68d0d6c38f/**

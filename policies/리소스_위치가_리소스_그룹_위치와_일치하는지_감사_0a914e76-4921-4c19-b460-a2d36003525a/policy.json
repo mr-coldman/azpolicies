@@ -1,0 +1,32 @@
+{
+ "properties": {
+  "displayName": "리소스 위치가 리소스 그룹 위치와 일치하는지 감사",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "리소스 위치가 리소스 그룹 위치와 일치하는지 감사",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "General"
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "location",
+      "notEquals": "[resourcegroup().location]"
+     },
+     {
+      "field": "location",
+      "notEquals": "global"
+     }
+    ]
+   },
+   "then": {
+    "effect": "audit"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/0a914e76-4921-4c19-b460-a2d36003525a",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "0a914e76-4921-4c19-b460-a2d36003525a"
+}

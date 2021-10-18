@@ -1,0 +1,51 @@
+{
+ "properties": {
+  "displayName": "Azure Data Factory의 SQL Server Integration Services 통합 런타임을 가상 네트워크에 조인해야 함",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "Azure Virtual Network를 배포하면 서브넷, 액세스 제어 정책, 추가로 액세스를 제어하는 기타 기능이 제공될 뿐만 아니라 Azure Data Factory에서 SQL Server Integration Services 통합 런타임에 대한 보안과 격리가 향상됩니다.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "Data Factory"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "이 효과는 정책 규칙이 일치하도록 평가될 때 발생하는 동작을 결정합니다."
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.DataFactory/factories/integrationRuntimes"
+     },
+     {
+      "field": "Microsoft.DataFactory/factories/integrationruntimes/type",
+      "equals": "Managed"
+     },
+     {
+      "field": "Microsoft.DataFactory/factories/integrationRuntimes/Managed.typeProperties.computeProperties.vnetProperties.vnetId",
+      "exists": "false"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/0088bc63-6dee-4a9c-9d29-91cfdc848952",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "0088bc63-6dee-4a9c-9d29-91cfdc848952"
+}

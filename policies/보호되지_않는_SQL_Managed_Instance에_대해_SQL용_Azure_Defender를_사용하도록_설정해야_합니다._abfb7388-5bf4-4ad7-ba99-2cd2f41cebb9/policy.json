@@ -1,0 +1,46 @@
+{
+ "properties": {
+  "displayName": "보호되지 않는 SQL Managed Instance에 대해 SQL용 Azure Defender를 사용하도록 설정해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Advanced Data Security를 사용하지 않고 각 SQL Managed Instance를 감사합니다.",
+  "metadata": {
+   "version": "1.0.2",
+   "category": "SQL"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Sql/managedInstances"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Sql/managedInstances/securityAlertPolicies",
+     "name": "Default",
+     "existenceCondition": {
+      "field": "Microsoft.Sql/managedInstances/securityAlertPolicies/state",
+      "equals": "Enabled"
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/abfb7388-5bf4-4ad7-ba99-2cd2f41cebb9",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "abfb7388-5bf4-4ad7-ba99-2cd2f41cebb9"
+}

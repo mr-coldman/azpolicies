@@ -1,0 +1,47 @@
+{
+ "properties": {
+  "displayName": "Logic Apps 통합 서비스 환경은 고객 관리형 키로 암호화되어야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "통합 서비스 환경에 배포하여 고객 관리형 키로 Logic Apps의 미사용 데이터 암호화를 관리합니다. 기본적으로 고객 데이터는 서비스 관리형 키로 암호화되지만, 규정 준수 표준을 충족하기 위해 고객 관리형 키가 일반적으로 필요합니다. 고객 관리형 키를 사용하면 사용자가 만들고 소유한 Azure Key Vault 키로 데이터를 암호화할 수 있습니다. 사용자는 순환 및 관리를 비롯하여 키 수명 주기에 대한 모든 권한을 갖고 책임을 집니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Logic Apps"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Logic/integrationServiceEnvironments"
+     },
+     {
+      "field": "Microsoft.Logic/integrationServiceEnvironments/encryptionConfiguration",
+      "exists": "false"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/1fafeaf6-7927-4059-a50a-8eb2a7a6f2b5",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "1fafeaf6-7927-4059-a50a-8eb2a7a6f2b5"
+}

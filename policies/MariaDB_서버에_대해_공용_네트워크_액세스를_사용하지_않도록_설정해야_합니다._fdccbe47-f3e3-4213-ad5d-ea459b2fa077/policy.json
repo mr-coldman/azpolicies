@@ -1,0 +1,46 @@
+{
+ "properties": {
+  "displayName": "MariaDB 서버에 대해 공용 네트워크 액세스를 사용하지 않도록 설정해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "공용 네트워크 액세스 속성을 사용하지 않도록 설정하여 보안을 강화하고 프라이빗 엔드포인트에서만 Azure Database for MariaDB에 액세스하도록 할 수 있습니다. 이 구성은 Azure IP 범위를 벗어난 모든 퍼블릭 주소 공간에서의 액세스를 엄격히 비활성화하며 IP 또는 가상 네트워크 기반 방화벽 규칙과 일치하는 모든 로그인을 거부합니다.",
+  "metadata": {
+   "version": "1.0.2",
+   "category": "SQL"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.DBforMariaDB/servers"
+     },
+     {
+      "field": "Microsoft.DBforMariaDB/servers/publicNetworkAccess",
+      "notEquals": "Disabled"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/fdccbe47-f3e3-4213-ad5d-ea459b2fa077",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "fdccbe47-f3e3-4213-ad5d-ea459b2fa077"
+}

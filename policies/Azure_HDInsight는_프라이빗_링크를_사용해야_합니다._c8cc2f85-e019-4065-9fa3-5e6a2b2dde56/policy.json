@@ -1,0 +1,63 @@
+{
+ "properties": {
+  "displayName": "Azure HDInsight는 프라이빗 링크를 사용해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Private Link를 사용하면 원본 또는 대상에서 공용 IP 주소 없이 Azure 서비스에 가상 네트워크를 연결할 수 있습니다. Private Link 플랫폼은 Azure 백본 네트워크를 통해 소비자와 서비스 간의 연결을 처리합니다. 프라이빗 엔드포인트를 Azure HDInsight 클러스터에 매핑하면 데이터 유출 위험이 감소합니다. https://aka.ms/hdi.pl에서 프라이빗 링크에 관해 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "HDInsight"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.HDInsight/clusters"
+     },
+     {
+      "anyOf": [
+       {
+        "field": "Microsoft.HDInsight/clusters/networkProperties.privateLink",
+        "equals": "Enabled"
+       },
+       {
+        "count": {
+         "field": "Microsoft.HDInsight/clusters/privateLinkConfigurations[*]"
+        },
+        "greaterOrEquals": 1
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.HDInsight/clusters/privateEndpointConnections",
+     "existenceCondition": {
+      "field": "Microsoft.HDInsight/clusters/privateEndpointConnections/privateLinkServiceConnectionState.status",
+      "equals": "Approved"
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/c8cc2f85-e019-4065-9fa3-5e6a2b2dde56",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "c8cc2f85-e019-4065-9fa3-5e6a2b2dde56"
+}

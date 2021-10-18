@@ -1,0 +1,52 @@
+{
+ "properties": {
+  "displayName": "IoT Hub의 프라이빗 엔드포인트를 사용하도록 설정해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "프라이빗 엔드포인트 연결은 IoT Hub에 대한 프라이빗 연결을 사용하도록 설정하여 보안 통신을 적용합니다. 알려진 네트워크에서 들어오는 트래픽에만 액세스할 수 있고 다른 모든 IP 주소(Azure 내의 IP 주소 포함)로부터의 액세스를 차단하도록 프라이빗 엔드포인트 연결을 구성합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Internet of Things"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Devices/IotHubs"
+     },
+     {
+      "count": {
+       "field": "Microsoft.Devices/IotHubs/privateEndpointConnections[*]",
+       "where": {
+        "field": "Microsoft.Devices/IotHubs/privateEndpointConnections[*].privateLinkServiceConnectionState.status",
+        "equals": "Approved"
+       }
+      },
+      "less": 1
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/0d40b058-9f95-4a19-93e3-9b0330baa2a3",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "0d40b058-9f95-4a19-93e3-9b0330baa2a3"
+}

@@ -1,0 +1,94 @@
+{
+ "properties": {
+  "displayName": "SQL Database는 GRS 백업 중복을 사용하지 않아야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "데이터 보존 규칙에 따라 데이터를 특정 지역 내에 유지해야 하는 경우 데이터베이스는 백업에 기본 지역 중복 스토리지를 사용하지 않아야 합니다. 참고: T-SQL을 사용하여 데이터베이스를 만들면 Azure Policy가 적용되지 않습니다. 명시적으로 지정하지 않는 경우 지역 중복 백업 스토리지를 사용하는 데이터베이스가 T-SQL을 통해 만들어집니다.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "SQL"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Deny"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Sql/servers/databases"
+     },
+     {
+      "field": "Microsoft.Sql/servers/databases/edition",
+      "notEquals": "DataWarehouse"
+     },
+     {
+      "anyOf": [
+       {
+        "allOf": [
+         {
+          "value": "[requestContext().apiVersion]",
+          "lessOrEquals": "2020-08-01-preview"
+         },
+         {
+          "not": {
+           "anyOf": [
+            {
+             "field": "Microsoft.Sql/servers/databases/storageAccountType",
+             "equals": "LRS"
+            },
+            {
+             "field": "Microsoft.Sql/servers/databases/storageAccountType",
+             "equals": "ZRS"
+            }
+           ]
+          }
+         }
+        ]
+       },
+       {
+        "allOf": [
+         {
+          "value": "[requestContext().apiVersion]",
+          "greater": "2020-08-01-preview"
+         },
+         {
+          "not": {
+           "anyOf": [
+            {
+             "field": "Microsoft.Sql/servers/databases/requestedBackupStorageRedundancy",
+             "equals": "Local"
+            },
+            {
+             "field": "Microsoft.Sql/servers/databases/requestedBackupStorageRedundancy",
+             "equals": "Zone"
+            }
+           ]
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/b219b9cf-f672-4f96-9ab0-f5a3ac5e1c13",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "b219b9cf-f672-4f96-9ab0-f5a3ac5e1c13"
+}

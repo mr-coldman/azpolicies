@@ -1,0 +1,91 @@
+{
+ "properties": {
+  "displayName": "App Service Environment 앱은 공용 인터넷을 통해 연결할 수 없습니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "App Service Environment에 배포된 애플리케이션에 공용 인터넷을 통해 액세스할 수 없도록 하려면 IP 주소가 포함된 App Service Environment를 가상 네트워크에 배포해야 합니다. IP 주소를 가상 네트워크 IP로 설정하려면 App Service Environment를 내부 부하 분산 장치와 함께 배포해야 합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "App Service"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Web/hostingEnvironments"
+     },
+     {
+      "field": "kind",
+      "like": "ASE*"
+     },
+     {
+      "anyOf": [
+       {
+        "allOf": [
+         {
+          "value": "[requestContext().apiVersion]",
+          "less": "2018-02-01"
+         },
+         {
+          "anyOf": [
+           {
+            "field": "Microsoft.Web/HostingEnvironments/internalLoadBalancingMode",
+            "notContains": "2"
+           },
+           {
+            "field": "Microsoft.Web/HostingEnvironments/internalLoadBalancingMode",
+            "notContains": "3"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "allOf": [
+         {
+          "value": "[requestContext().apiVersion]",
+          "greaterOrEquals": "2018-02-01"
+         },
+         {
+          "anyOf": [
+           {
+            "field": "Microsoft.Web/HostingEnvironments/internalLoadBalancingMode",
+            "notContains": "Web"
+           },
+           {
+            "field": "Microsoft.Web/HostingEnvironments/internalLoadBalancingMode",
+            "notContains": "Publishing"
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/2d048aca-6479-4923-88f5-e2ac295d9af3",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "2d048aca-6479-4923-88f5-e2ac295d9af3"
+}

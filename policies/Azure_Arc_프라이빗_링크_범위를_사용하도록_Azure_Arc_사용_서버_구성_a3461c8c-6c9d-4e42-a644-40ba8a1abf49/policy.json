@@ -1,0 +1,68 @@
+{
+ "properties": {
+  "displayName": "Azure Arc 프라이빗 링크 범위를 사용하도록 Azure Arc 사용 서버 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Private Link를 사용하면 원본 또는 대상에서 공용 IP 주소 없이 Azure 서비스에 가상 네트워크를 연결할 수 있습니다. Private Link 플랫폼은 Azure 백본 네트워크를 통해 소비자와 서비스 간의 연결을 처리합니다. Azure Arc 사용 서버를 개인 엔드포인트로 구성된 Azure Arc 프라이빗 링크 범위에 매핑하면 데이터 유출 위험이 줄어듭니다. https://aka.ms/arc/privatelink에서 프라이빗 링크에 관해 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Azure Arc"
+  },
+  "parameters": {
+   "privateLinkScopeId": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Azure Arc Private Link 범위 ID",
+     "description": "Azure Arc 사용 서버와 연결할 Azure Arc 프라이빗 링크 범위입니다.",
+     "strongType": "Microsoft.HybridCompute/privateLinkScopes"
+    }
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Modify",
+     "Disabled"
+    ],
+    "defaultValue": "Modify"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.HybridCompute/machines"
+     },
+     {
+      "field": "Microsoft.HybridCompute/machines/privateLinkScopeResourceId",
+      "notEquals": "[parameters('privateLinkScopeId')]"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "conflictEffect": "audit",
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/cd570a14-e51a-42ad-bac8-bafd67325302"
+     ],
+     "operations": [
+      {
+       "condition": "[greaterOrEquals(requestContext().apiVersion, '2020-08-15-preview')]",
+       "operation": "addOrReplace",
+       "field": "Microsoft.HybridCompute/machines/privateLinkScopeResourceId",
+       "value": "[parameters('privateLinkScopeId')]"
+      }
+     ]
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/a3461c8c-6c9d-4e42-a644-40ba8a1abf49",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "a3461c8c-6c9d-4e42-a644-40ba8a1abf49"
+}

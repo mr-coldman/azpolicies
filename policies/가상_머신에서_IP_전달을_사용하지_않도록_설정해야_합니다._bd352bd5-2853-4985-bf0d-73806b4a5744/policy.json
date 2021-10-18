@@ -1,0 +1,52 @@
+{
+ "properties": {
+  "displayName": "가상 머신에서 IP 전달을 사용하지 않도록 설정해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "가상 머신의 NIC에서 IP 전달을 사용하도록 설정하면 머신이 다른 대상으로 주소가 지정된 트래픽을 수신할 수 있습니다. IP 전달이 필요한 경우(예: VM을 네트워크 가상 어플라이언스로 사용하는 경우)는 거의 없으므로 네트워크 보안 팀에서 검토해야 합니다.",
+  "metadata": {
+   "version": "3.0.0",
+   "category": "Security Center"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "in": [
+     "Microsoft.Compute/virtualMachines",
+     "Microsoft.ClassicCompute/virtualMachines"
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Security/assessments",
+     "name": "c3b51c94-588b-426b-a892-24696f9e54cc",
+     "existenceCondition": {
+      "field": "Microsoft.Security/assessments/status.code",
+      "in": [
+       "NotApplicable",
+       "Healthy"
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/bd352bd5-2853-4985-bf0d-73806b4a5744",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "bd352bd5-2853-4985-bf0d-73806b4a5744"
+}

@@ -1,0 +1,66 @@
+{
+ "properties": {
+  "displayName": "[미리 보기]: Windows Arc 컴퓨터에 Azure Security 에이전트를 설치해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "머신에서 보안 구성 및 취약성을 모니터링하기 위해 Windows Arc 컴퓨터에 Azure Security 에이전트를 설치합니다. 평가 결과는 Azure Security Center에서 보고 관리할 수 있습니다.",
+  "metadata": {
+   "category": "Security Center",
+   "version": "1.0.0-preview",
+   "preview": true
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.HybridCompute/machines"
+     },
+     {
+      "field": "Microsoft.HybridCompute/imageOffer",
+      "like": "windows*"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.HybridCompute/machines/extensions",
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.HybridCompute/machines/extensions/type",
+        "equals": "AzureSecurityWindowsAgent"
+       },
+       {
+        "field": "Microsoft.HybridCompute/machines/extensions/Publisher",
+        "equals": "Microsoft.Azure.Security.Monitoring"
+       },
+       {
+        "field": "Microsoft.HybridCompute/machines/extensions/provisioningState",
+        "equals": "Succeeded"
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/0367cfc4-90b3-46ba-a8a6-ddd5d3514878",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "0367cfc4-90b3-46ba-a8a6-ddd5d3514878"
+}

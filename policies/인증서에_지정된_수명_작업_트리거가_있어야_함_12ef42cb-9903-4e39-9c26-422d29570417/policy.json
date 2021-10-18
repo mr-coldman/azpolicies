@@ -1,0 +1,85 @@
+{
+ "properties": {
+  "displayName": "인증서에 지정된 수명 작업 트리거가 있어야 함",
+  "policyType": "BuiltIn",
+  "mode": "Microsoft.KeyVault.Data",
+  "description": "특정 수명 백분율 또는 만료 전 특정 기간(일)에 인증서 수명 작업이 트리거되는지 여부를 지정하여 조직의 준수 요구 사항을 관리합니다.",
+  "metadata": {
+   "version": "2.0.1",
+   "category": "Key Vault"
+  },
+  "parameters": {
+   "maximumPercentageLife": {
+    "type": "Integer",
+    "metadata": {
+     "displayName": "최대 수명 백분율",
+     "description": "정책 작업을 트리거하려면 인증서 수명의 백분율을 입력합니다. 예를 들어, 인증서의 유효한 수명의 80%에서 정책 작업을 트리거하려면 '80'을 입력합니다."
+    }
+   },
+   "minimumDaysBeforeExpiry": {
+    "type": "Integer",
+    "metadata": {
+     "displayName": "만료 전 최소 기간(일)",
+     "description": "정책 작업을 트리거하려면 인증서 만료 전까지 남은 일수를 입력합니다. 예를 들어, 인증서가 만료되기 90일 전에 정책 작업을 트리거하려면 '90'을 입력합니다."
+    }
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "'감사'는 비준수 리소스를 만들도록 허용하지만 리소스에 비준수로 플래그 지정합니다. '거부'는 리소스 생성을 차단합니다. '사용 안 함'은 정책을 끕니다."
+    },
+    "allowedValues": [
+     "audit",
+     "deny",
+     "disabled"
+    ],
+    "defaultValue": "audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.KeyVault.Data/vaults/certificates"
+     },
+     {
+      "anyOf": [
+       {
+        "allOf": [
+         {
+          "field": "Microsoft.KeyVault.Data/vaults/certificates/lifetimeAction.daysBeforeExpiry",
+          "exists": true
+         },
+         {
+          "field": "Microsoft.KeyVault.Data/vaults/certificates/lifetimeAction.daysBeforeExpiry",
+          "less": "[parameters('minimumDaysBeforeExpiry')]"
+         }
+        ]
+       },
+       {
+        "allOf": [
+         {
+          "field": "Microsoft.KeyVault.Data/vaults/certificates/lifetimeAction.lifetimePercentage",
+          "exists": true
+         },
+         {
+          "field": "Microsoft.KeyVault.Data/vaults/certificates/lifetimeAction.lifetimePercentage",
+          "greater": "[parameters('maximumPercentageLife')]"
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/12ef42cb-9903-4e39-9c26-422d29570417",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "12ef42cb-9903-4e39-9c26-422d29570417"
+}

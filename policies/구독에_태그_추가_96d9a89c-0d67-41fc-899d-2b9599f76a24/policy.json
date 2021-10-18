@@ -1,0 +1,60 @@
+{
+ "properties": {
+  "displayName": "구독에 태그 추가",
+  "policyType": "BuiltIn",
+  "mode": "All",
+  "description": "수정 작업을 통해 지정된 태그 및 값을 구독에 추가합니다. 다른 값을 사용하는 태그가 있으면 변경되지 않습니다. 정책 수정에 대한 자세한 내용은 https://aka.ms/azurepolicyremediation을 참조하세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Tags"
+  },
+  "parameters": {
+   "tagName": {
+    "type": "String",
+    "metadata": {
+     "displayName": "태그 이름",
+     "description": "태그 이름(예: 'environment')"
+    }
+   },
+   "tagValue": {
+    "type": "String",
+    "metadata": {
+     "displayName": "태그 값",
+     "description": "태그 값(예: 'production')"
+    }
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Resources/subscriptions"
+     },
+     {
+      "field": "[concat('tags[', parameters('tagName'), ']')]",
+      "exists": "false"
+     }
+    ]
+   },
+   "then": {
+    "effect": "modify",
+    "details": {
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/4a9ae827-6dc8-4573-8ac7-8239d42aa03f"
+     ],
+     "operations": [
+      {
+       "operation": "add",
+       "field": "[concat('tags[', parameters('tagName'), ']')]",
+       "value": "[parameters('tagValue')]"
+      }
+     ]
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/96d9a89c-0d67-41fc-899d-2b9599f76a24",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "96d9a89c-0d67-41fc-899d-2b9599f76a24"
+}

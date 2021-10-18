@@ -1,0 +1,52 @@
+{
+ "properties": {
+  "displayName": "CORS에서 모든 도메인이 FHIR 서비스에 액세스하도록 허용하지 않아야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "CORS(원본 간 리소스 공유)는 모든 도메인이 FHIR 서비스에 액세스하도록 허용하지 않아야 합니다. FHIR 서비스를 보호하려면 모든 도메인에 대한 액세스 권한을 제거하고 연결할 수 있는 도메인을 명시적으로 정의하세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Healthcare APIs"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "audit",
+     "disabled"
+    ],
+    "defaultValue": "audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.HealthcareApis/workspaces/fhirservices"
+     },
+     {
+      "count": {
+       "field": "Microsoft.HealthcareApis/workspaces/fhirservices/corsConfiguration.origins[*]",
+       "where": {
+        "field": "Microsoft.HealthcareApis/workspaces/fhirservices/corsConfiguration.origins[*]",
+        "equals": "*"
+       }
+      },
+      "greater": 0
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/fe1c9040-c46a-4e81-9aea-c7850fbb3aa6",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "fe1c9040-c46a-4e81-9aea-c7850fbb3aa6"
+}

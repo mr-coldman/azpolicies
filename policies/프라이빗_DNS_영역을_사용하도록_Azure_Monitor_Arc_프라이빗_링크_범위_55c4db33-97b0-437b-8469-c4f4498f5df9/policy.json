@@ -1,0 +1,145 @@
+{
+ "properties": {
+  "displayName": "프라이빗 DNS 영역을 사용하도록 Azure Monitor Arc 프라이빗 링크 범위",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "프라이빗 DNS 영역을 사용하여 프라이빗 엔드포인트의 DNS 확인을 재정의합니다. 프라이빗 DNS 영역은 가상 네트워크에 연결하여 Azure Arc 프라이빗 링크 범위 리소스를 확인합니다. https://aka.ms/awps/privatelink에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Azure Arc"
+  },
+  "parameters": {
+   "privateDnsZoneIDForGuestConfiguration": {
+    "type": "String",
+    "metadata": {
+     "displayName": "privatelink.guestconfiguration.azure.com에 대한 프라이빗 DNS 영역 ID",
+     "description": "게스트 구성 서비스로 프라이빗 DNS 영역을 확인하는 데 사용되는 프라이빗 DNS 영역 ID입니다.",
+     "strongType": "Microsoft.Network/privateDnsZones",
+     "assignPermissions": true
+    }
+   },
+   "privateDnsZoneIDForHybridResourceProvider": {
+    "type": "String",
+    "metadata": {
+     "displayName": "privatelink.his.arc.azure.com에 대한 프라이빗 DNS 영역 ID",
+     "description": "프라이빗 DNS 영역을 Azure Arc 메타데이터 및 ID 서비스로 확인하는 데 사용되는 개인 DNS 영역 ID입니다.",
+     "strongType": "Microsoft.Network/privateDnsZones",
+     "assignPermissions": true
+    }
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "DeployIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "DeployIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Network/privateEndpoints"
+     },
+     {
+      "count": {
+       "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*]",
+       "where": {
+        "allOf": [
+         {
+          "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].privateLinkServiceId",
+          "contains": "Microsoft.HybridCompute/privateLinkScopes"
+         },
+         {
+          "field": "Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].groupIds[*]",
+          "equals": "hybridcompute"
+         }
+        ]
+       }
+      },
+      "greaterOrEquals": 1
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+     "roleDefinitionIds": [
+      "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7"
+     ],
+     "deployment": {
+      "properties": {
+       "mode": "incremental",
+       "template": {
+        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "privateDnsZoneIDForGuestConfiguration": {
+          "type": "string"
+         },
+         "privateDnsZoneIDForHybridResourceProvider": {
+          "type": "string"
+         },
+         "privateEndpointName": {
+          "type": "string"
+         },
+         "location": {
+          "type": "string"
+         }
+        },
+        "resources": [
+         {
+          "name": "[concat(parameters('privateEndpointName'), '/deployedByPolicy')]",
+          "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+          "apiVersion": "2020-03-01",
+          "location": "[parameters('location')]",
+          "properties": {
+           "privateDnsZoneConfigs": [
+            {
+             "name": "privatelink-guestconfiguration-azure-com",
+             "properties": {
+              "privateDnsZoneId": "[parameters('privateDnsZoneIDForGuestConfiguration')]"
+             }
+            },
+            {
+             "name": "privatelink-his-arc-azure-com",
+             "properties": {
+              "privateDnsZoneId": "[parameters('privateDnsZoneIDForHybridResourceProvider')]"
+             }
+            }
+           ]
+          }
+         }
+        ]
+       },
+       "parameters": {
+        "privateDnsZoneIDForGuestConfiguration": {
+         "value": "[parameters('privateDnsZoneIDForGuestConfiguration')]"
+        },
+        "privateDnsZoneIDForHybridResourceProvider": {
+         "value": "[parameters('privateDnsZoneIDForHybridResourceProvider')]"
+        },
+        "privateEndpointName": {
+         "value": "[field('name')]"
+        },
+        "location": {
+         "value": "[field('location')]"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/55c4db33-97b0-437b-8469-c4f4498f5df9",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "55c4db33-97b0-437b-8469-c4f4498f5df9"
+}

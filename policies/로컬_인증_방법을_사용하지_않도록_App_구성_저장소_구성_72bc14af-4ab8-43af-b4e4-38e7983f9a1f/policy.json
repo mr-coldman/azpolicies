@@ -1,0 +1,60 @@
+{
+ "properties": {
+  "displayName": "로컬 인증 방법을 사용하지 않도록 App 구성 저장소 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "로컬 인증 방법을 사용하지 않도록 설정하여 App 구성 저장소에 인증 전용의 Azure Active Directory ID가 필요하도록 합니다. 자세한 내용은 https://go.microsoft.com/fwlink/?linkid=2161954에서 확인하세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "App Configuration"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Modify",
+     "Disabled"
+    ],
+    "defaultValue": "Modify"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.AppConfiguration/configurationStores"
+     },
+     {
+      "field": "Microsoft.AppConfiguration/configurationStores/disableLocalAuth",
+      "notEquals": true
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "conflictEffect": "audit",
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+     ],
+     "operations": [
+      {
+       "condition": "[greaterOrEquals(requestContext().apiVersion, '2021-03-01-preview')]",
+       "operation": "addOrReplace",
+       "field": "Microsoft.AppConfiguration/configurationStores/disableLocalAuth",
+       "value": true
+      }
+     ]
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/72bc14af-4ab8-43af-b4e4-38e7983f9a1f",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "72bc14af-4ab8-43af-b4e4-38e7983f9a1f"
+}

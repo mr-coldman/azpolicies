@@ -1,0 +1,566 @@
+{
+ "properties": {
+  "displayName": "Azure Site Recovery를 통해 복제를 사용하여 가상 머신에서 재해 복구 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "재해 복구 구성이 없는 가상 머신은 중단 및 기타 장애에 취약합니다. 가상 머신에 재해 복구가 아직 구성되지 않은 경우 비즈니스 연속성을 촉진하는 미리 설정된 구성으로 복제를 사용하도록 설정하면 동일한 기능을 시작합니다. 할당 범위를 제어하기 위해 지정된 태그가 포함된 가상 머신을 선택적으로 포함/제외할 수 있습니다. 재해 복구에 대해 자세히 알아보려면 https://aka.ms/asr-doc를 참조하세요.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "Compute"
+  },
+  "parameters": {
+   "sourceRegion": {
+    "type": "String",
+    "metadata": {
+     "displayName": "원본 지역",
+     "description": "원본 가상 머신이 배포되는 지역",
+     "strongType": "location",
+     "serviceName": "ASR"
+    }
+   },
+   "targetRegion": {
+    "type": "String",
+    "metadata": {
+     "displayName": "대상 지역",
+     "description": "재해 발생 시 가상 머신을 배포하는 데 사용할 지역",
+     "strongType": "location",
+     "serviceName": "ASR"
+    }
+   },
+   "targetResourceGroupId": {
+    "type": "String",
+    "metadata": {
+     "displayName": "대상 리소스 그룹",
+     "description": "대상 지역에서 가상 머신을 만드는 데 사용할 리소스 그룹",
+     "strongType": "Microsoft.Resources/resourceGroups",
+     "assignPermissions": true,
+     "serviceName": "ASR"
+    }
+   },
+   "vaultResourceGroupId": {
+    "type": "String",
+    "metadata": {
+     "displayName": "자격 증명 모음 리소스 그룹",
+     "description": "재해 복구 구성에 사용된 Recovery Services 자격 증명 모음을 포함하는 리소스 그룹",
+     "strongType": "Microsoft.Resources/resourceGroups",
+     "assignPermissions": true,
+     "serviceName": "ASR"
+    }
+   },
+   "vaultId": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Recovery Services 자격 증명 모음",
+     "description": "재해 복구 구성에 사용할 Recovery Services 자격 증명 모음",
+     "strongType": "Microsoft.RecoveryServices/vaults",
+     "serviceName": "ASR"
+    }
+   },
+   "recoveryNetworkId": {
+    "type": "String",
+    "metadata": {
+     "displayName": "복구 가상 네트워크",
+     "description": "대상 지역에 있는 기존 가상 네트워크의 ID 또는 대상 지역에 생성할 가상 네트워크의 이름",
+     "strongType": "Microsoft.Network/virtualNetworks",
+     "serviceName": "ASR"
+    },
+    "defaultValue": ""
+   },
+   "targetZone": {
+    "type": "String",
+    "metadata": {
+     "displayName": "대상 가용성 영역",
+     "description": "재해 발생 중 가상 머신에서 사용할 지정된 대상 지역의 가용성 영역",
+     "strongType": "zone",
+     "serviceName": "ASR"
+    },
+    "defaultValue": ""
+   },
+   "cacheStorageAccountId": {
+    "type": "String",
+    "metadata": {
+     "displayName": "캐시 스토리지 계정",
+     "description": "원본 지역에서 만들 캐시 스토리지 계정 이름의 기존 캐시 스토리지 계정 ID 또는 접두사입니다.",
+     "strongType": "Microsoft.Storage/storageAccounts",
+     "serviceName": "ASR"
+    },
+    "defaultValue": ""
+   },
+   "tagName": {
+    "type": "String",
+    "metadata": {
+     "displayName": "태그 이름",
+     "description": "이 정책의 범위에 VM을 포함하거나 제외하는 데 사용할 태그의 이름입니다. 이것은 태그 값 매개 변수와 함께 사용해야 합니다.",
+     "serviceName": "ASR"
+    },
+    "defaultValue": ""
+   },
+   "tagValue": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "태그 값",
+     "description": "이 정책의 범위에 VM을 포함하거나 제외하는 데 사용할 태그 값입니다(값이 여러 개인 경우 쉼표로 구분된 목록 사용). 이 값은 태그 이름 매개 변수와 함께 사용해야 합니다.",
+     "serviceName": "ASR"
+    },
+    "defaultValue": []
+   },
+   "tagType": {
+    "type": "String",
+    "metadata": {
+     "displayName": "태그 유형",
+     "description": "태그 유형은 포함 태그 또는 제외 태그일 수 있습니다. 포함 태그 유형은 태그 이름과 태그 값이 있는 VM이 ​​복제에 포함되는지 확인하고, 제외 태그 유형은 태그 이름과 태그 값이 있는 VM이 ​​복제에서 제외되는지 확인합니다.",
+     "serviceName": "ASR"
+    },
+    "allowedValues": [
+     "Inclusion",
+     "Exclusion",
+     ""
+    ],
+    "defaultValue": ""
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "DeployIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "DeployIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Compute/virtualMachines"
+     },
+     {
+      "field": "location",
+      "equals": "[parameters('sourceRegion')]"
+     },
+     {
+      "anyOf": [
+       {
+        "allOf": [
+         {
+          "value": "[parameters('tagType')]",
+          "equals": "Inclusion"
+         },
+         {
+          "field": "[concat('tags[', parameters('tagName'), ']')]",
+          "in": "[parameters('tagValue')]"
+         }
+        ]
+       },
+       {
+        "allOf": [
+         {
+          "value": "[parameters('tagType')]",
+          "equals": "Exclusion"
+         },
+         {
+          "field": "[concat('tags[', parameters('tagName'), ']')]",
+          "notIn": "[parameters('tagValue')]"
+         }
+        ]
+       },
+       {
+        "anyOf": [
+         {
+          "value": "[empty(parameters('tagName'))]",
+          "equals": "true"
+         },
+         {
+          "value": "[empty(parameters('tagValue'))]",
+          "equals": "true"
+         },
+         {
+          "value": "[empty(parameters('tagType'))]",
+          "equals": "true"
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Resources/links",
+     "evaluationDelay": "PT15M",
+     "roleDefinitionIds": [
+      "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+     ],
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "name",
+        "like": "ASR-Policy-Protect-*"
+       },
+       {
+        "field": "Microsoft.Resources/links/targetId",
+        "contains": "/replicationProtectedItems/"
+       }
+      ]
+     },
+     "deployment": {
+      "properties": {
+       "mode": "incremental",
+       "template": {
+        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "apiVersion": {
+          "type": "String"
+         },
+         "avSetId": {
+          "type": "String"
+         },
+         "dataDiskIds": {
+          "type": "object"
+         },
+         "osDiskId": {
+          "type": "String"
+         },
+         "ppgId": {
+          "type": "String"
+         },
+         "recoveryNetworkId": {
+          "type": "String"
+         },
+         "recoverySubscriptionId": {
+          "type": "String"
+         },
+         "sourceRegion": {
+          "type": "String"
+         },
+         "sourceResourceGroupName": {
+          "type": "String"
+         },
+         "targetRegion": {
+          "type": "String"
+         },
+         "targetResourceGroupName": {
+          "type": "String"
+         },
+         "targetZone": {
+          "type": "String"
+         },
+         "vaultName": {
+          "type": "String"
+         },
+         "vaultResourceGroupName": {
+          "type": "String"
+         },
+         "vmId": {
+          "type": "String"
+         },
+         "vmZones": {
+          "type": "Object"
+         },
+         "cacheStorageAccountId": {
+          "type": "String"
+         }
+        },
+        "variables": {
+         "avSetApiVersion": "2019-03-01",
+         "deploymentApiVersion": "2017-05-10",
+         "vmApiVersion": "2019-07-01",
+         "ppgApiVersion": "2019-12-01",
+         "storageAccountApiVersion": "2018-07-01",
+         "portalLinkPrefix": "https://portal.azure.com/#@microsoft.onmicrosoft.com/resource",
+         "schemaLink": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+         "defaultAvSet": "defaultAvSet-asr",
+         "defaultPPG": "defaultPPG-asr",
+         "eligibilityResultsDefault": "default",
+         "protectedItemSuffix": "-policy",
+         "recoveryAvSetPrefix": "RecoveryAvSet-",
+         "recoveryPPGPrefix": "RecoveryPPG-",
+         "storagePrefix": "Storage-",
+         "avSetType": "Microsoft.Compute/availabilitySets",
+         "deploymentType": "Microsoft.Resources/deployments",
+         "networkType": "Microsoft.Network/virtualNetworks",
+         "ppgType": "Microsoft.Compute/proximityPlacementGroups",
+         "replicationEligibilityResultsType": "Microsoft.RecoveryServices/replicationEligibilityResults",
+         "storageType": "Microsoft.Storage/storageAccounts",
+         "vaultType": "Microsoft.RecoveryServices/vaults",
+         "avSetTemplateName": "[concat(variables('recoveryAvSetPrefix'), last(split(parameters('vmId'), '/')))]",
+         "avSetTemplateName64": "[if(greater(length(variables('avSetTemplateName')), 64), substring(variables('avSetTemplateName'), 0, 64), variables('avSetTemplateName'))]",
+         "ppgTemplateName": "[concat(variables('recoveryPPGPrefix'), last(split(parameters('vmId'), '/')))]",
+         "ppgTemplateName64": "[if(greater(length(variables('ppgTemplateName')), 64), substring(variables('ppgTemplateName'), 0, 64), variables('ppgTemplateName'))]",
+         "storageAccountTemplateName": "[concat(variables('storagePrefix'), last(split(parameters('vmId'), '/')))]",
+         "storageAccountTemplateName64": "[concat(variables('storagePrefix'), uniqueString(variables('storageAccountTemplateName')))]",
+         "replicationProtectedIntentTemplateName": "[concat('ASR-', parameters('sourceResourceGroupName'), '-', last(split(parameters('vmId'), '/')))]",
+         "replicationProtectedIntentTemplateName64": "[if(greater(length(variables('replicationProtectedIntentTemplateName')), 64), substring(variables('replicationProtectedIntentTemplateName'), 0, 64), variables('replicationProtectedIntentTemplateName'))]",
+         "vmDataDiskIds": "[array(parameters('dataDiskIds').rawValue)]",
+         "vmDiskCount": "[add(length(variables('vmDataDiskIds')), int(1))]",
+         "diskIds": "[concat(array(parameters('osDiskId')), array(parameters('dataDiskIds').rawValue))]",
+         "vaultId": "[resourceId(parameters('vaultResourceGroupName'), variables('vaultType'), parameters('vaultName'))]",
+         "eligibilityResultsId": "[extensionResourceId(parameters('vmId'), variables('replicationEligibilityResultsType'), variables('eligibilityResultsDefault'))]",
+         "protectedIntentName": "[concat(parameters('vaultName'), '/', guid(resourceGroup().id, last(split(parameters('vmId'), '/'))), variables('protectedItemSuffix'))]",
+         "recoveryAvSetName": "[if(empty(parameters('avSetId')), variables('defaultAvSet'), concat(last(split(parameters('avSetId'), '/')), '-asr'))]",
+         "recoveryAvSetId": "[if(empty(parameters('avSetId')), '', resourceId(parameters('targetResourceGroupName'), variables('avSetType'), variables('recoveryAvSetName')))]",
+         "recoveryAvType": "[if(not(empty(parameters('avSetId'))), 'AvailabilitySet', if(not(empty(parameters('targetZone'))), 'AvailabilityZone', 'Single'))]",
+         "recoveryAvZone": "[parameters('targetZone')]",
+         "recoveryPPGName": "[if(empty(parameters('ppgId')), variables('defaultPPG'), concat(last(split(parameters('ppgId'), '/')), '-asr'))]",
+         "recoveryPPGId": "[if(empty(parameters('ppgId')), '', resourceId(parameters('targetResourceGroupName'), variables('ppgType'), variables('recoveryPPGName')))]",
+         "targetResourceGroupId": "[concat('/subscriptions/', parameters('recoverySubscriptionId'), '/resourceGroups/', parameters('targetResourceGroupName'))]",
+         "storageAccountSKUName": "Standard_LRS",
+         "storageAccountKind": "Storage",
+         "cacheStorageAccountArmId": "[if(empty(parameters('cacheStorageAccountId')),'',if(contains(parameters('cacheStorageAccountId'),'/'),parameters('cacheStorageAccountId'),resourceId(parameters('vaultResourceGroupName'), variables('storageType'), parameters('cacheStorageAccountId'))))]"
+        },
+        "resources": [
+         {
+          "condition": "[not(empty(parameters('ppgId')))]",
+          "apiVersion": "[variables('deploymentApiVersion')]",
+          "name": "[variables('ppgTemplateName64')]",
+          "type": "Microsoft.Resources/deployments",
+          "resourceGroup": "[parameters('targetResourceGroupName')]",
+          "properties": {
+           "mode": "Incremental",
+           "template": {
+            "$schema": "[variables('schemaLink')]",
+            "contentVersion": "1.0.0.0",
+            "parameters": {},
+            "variables": {},
+            "resources": [
+             {
+              "condition": "[not(empty(parameters('ppgId')))]",
+              "type": "[variables('ppgType')]",
+              "name": "[variables('recoveryPPGName')]",
+              "apiVersion": "[variables('ppgApiVersion')]",
+              "location": "[parameters('targetRegion')]",
+              "properties": {
+               "proximityPlacementGroupType": "[if(empty(parameters('ppgId')), 'Standard', reference(parameters('ppgId'), variables('ppgApiVersion')).proximityPlacementGroupType)]"
+              }
+             }
+            ]
+           },
+           "parameters": {}
+          }
+         },
+         {
+          "condition": "[not(empty(parameters('avSetId')))]",
+          "apiVersion": "[variables('deploymentApiVersion')]",
+          "name": "[variables('avSetTemplateName64')]",
+          "type": "Microsoft.Resources/deployments",
+          "resourceGroup": "[parameters('targetResourceGroupName')]",
+          "properties": {
+           "mode": "Incremental",
+           "template": {
+            "$schema": "[variables('schemaLink')]",
+            "contentVersion": "1.0.0.0",
+            "parameters": {},
+            "variables": {},
+            "resources": [
+             {
+              "condition": "[not(empty(parameters('avSetId')))]",
+              "type": "[variables('avSetType')]",
+              "sku": {
+               "name": "[if(empty(parameters('avSetId')), 'Aligned', reference(parameters('avSetId'), variables('avSetApiVersion'), 'Full').sku.name)]"
+              },
+              "name": "[variables('recoveryAvSetName')]",
+              "apiVersion": "[variables('avSetApiVersion')]",
+              "location": "[parameters('targetRegion')]",
+              "tags": {},
+              "properties": {
+               "platformUpdateDomainCount": "[if(empty(parameters('avSetId')), '5', reference(parameters('avSetId'), variables('avSetApiVersion')).platformUpdateDomainCount)]",
+               "platformFaultDomainCount": "[if(empty(parameters('avSetId')), '2', reference(parameters('avSetId'), variables('avSetApiVersion')).platformFaultDomainCount)]",
+               "proximityPlacementGroup": "[if(empty(parameters('ppgId')), json('null'), json(concat('{', '\"id\"', ':', '\"', variables('recoveryPPGId'), '\"', '}')))]"
+              }
+             }
+            ]
+           },
+           "parameters": {}
+          },
+          "dependsOn": [
+           "[variables('ppgTemplateName64')]"
+          ]
+         },
+         {
+          "condition": "[and(not(empty(parameters('cacheStorageAccountId'))), not(contains(parameters('cacheStorageAccountId'), '/')))]",
+          "apiVersion": "[variables('deploymentApiVersion')]",
+          "name": "[variables('storageAccountTemplateName64')]",
+          "type": "Microsoft.Resources/deployments",
+          "resourceGroup": "[parameters('vaultResourceGroupName')]",
+          "properties": {
+           "mode": "Incremental",
+           "template": {
+            "$schema": "[variables('schemaLink')]",
+            "contentVersion": "1.0.0.0",
+            "parameters": {},
+            "variables": {},
+            "resources": [
+             {
+              "condition": "[and(not(empty(parameters('cacheStorageAccountId'))), not(contains(parameters('cacheStorageAccountId'), '/')))]",
+              "type": "[variables('storageType')]",
+              "name": "[parameters('cacheStorageAccountId')]",
+              "apiVersion": "[variables('storageAccountApiVersion')]",
+              "location": "[parameters('sourceRegion')]",
+              "sku": {
+               "name": "[variables('storageAccountSKUName')]"
+              },
+              "kind": "[variables('storageAccountKind')]",
+              "properties": {
+               "supportsHttpsTrafficOnly": true
+              }
+             }
+            ]
+           },
+           "parameters": {}
+          }
+         },
+         {
+          "apiVersion": "[variables('deploymentApiVersion')]",
+          "name": "[variables('replicationProtectedIntentTemplateName64')]",
+          "type": "Microsoft.Resources/deployments",
+          "resourceGroup": "[parameters('vaultResourceGroupName')]",
+          "properties": {
+           "mode": "Incremental",
+           "template": {
+            "$schema": "[variables('schemaLink')]",
+            "contentVersion": "1.0.0.0",
+            "parameters": {},
+            "variables": {},
+            "resources": [
+             {
+              "condition": "[lessOrEquals(length(reference(variables('eligibilityResultsId'), '2018-07-10').errors), int('0'))]",
+              "type": "Microsoft.RecoveryServices/vaults/replicationProtectionIntents",
+              "name": "[variables('protectedIntentName')]",
+              "apiVersion": "[parameters('apiVersion')]",
+              "properties": {
+               "providerSpecificDetails": {
+                "instanceType": "A2A",
+                "fabricObjectId": "[parameters('vmId')]",
+                "primaryLocation": "[parameters('sourceRegion')]",
+                "recoveryLocation": "[parameters('targetRegion')]",
+                "recoverySubscriptionId": "[parameters('recoverySubscriptionId')]",
+                "recoveryAvailabilityType": "[variables('recoveryAvType')]",
+                "recoveryAvailabilityZone": "[variables('recoveryAvZone')]",
+                "recoveryResourceGroupId": "[variables('targetResourceGroupId')]",
+                "recoveryAvailabilitySetCustomInput": "[if(empty(parameters('avSetId')), json('null'), json(concat('{', '\"resourceType\"', ':', '\"Existing\",', '\"recoveryAvailabilitySetId\"', ':', '\"', variables('recoveryAvSetId'), '\"', '}')))]",
+                "recoveryProximityPlacementGroupCustomInput": "[if(empty(parameters('ppgId')), json('null'), json(concat('{', '\"resourceType\"', ':', '\"Existing\",', '\"recoveryProximityPlacementGroupId\"', ':', '\"', variables('recoveryPPGId'), '\"', '}')))]",
+                "recoveryVirtualNetworkCustomInput": "[if(contains(parameters('recoveryNetworkId'), '/'), json(concat('{', '\"resourceType\"', ':', '\"Existing\",', '\"recoveryVirtualNetworkId\"', ':', '\"', parameters('recoveryNetworkId'), '\"', '}')),if(empty(parameters('recoveryNetworkId')), json('null'), json(concat('{', '\"resourceType\"', ':', '\"New\",', '\"recoveryVirtualNetworkName\"', ':', '\"', parameters('recoveryNetworkId'), '\"', '}'))))]",
+                "primaryStagingStorageAccountCustomInput": "[if(empty(variables('cacheStorageAccountArmId')),json('null'),json(concat('{', '\"resourceType\"', ':', '\"Existing\",', '\"azureStorageAccountId\"', ':', '\"', variables('cacheStorageAccountArmId'), '\"', '}')))]",
+                "vmDisks": [],
+                "copy": [
+                 {
+                  "name": "vmManagedDisks",
+                  "count": "[variables('vmDiskCount')]",
+                  "input": {
+                   "diskId": "[if(equals(copyIndex('vmManagedDisks'), int(0)), reference(parameters('vmId'), variables('vmApiVersion')).storageProfile.osDisk.managedDisk.Id, variables('vmDataDiskIds')[sub(copyIndex('vmManagedDisks'), int(1))])]",
+                   "recoveryResourceGroupCustomInput": {
+                    "resourceType": "Existing",
+                    "recoveryResourceGroupId": "[variables('targetResourceGroupId')]"
+                   }
+                  }
+                 }
+                ]
+               }
+              }
+             }
+            ],
+            "outputs": {
+             "vmName": {
+              "value": "[last(split(parameters('vmId'), '/'))]",
+              "type": "string"
+             },
+             "availabilitySetUrl": {
+              "value": "[if(empty(parameters('avSetId')), '', concat(variables('portalLinkPrefix'), variables('recoveryAvSetId')))]",
+              "type": "string"
+             },
+             "proximityPlacementGroupUrl": {
+              "value": "[if(empty(parameters('ppgId')), '', concat(variables('portalLinkPrefix'), variables('recoveryPPGId')))]",
+              "type": "string"
+             },
+             "replicationEligibilityResults": {
+              "value": "[reference(variables('eligibilityResultsId'), parameters('apiVersion'))]",
+              "type": "Object"
+             }
+            }
+           },
+           "parameters": {}
+          },
+          "dependsOn": [
+           "[variables('ppgTemplateName64')]",
+           "[variables('avSetTemplateName64')]",
+           "[variables('storageAccountTemplateName64')]"
+          ]
+         }
+        ],
+        "outputs": {}
+       },
+       "parameters": {
+        "apiVersion": {
+         "value": "2018-07-10"
+        },
+        "avSetId": {
+         "value": "[field('Microsoft.Compute/virtualMachines/availabilitySet.id')]"
+        },
+        "dataDiskIds": {
+         "value": {
+          "rawValue": "[field('Microsoft.Compute/virtualMachines/storageProfile.dataDisks[*].managedDisk.id')]",
+          "emptyArray": []
+         }
+        },
+        "osDiskId": {
+         "value": "[field('Microsoft.Compute/virtualMachines/storageProfile.osDisk.managedDisk.id')]"
+        },
+        "ppgId": {
+         "value": "[field('Microsoft.Compute/virtualMachines/proximityPlacementGroup.id')]"
+        },
+        "recoveryNetworkId": {
+         "value": "[parameters('recoveryNetworkId')]"
+        },
+        "recoverySubscriptionId": {
+         "value": "[subscription().subscriptionId]"
+        },
+        "sourceRegion": {
+         "value": "[parameters('sourceRegion')]"
+        },
+        "sourceResourceGroupName": {
+         "value": "[resourcegroup().Name]"
+        },
+        "targetRegion": {
+         "value": "[parameters('targetRegion')]"
+        },
+        "targetResourceGroupName": {
+         "value": "[last(split(parameters('targetResourceGroupId'), '/'))]"
+        },
+        "targetZone": {
+         "value": "[parameters('targetZone')]"
+        },
+        "vaultName": {
+         "value": "[last(split(parameters('vaultId'), '/'))]"
+        },
+        "vaultResourceGroupName": {
+         "value": "[last(split(parameters('vaultResourceGroupId'), '/'))]"
+        },
+        "vmId": {
+         "value": "[field('id')]"
+        },
+        "vmZones": {
+         "value": {
+          "rawValue": "[field('Microsoft.Compute/virtualMachines/zones')]",
+          "emptyArray": []
+         }
+        },
+        "cacheStorageAccountId": {
+         "value": "[parameters('cacheStorageAccountId')]"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/ac34a73f-9fa5-4067-9247-a3ecae514468",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "ac34a73f-9fa5-4067-9247-a3ecae514468"
+}

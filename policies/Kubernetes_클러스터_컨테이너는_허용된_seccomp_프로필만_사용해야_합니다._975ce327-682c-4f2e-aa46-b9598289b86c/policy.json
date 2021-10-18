@@ -1,0 +1,98 @@
+{
+ "properties": {
+  "displayName": "Kubernetes 클러스터 컨테이너는 허용된 seccomp 프로필만 사용해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Microsoft.Kubernetes.Data",
+  "description": "이 정책은 컨테이너가 Kubernetes 클러스터에서 허용된 seccomp 프로필만 사용하도록 합니다. 이 정책은 일반적으로 AKS(Azure Kubernetes Service)에 사용할 수 있으며, AKS Engine 및 Azure Arc 사용 Kubernetes의 미리 보기에 사용할 수 있습니다. 이 정책 사용에 대한 지침은 https://aka.ms/kubepolicydoc를 참조하세요.",
+  "metadata": {
+   "version": "4.0.1",
+   "category": "Kubernetes"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "'감사'는 비준수 리소스 생성이나 업데이트를 허용하지만 리소스에 비준수로 플래그 지정합니다. '거부'는 비준수 리소스 생성이나 업데이트를 차단합니다. '사용 안 함'은 정책을 끕니다."
+    },
+    "allowedValues": [
+     "audit",
+     "deny",
+     "disabled"
+    ],
+    "defaultValue": "audit"
+   },
+   "excludedNamespaces": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "네임스페이스 제외",
+     "description": "정책 평가에서 제외할 Kubernetes 네임스페이스의 목록입니다."
+    },
+    "defaultValue": [
+     "kube-system",
+     "gatekeeper-system",
+     "azure-arc"
+    ]
+   },
+   "namespaces": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "네임스페이스 포함",
+     "description": "정책 평가에만 포함할 Kubernetes 네임스페이스의 목록입니다. 빈 목록은 정책이 모든 네임스페이스의 모든 리소스에 적용됨을 의미합니다."
+    },
+    "defaultValue": []
+   },
+   "labelSelector": {
+    "type": "Object",
+    "metadata": {
+     "displayName": "Kubernetes 레이블 선택기",
+     "description": "정책 평가를 위해 Kubernetes 리소스를 선택하는 레이블 쿼리입니다. 빈 레이블 선택기는 모든 Kubernetes 리소스와 일치합니다."
+    },
+    "defaultValue": {}
+   },
+   "allowedProfiles": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "허용된 seccomp 프로필",
+     "description": "컨테이너에서 사용할 수 있는 seccomp 프로필 목록입니다. 예: 'runtime/default;docker/default'. 모든 항목을 차단하려면 입력으로 빈 목록을 제공하세요."
+    },
+    "defaultValue": []
+   },
+   "excludedContainers": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "컨테이너 제외",
+     "description": "정책 평가에서 제외할 InitContainers 및 컨테이너 목록입니다. ID는 컨테이너 이름입니다. 빈 목록을 사용하여 이 정책을 모든 네임스페이스의 모든 컨테이너에 적용합니다."
+    },
+    "defaultValue": []
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "in": [
+     "AKS Engine",
+     "Microsoft.Kubernetes/connectedClusters",
+     "Microsoft.ContainerService/managedClusters"
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "constraintTemplate": "https://store.policy.core.windows.net/kubernetes/allowed-seccomp-profiles/v2/template.yaml",
+     "constraint": "https://store.policy.core.windows.net/kubernetes/allowed-seccomp-profiles/v2/constraint.yaml",
+     "excludedNamespaces": "[parameters('excludedNamespaces')]",
+     "namespaces": "[parameters('namespaces')]",
+     "labelSelector": "[parameters('labelSelector')]",
+     "values": {
+      "allowedProfiles": "[parameters('allowedProfiles')]",
+      "excludedContainers": "[parameters('excludedContainers')]"
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/975ce327-682c-4f2e-aa46-b9598289b86c",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "975ce327-682c-4f2e-aa46-b9598289b86c"
+}

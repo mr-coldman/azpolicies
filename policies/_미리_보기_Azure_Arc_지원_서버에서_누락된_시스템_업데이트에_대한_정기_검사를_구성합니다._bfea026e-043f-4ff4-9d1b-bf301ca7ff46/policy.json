@@ -1,0 +1,156 @@
+{
+ "properties": {
+  "displayName": "[미리 보기]: Azure Arc 지원 서버에서 누락된 시스템 업데이트에 대한 정기 검사를 구성합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Arc 사용 서버에서 OS 업데이트를 위한 자동 평가(매 24시간)를 구성합니다. 머신 구독, 리소스 그룹, 위치 또는 태그에 따라 할당 범위를 제어할 수 있습니다. Windows용 이 기능에 대한 자세한 정보: https://aka.ms/computevm-windowspatchassessmentmode, Linux: https://aka.ms/computevm-linuxpatchassessmentmode.",
+  "metadata": {
+   "version": "1.0.0-preview",
+   "category": "Update Management Center",
+   "preview": true
+  },
+  "parameters": {
+   "assessmentMode": {
+    "type": "String",
+    "metadata": {
+     "displayName": "평가 모드",
+     "description": "머신에 대한 평가 모드입니다."
+    },
+    "allowedValues": [
+     "ImageDefault",
+     "AutomaticByPlatform"
+    ],
+    "defaultValue": "ImageDefault"
+   },
+   "osType": {
+    "type": "String",
+    "metadata": {
+     "displayName": "OS 유형",
+     "description": "머신의 OS 유형입니다."
+    },
+    "allowedValues": [
+     "Windows",
+     "Linux"
+    ],
+    "defaultValue": "Windows"
+   },
+   "locations": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "머신 위치",
+     "description": "머신을 대상으로 지정해야 하는 위치 목록입니다.",
+     "strongType": "location"
+    },
+    "defaultValue": []
+   },
+   "tagValues": {
+    "type": "Object",
+    "metadata": {
+     "displayName": "머신의 태그",
+     "description": "대상 머신을 가져오는 데 일치해야 하는 태그 목록입니다."
+    },
+    "defaultValue": {}
+   },
+   "tagOperator": {
+    "type": "String",
+    "metadata": {
+     "displayName": "태그 연산자",
+     "description": "리소스 태그에 대한 일치 조건"
+    },
+    "allowedValues": [
+     "All",
+     "Any"
+    ],
+    "defaultValue": "Any"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.HybridCompute/machines"
+     },
+     {
+      "field": "Microsoft.HybridCompute/machines/osName",
+      "equals": "[parameters('osType')]"
+     },
+     {
+      "anyOf": [
+       {
+        "value": "[empty(parameters('locations'))]",
+        "equals": true
+       },
+       {
+        "field": "location",
+        "in": "[parameters('locations')]"
+       }
+      ]
+     },
+     {
+      "field": "[if(equals(parameters('osType'), 'Windows'), 'Microsoft.HybridCompute/machines/osProfile.windowsConfiguration.patchSettings.assessmentMode', 'Microsoft.HybridCompute/machines/osProfile.linuxConfiguration.patchSettings.assessmentMode')]",
+      "notEquals": "[parameters('assessmentMode')]"
+     },
+     {
+      "anyOf": [
+       {
+        "value": "[empty(parameters('tagValues'))]",
+        "equals": true
+       },
+       {
+        "allOf": [
+         {
+          "value": "[parameters('tagOperator')]",
+          "equals": "Any"
+         },
+         {
+          "value": "[greaterOrEquals(if(empty(field('tags')), 0, length(intersection(parameters('tagValues'), field('tags')))), 1)]",
+          "equals": true
+         }
+        ]
+       },
+       {
+        "allOf": [
+         {
+          "value": "[parameters('tagOperator')]",
+          "equals": "All"
+         },
+         {
+          "value": "[equals(if(empty(field('tags')), 0, length(intersection(parameters('tagValues'), field('tags')))), length(parameters('tagValues')))]",
+          "equals": true
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "modify",
+    "details": {
+     "roleDefinitionIds": [
+      "/providers/Microsoft.Authorization/roleDefinitions/cd570a14-e51a-42ad-bac8-bafd67325302"
+     ],
+     "conflictEffect": "audit",
+     "operations": [
+      {
+       "condition": "[equals(parameters('osType'), 'Windows')]",
+       "operation": "addOrReplace",
+       "field": "Microsoft.HybridCompute/machines/osProfile.windowsConfiguration.patchSettings.assessmentMode",
+       "value": "[parameters('assessmentMode')]"
+      },
+      {
+       "condition": "[equals(parameters('osType'), 'Linux')]",
+       "operation": "addOrReplace",
+       "field": "Microsoft.HybridCompute/machines/osProfile.linuxConfiguration.patchSettings.assessmentMode",
+       "value": "[parameters('assessmentMode')]"
+      }
+     ]
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/bfea026e-043f-4ff4-9d1b-bf301ca7ff46",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "bfea026e-043f-4ff4-9d1b-bf301ca7ff46"
+}

@@ -1,0 +1,267 @@
+{
+ "properties": {
+  "displayName": "Windows 머신 네트워크 연결 감사",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "정책 할당 범위에 필수 구성 요소를 배포해야 합니다. 자세한 내용은 https://aka.ms/gcpol을 참조하세요. IP 및 TCP 포트에 대한 네트워크 연결 상태가 정책 매개 변수와 일치하지 않는 경우 머신이 비규격입니다.",
+  "metadata": {
+   "category": "Guest Configuration",
+   "version": "1.0.0",
+   "requiredProviders": [
+    "Microsoft.GuestConfiguration"
+   ],
+   "guestConfiguration": {
+    "name": "WindowsRemoteConnection",
+    "version": "1.*",
+    "configurationParameter": {
+     "host": "[WindowsRemoteConnection]WindowsRemoteConnection1;host",
+     "port": "[WindowsRemoteConnection]WindowsRemoteConnection1;port",
+     "shouldConnect": "[WindowsRemoteConnection]WindowsRemoteConnection1;shouldConnect"
+    }
+   }
+  },
+  "parameters": {
+   "IncludeArcMachines": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Arc 연결된 서버 포함",
+     "description": "이 옵션을 선택하면 Arc 연결된 머신마다 매달 청구되는 것에 동의하게 됩니다."
+    },
+    "allowedValues": [
+     "true",
+     "false"
+    ],
+    "defaultValue": "false"
+   },
+   "host": {
+    "type": "String",
+    "metadata": {
+     "displayName": "원격 호스트 이름",
+     "description": "원격 호스트 머신의 DNS(Domain Name System) 이름 또는 IP 주소를 지정합니다."
+    }
+   },
+   "port": {
+    "type": "String",
+    "metadata": {
+     "displayName": "포트",
+     "description": "원격 호스트 이름의 TCP 포트 번호입니다."
+    }
+   },
+   "shouldConnect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "원격 호스트에 연결해야 함",
+     "description": "연결을 설정할 수 없는 경우 머신이 비규격입니다."
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "False"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "anyOf": [
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/virtualMachines"
+       },
+       {
+        "anyOf": [
+         {
+          "field": "Microsoft.Compute/imagePublisher",
+          "in": [
+           "esri",
+           "incredibuild",
+           "MicrosoftDynamicsAX",
+           "MicrosoftSharepoint",
+           "MicrosoftVisualStudio",
+           "MicrosoftWindowsDesktop",
+           "MicrosoftWindowsServerHPCPack"
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "MicrosoftWindowsServer"
+           },
+           {
+            "field": "Microsoft.Compute/imageSKU",
+            "notLike": "2008*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "MicrosoftSQLServer"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "notLike": "SQL2008*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "microsoft-dsvm"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "equals": "dsvm-windows"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "microsoft-ads"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "in": [
+             "standard-data-science-vm",
+             "windows-data-science-vm"
+            ]
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "batch"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "equals": "rendering-windows2016"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "center-for-internet-security-inc"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "cis-windows-server-201*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "pivotal"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "bosh-windows-server*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "cloud-infrastructure-services"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "ad*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Compute/virtualMachines/osProfile.windowsConfiguration",
+              "exists": "true"
+             },
+             {
+              "field": "Microsoft.Compute/virtualMachines/storageProfile.osDisk.osType",
+              "like": "Windows*"
+             }
+            ]
+           },
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Compute/imageSKU",
+              "exists": "false"
+             },
+             {
+              "allOf": [
+               {
+                "field": "Microsoft.Compute/imageSKU",
+                "notLike": "2008*"
+               },
+               {
+                "field": "Microsoft.Compute/imageOffer",
+                "notLike": "SQL2008*"
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "allOf": [
+       {
+        "value": "[parameters('IncludeArcMachines')]",
+        "equals": "true"
+       },
+       {
+        "field": "type",
+        "equals": "Microsoft.HybridCompute/machines"
+       },
+       {
+        "field": "Microsoft.HybridCompute/imageOffer",
+        "like": "windows*"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "auditIfNotExists",
+    "details": {
+     "type": "Microsoft.GuestConfiguration/guestConfigurationAssignments",
+     "name": "WindowsRemoteConnection",
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/complianceStatus",
+        "equals": "Compliant"
+       },
+       {
+        "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/parameterHash",
+        "equals": "[base64(concat('[WindowsRemoteConnection]WindowsRemoteConnection1;host', '=', parameters('host'), ',', '[WindowsRemoteConnection]WindowsRemoteConnection1;port', '=', parameters('port'), ',', '[WindowsRemoteConnection]WindowsRemoteConnection1;shouldConnect', '=', parameters('shouldConnect')))]"
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/630ac30f-a234-4533-ac2d-e0df77acda51",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "630ac30f-a234-4533-ac2d-e0df77acda51"
+}

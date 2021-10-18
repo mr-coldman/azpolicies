@@ -1,0 +1,47 @@
+{
+ "properties": {
+  "displayName": "스토리지 계정은 테넌트 간 개체 복제를 방지해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "저장소 계정에 대한 개체 복제 제한을 감사합니다. 기본적으로 사용자는 한 Azure AD 테넌트의 원본 스토리지 계정과 다른 테넌트의 대상 계정을 사용하여 개체 복제를 구성할 수 있습니다. 고객의 데이터가 고객이 소유한 스토리지 계정에 복제될 수 있기 때문에 보안상 우려가 있습니다. allowCrossTenantReplication을 false로 설정하면 원본 계정과 대상 계정이 모두 동일한 Azure AD 테넌트에 있는 경우에만 개체 복제를 구성할 수 있습니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Storage"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "이 효과는 정책 규칙이 일치하도록 평가될 때 발생하는 동작을 결정합니다."
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Storage/storageAccounts"
+     },
+     {
+      "field": "Microsoft.Storage/storageAccounts/allowCrossTenantReplication",
+      "notEquals": "false"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/92a89a79-6c52-4a7e-a03f-61306fc49312",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "92a89a79-6c52-4a7e-a03f-61306fc49312"
+}

@@ -1,0 +1,65 @@
+{
+ "properties": {
+  "displayName": "[미리 보기]: Azure Recovery Services 자격 증명 모음은 백업용 프라이빗 링크를 사용해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Private Link를 사용하면 원본 또는 대상에서 공용 IP 주소 없이 Azure 서비스에 가상 네트워크를 연결할 수 있습니다. Private Link 플랫폼은 Azure 백본 네트워크를 통해 소비자와 서비스 간의 연결을 처리합니다. 프라이빗 엔드포인트를 Azure Recovery Services 자격 증명 모음에 매핑하면 데이터 유출 위험이 감소합니다. https://aka.ms/AB-PrivateEndpoints에서 Private Link에 관해 자세히 알아보세요.",
+  "metadata": {
+   "version": "2.0.0-preview",
+   "preview": true,
+   "category": "Backup"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.RecoveryServices/vaults"
+     },
+     {
+      "count": {
+       "field": "Microsoft.RecoveryServices/vaults/privateEndpointConnections[*]",
+       "where": {
+        "allOf": [
+         {
+          "field": "Microsoft.RecoveryServices/vaults/privateEndpointConnections[*].privateLinkServiceConnectionState.status",
+          "equals": "Approved"
+         },
+         {
+          "field": "Microsoft.RecoveryServices/vaults/privateEndpointConnections[*].provisioningState",
+          "equals": "Succeeded"
+         },
+         {
+          "field": "Microsoft.RecoveryServices/vaults/privateEndpointConnections[*].id",
+          "contains": ".backup"
+         }
+        ]
+       }
+      },
+      "less": 1
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/deeddb44-9f94-4903-9fa0-081d524406e3",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "deeddb44-9f94-4903-9fa0-081d524406e3"
+}

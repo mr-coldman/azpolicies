@@ -1,0 +1,63 @@
+{
+ "properties": {
+  "displayName": "Storage 계정에 보안 전송을 사용하도록 설정해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "스토리지 계정 보안 전송의 요구 사항을 감사합니다. 보안 전송은 스토리지 계정이 보안 연결(HTTPS)에서의 요청만 허용하도록 강제하는 옵션입니다. HTTPS 보안 연결을 사용하여 서버 및 서비스 간 인증을 보장하고 전송 중인 데이터를 메시지 가로채기(man-in-the-middle), 도청 및 세션 하이재킹과 같은 네트워크 계층 공격으로부터 보호합니다.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "Storage"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "이 효과는 정책 규칙이 일치하도록 평가될 때 발생하는 동작을 결정합니다."
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Storage/storageAccounts"
+     },
+     {
+      "anyOf": [
+       {
+        "allOf": [
+         {
+          "value": "[requestContext().apiVersion]",
+          "less": "2019-04-01"
+         },
+         {
+          "field": "Microsoft.Storage/storageAccounts/supportsHttpsTrafficOnly",
+          "exists": "false"
+         }
+        ]
+       },
+       {
+        "field": "Microsoft.Storage/storageAccounts/supportsHttpsTrafficOnly",
+        "equals": "false"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/404c3081-a854-4457-ae30-26a93ef643f9",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "404c3081-a854-4457-ae30-26a93ef643f9"
+}

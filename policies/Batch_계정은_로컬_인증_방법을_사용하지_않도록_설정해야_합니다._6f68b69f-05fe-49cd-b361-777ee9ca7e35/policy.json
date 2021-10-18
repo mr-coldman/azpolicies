@@ -1,0 +1,63 @@
+{
+ "properties": {
+  "displayName": "Batch 계정은 로컬 인증 방법을 사용하지 않도록 설정해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "로컬 인증 방법을 사용하지 않도록 설정하면 Batch 계정에서 인증을 위해 독점적으로 Azure Active Directory ID가 필요하게 되어 보안이 향상됩니다. https://aka.ms/batch/auth에서 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Batch"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Deny",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Batch/batchAccounts"
+     },
+     {
+      "anyOf": [
+       {
+        "field": "Microsoft.Batch/batchAccounts/allowedAuthenticationModes",
+        "exists": "false"
+       },
+       {
+        "count": {
+         "field": "Microsoft.Batch/batchAccounts/allowedAuthenticationModes[*]",
+         "where": {
+          "not": {
+           "field": "Microsoft.Batch/batchAccounts/allowedAuthenticationModes[*]",
+           "equals": "AAD"
+          }
+         }
+        },
+        "greater": 0
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/6f68b69f-05fe-49cd-b361-777ee9ca7e35",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "6f68b69f-05fe-49cd-b361-777ee9ca7e35"
+}

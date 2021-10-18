@@ -1,0 +1,64 @@
+{
+ "properties": {
+  "displayName": "App Service Environment에서 내부 암호화를 사용하도록 설정해야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "InternalEncryption을 true로 설정하면 App Service Environment에서 프런트엔드와 작업자 사이의 페이지 파일, 작업자 디스크 및 내부 네트워크 트래픽이 암호화됩니다. 자세한 내용을 보려면 https://docs.microsoft.com/azure/app-service/environment/app-service-app-service-environment-custom-settings#enable-internal-encryption을 참조하세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "App Service"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Web/hostingEnvironments"
+     },
+     {
+      "field": "kind",
+      "like": "ASE*"
+     },
+     {
+      "count": {
+       "field": "Microsoft.Web/HostingEnvironments/clusterSettings[*]",
+       "where": {
+        "allOf": [
+         {
+          "field": "Microsoft.Web/HostingEnvironments/clusterSettings[*].name",
+          "equals": "InternalEncryption"
+         },
+         {
+          "field": "Microsoft.Web/HostingEnvironments/clusterSettings[*].value",
+          "equals": "true"
+         }
+        ]
+       }
+      },
+      "less": 1
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/fb74e86f-d351-4b8d-b034-93da7391c01f",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "fb74e86f-d351-4b8d-b034-93da7391c01f"
+}

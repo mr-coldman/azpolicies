@@ -1,0 +1,52 @@
+{
+ "properties": {
+  "displayName": "이벤트 허브 네임스페이스는 암호화에 고객 관리형 키를 사용해야 함",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure Event Hubs는 Microsoft 관리형 키(기본값) 또는 고객 관리형 키로 미사용 데이터를 암호화하는 옵션을 지원합니다. 고객 관리형 키를 사용하여 데이터를 암호화하도록 선택하면 이벤트 허브에서 네임스페이스의 데이터를 암호화하는 데 사용할 키에 대한 액세스 권한을 할당하고 순환할 수 있으며 사용하지 않도록 설정하고 철회할 수 있습니다. 이벤트 허브는 전용 클러스터의 네임스페이스에 대해 고객 관리형 키를 사용한 암호화만 지원합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Event Hub"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.EventHub/namespaces"
+     },
+     {
+      "field": "Microsoft.EventHub/namespaces/clusterArmId",
+      "exists": "true"
+     },
+     {
+      "not": {
+       "field": "Microsoft.EventHub/namespaces/encryption.keySource",
+       "equals": "Microsoft.Keyvault"
+      }
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]"
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/a1ad735a-e96f-45d2-a7b2-9a4932cab7ec",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "a1ad735a-e96f-45d2-a7b2-9a4932cab7ec"
+}

@@ -1,0 +1,365 @@
+{
+ "properties": {
+  "displayName": "Linux 컴퓨터에는 허용된 로컬 계정만 있어야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "필수 구성 요소를 정책 할당 범위에 배포해야 합니다. 자세한 내용은 https://aka.ms/gcpol을 방문하세요. Azure Active Directory를 사용하여 사용자 계정을 관리하는 것이 ID 관리를 위한 모범 사례입니다. 로컬 컴퓨터 계정을 줄이면 중앙 시스템 외부에서 관리되는 ID가 확산되는 것을 방지할 수 있습니다. 활성화된 로컬 사용자 계정이 있고 정책 매개 변수에 나열되지 않은 경우 시스템은 비준수입니다.",
+  "metadata": {
+   "category": "Guest Configuration",
+   "version": "1.1.0",
+   "requiredProviders": [
+    "Microsoft.GuestConfiguration"
+   ],
+   "guestConfiguration": {
+    "name": "LocalUsers_Linux",
+    "version": "1.*",
+    "configurationParameter": {
+     "Allowed": "[LocalUser]Accounts;Exclude"
+    }
+   }
+  },
+  "parameters": {
+   "IncludeArcMachines": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Arc 연결된 서버 포함",
+     "description": "이 옵션을 선택하면 Arc 연결된 머신마다 매달 청구되는 것에 동의하게 됩니다."
+    },
+    "allowedValues": [
+     "true",
+     "false"
+    ],
+    "defaultValue": "false"
+   },
+   "Allowed": {
+    "type": "String",
+    "metadata": {
+     "displayName": "허용된 로컬 계정",
+     "description": "제외할 계정 이름을 세미콜론(';')으로 구분하여 나열합니다. 이러한 계정이 존재하고 활성화된 경우 해당 계정은 준수로 식별됩니다."
+    },
+    "defaultValue": ""
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "이 정책 실행을 사용 또는 사용 안 함"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "anyOf": [
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/virtualMachines"
+       },
+       {
+        "anyOf": [
+         {
+          "field": "Microsoft.Compute/imagePublisher",
+          "in": [
+           "microsoft-aks",
+           "qubole-inc",
+           "datastax",
+           "couchbase",
+           "scalegrid",
+           "checkpoint",
+           "paloaltonetworks",
+           "debian"
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "OpenLogic"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "CentOS*"
+           },
+           {
+            "field": "Microsoft.Compute/imageSKU",
+            "notLike": "6*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "Oracle"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "equals": "Oracle-Linux"
+           },
+           {
+            "field": "Microsoft.Compute/imageSKU",
+            "notLike": "6*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "RedHat"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "in": [
+             "RHEL",
+             "RHEL-HA",
+             "RHEL-SAP",
+             "RHEL-SAP-APPS",
+             "RHEL-SAP-HA",
+             "RHEL-SAP-HANA"
+            ]
+           },
+           {
+            "field": "Microsoft.Compute/imageSKU",
+            "notLike": "6*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "RedHat"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "in": [
+             "osa",
+             "rhel-byos"
+            ]
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "center-for-internet-security-inc"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "in": [
+             "cis-centos-7-l1",
+             "cis-centos-7-v2-1-1-l1",
+             "cis-centos-8-l1",
+             "cis-debian-linux-8-l1",
+             "cis-debian-linux-9-l1",
+             "cis-nginx-centos-7-v1-1-0-l1",
+             "cis-oracle-linux-7-v2-0-0-l1",
+             "cis-oracle-linux-8-l1",
+             "cis-postgresql-11-centos-linux-7-level-1",
+             "cis-rhel-7-l2",
+             "cis-rhel-7-v2-2-0-l1",
+             "cis-rhel-8-l1",
+             "cis-suse-linux-12-v2-0-0-l1",
+             "cis-ubuntu-linux-1604-v1-0-0-l1",
+             "cis-ubuntu-linux-1804-l1"
+            ]
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "credativ"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "equals": "Debian"
+           },
+           {
+            "field": "Microsoft.Compute/imageSKU",
+            "notLike": "7*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "Suse"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "SLES*"
+           },
+           {
+            "field": "Microsoft.Compute/imageSKU",
+            "notLike": "11*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "Canonical"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "contains": "Ubuntu"
+           },
+           {
+            "field": "Microsoft.Compute/imageSKU",
+            "notLike": "12*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "microsoft-dsvm"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "in": [
+             "linux-data-science-vm-ubuntu",
+             "azureml"
+            ]
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "cloudera"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "equals": "cloudera-centos-os"
+           },
+           {
+            "field": "Microsoft.Compute/imageSKU",
+            "notLike": "6*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "cloudera"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "equals": "cloudera-altus-centos-os"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "microsoft-ads"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "linux*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Compute/virtualMachines/osProfile.linuxConfiguration",
+              "exists": "true"
+             },
+             {
+              "field": "Microsoft.Compute/virtualMachines/storageProfile.osDisk.osType",
+              "like": "Linux*"
+             }
+            ]
+           },
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Compute/imagePublisher",
+              "exists": "false"
+             },
+             {
+              "field": "Microsoft.Compute/imagePublisher",
+              "notIn": [
+               "OpenLogic",
+               "RedHat",
+               "credativ",
+               "Suse",
+               "Canonical",
+               "microsoft-dsvm",
+               "cloudera",
+               "microsoft-ads",
+               "center-for-internet-security-inc",
+               "Oracle"
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "allOf": [
+       {
+        "value": "[parameters('IncludeArcMachines')]",
+        "equals": "true"
+       },
+       {
+        "field": "type",
+        "equals": "Microsoft.HybridCompute/machines"
+       },
+       {
+        "field": "Microsoft.HybridCompute/imageOffer",
+        "like": "linux*"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.GuestConfiguration/guestConfigurationAssignments",
+     "name": "LocalUsers_Linux",
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/complianceStatus",
+        "equals": "Compliant"
+       },
+       {
+        "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/parameterHash",
+        "equals": "[base64(concat('[LocalUser]Accounts;Exclude', '=', parameters('Allowed')))]"
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/73db37c4-f180-4b0f-ab2c-8ee96467686b",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "73db37c4-f180-4b0f-ab2c-8ee96467686b"
+}

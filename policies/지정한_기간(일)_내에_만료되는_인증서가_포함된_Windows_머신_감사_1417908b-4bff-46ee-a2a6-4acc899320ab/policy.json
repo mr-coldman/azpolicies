@@ -1,0 +1,287 @@
+{
+ "properties": {
+  "displayName": "지정한 기간(일) 내에 만료되는 인증서가 포함된 Windows 머신 감사",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "정책 할당 범위에 필수 구성 요소를 배포해야 합니다. 자세한 내용은 https://aka.ms/gcpol을 참조하세요. 지정한 저장소의 인증서에 매개 변수로 지정된 기간(일)의 범위를 벗어난 만료 날짜가 있는 경우 머신이 비규격입니다. 또한 정책은 특정 인증서만 확인하거나 특정 인증서를 제외하는 옵션과 만료된 인증서 보고 여부에 대한 옵션을 제공합니다.",
+  "metadata": {
+   "category": "Guest Configuration",
+   "version": "1.0.0",
+   "requiredProviders": [
+    "Microsoft.GuestConfiguration"
+   ],
+   "guestConfiguration": {
+    "name": "CertificateExpiration",
+    "version": "1.*",
+    "configurationParameter": {
+     "CertificateStorePath": "[CertificateStore]CertificateStore1;CertificateStorePath",
+     "ExpirationLimitInDays": "[CertificateStore]CertificateStore1;ExpirationLimitInDays",
+     "CertificateThumbprintsToInclude": "[CertificateStore]CertificateStore1;CertificateThumbprintsToInclude",
+     "CertificateThumbprintsToExclude": "[CertificateStore]CertificateStore1;CertificateThumbprintsToExclude",
+     "IncludeExpiredCertificates": "[CertificateStore]CertificateStore1;IncludeExpiredCertificates"
+    }
+   }
+  },
+  "parameters": {
+   "IncludeArcMachines": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Arc 연결된 서버 포함",
+     "description": "이 옵션을 선택하면 Arc 연결된 머신마다 매달 청구되는 것에 동의하게 됩니다."
+    },
+    "allowedValues": [
+     "true",
+     "false"
+    ],
+    "defaultValue": "false"
+   },
+   "CertificateStorePath": {
+    "type": "String",
+    "metadata": {
+     "displayName": "인증서 저장소 경로",
+     "description": "만료 날짜를 검사할 인증서가 포함된 인증서 저장소 경로입니다. 기본값이 루트 인증서 저장소 경로인 'Cert:'이므로, 머신의 모든 인증서가 검사됩니다. 다른 경로 예: 'Cert:\\LocalMachine', 'Cert:\\LocalMachine\\TrustedPublisher', 'Cert:\\CurrentUser'"
+    },
+    "defaultValue": "Cert:"
+   },
+   "ExpirationLimitInDays": {
+    "type": "String",
+    "metadata": {
+     "displayName": "만료 제한(일)",
+     "description": "만료되는 인증서를 검사하는 기간(일)을 나타내는 정수입니다. 예를 들어 이 값이 30인 경우 다음 30일 이내에 만료되는 모든 인증서로 인해 이 정책이 비준수 상태가 됩니다."
+    },
+    "defaultValue": "30"
+   },
+   "CertificateThumbprintsToInclude": {
+    "type": "String",
+    "metadata": {
+     "displayName": "포함할 인증서 지문",
+     "description": "지정된 경로 아래에서 검사할 세미콜론으로 구분된 인증서 지문 목록입니다. 값이 지정되지 않은 경우 인증서 저장소 경로 아래의 모든 인증서가 검사됩니다. 값이 지정된 경우 지정된 지문이 있는 인증서 외에 인증서는 검사되지 않습니다. 예: THUMBPRINT1;THUMBPRINT2;THUMBPRINT3"
+    },
+    "defaultValue": ""
+   },
+   "CertificateThumbprintsToExclude": {
+    "type": "String",
+    "metadata": {
+     "displayName": "제외할 인증서 지문",
+     "description": "무시할 세미콜론으로 구분된 인증서 지문 목록입니다. 예: THUMBPRINT1; THUMBPRINT2; THUMBPRINT3"
+    },
+    "defaultValue": ""
+   },
+   "IncludeExpiredCertificates": {
+    "type": "String",
+    "metadata": {
+     "displayName": "만료된 인증서 포함",
+     "description": "'true' 또는 'false'여야 합니다. true는 이미 만료된 인증서도 이 정책을 비준수 상태로 만듦을 나타냅니다. false는 만료된 인증서가 무시됨을 나타냅니다."
+    },
+    "allowedValues": [
+     "true",
+     "false"
+    ],
+    "defaultValue": "false"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "anyOf": [
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Compute/virtualMachines"
+       },
+       {
+        "anyOf": [
+         {
+          "field": "Microsoft.Compute/imagePublisher",
+          "in": [
+           "esri",
+           "incredibuild",
+           "MicrosoftDynamicsAX",
+           "MicrosoftSharepoint",
+           "MicrosoftVisualStudio",
+           "MicrosoftWindowsDesktop",
+           "MicrosoftWindowsServerHPCPack"
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "MicrosoftWindowsServer"
+           },
+           {
+            "field": "Microsoft.Compute/imageSKU",
+            "notLike": "2008*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "MicrosoftSQLServer"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "notLike": "SQL2008*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "microsoft-dsvm"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "equals": "dsvm-windows"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "microsoft-ads"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "in": [
+             "standard-data-science-vm",
+             "windows-data-science-vm"
+            ]
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "batch"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "equals": "rendering-windows2016"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "center-for-internet-security-inc"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "cis-windows-server-201*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "pivotal"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "bosh-windows-server*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "cloud-infrastructure-services"
+           },
+           {
+            "field": "Microsoft.Compute/imageOffer",
+            "like": "ad*"
+           }
+          ]
+         },
+         {
+          "allOf": [
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Compute/virtualMachines/osProfile.windowsConfiguration",
+              "exists": "true"
+             },
+             {
+              "field": "Microsoft.Compute/virtualMachines/storageProfile.osDisk.osType",
+              "like": "Windows*"
+             }
+            ]
+           },
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Compute/imageSKU",
+              "exists": "false"
+             },
+             {
+              "allOf": [
+               {
+                "field": "Microsoft.Compute/imageSKU",
+                "notLike": "2008*"
+               },
+               {
+                "field": "Microsoft.Compute/imageOffer",
+                "notLike": "SQL2008*"
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "allOf": [
+       {
+        "value": "[parameters('IncludeArcMachines')]",
+        "equals": "true"
+       },
+       {
+        "field": "type",
+        "equals": "Microsoft.HybridCompute/machines"
+       },
+       {
+        "field": "Microsoft.HybridCompute/imageOffer",
+        "like": "windows*"
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "auditIfNotExists",
+    "details": {
+     "type": "Microsoft.GuestConfiguration/guestConfigurationAssignments",
+     "name": "CertificateExpiration",
+     "existenceCondition": {
+      "allOf": [
+       {
+        "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/complianceStatus",
+        "equals": "Compliant"
+       },
+       {
+        "field": "Microsoft.GuestConfiguration/guestConfigurationAssignments/parameterHash",
+        "equals": "[base64(concat('[CertificateStore]CertificateStore1;CertificateStorePath', '=', parameters('CertificateStorePath'), ',', '[CertificateStore]CertificateStore1;ExpirationLimitInDays', '=', parameters('ExpirationLimitInDays'), ',', '[CertificateStore]CertificateStore1;CertificateThumbprintsToInclude', '=', parameters('CertificateThumbprintsToInclude'), ',', '[CertificateStore]CertificateStore1;CertificateThumbprintsToExclude', '=', parameters('CertificateThumbprintsToExclude'), ',', '[CertificateStore]CertificateStore1;IncludeExpiredCertificates', '=', parameters('IncludeExpiredCertificates')))]"
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/1417908b-4bff-46ee-a2a6-4acc899320ab",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "1417908b-4bff-46ee-a2a6-4acc899320ab"
+}

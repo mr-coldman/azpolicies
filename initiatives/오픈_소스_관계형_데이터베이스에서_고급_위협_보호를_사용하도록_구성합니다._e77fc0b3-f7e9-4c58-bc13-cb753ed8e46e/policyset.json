@@ -1,0 +1,32 @@
+{
+ "properties": {
+  "displayName": "오픈 소스 관계형 데이터베이스에서 고급 위협 보호를 사용하도록 구성합니다.",
+  "policyType": "BuiltIn",
+  "description": "비기본 계층 오픈 소스 관계형 데이터베이스에서 고급 위협 보호를 활성화하여 데이터베이스에 액세스하거나 공격하려는 비정상적이고 잠재적으로 유해한 시도를 나타내는 비정상적인 작업을 탐지합니다. https://aka.ms/AzDforOpenSourceDBsDocu를 참조하세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Security Center"
+  },
+  "parameters": {},
+  "policyDefinitions": [
+   {
+    "policyDefinitionReferenceId": "deployAtpOnAzureDatabaseForPostgreSqlServer",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/db048e65-913c-49f9-bb5f-1084184671d3",
+    "parameters": {}
+   },
+   {
+    "policyDefinitionReferenceId": "deployAtpOnAzureDatabaseForMySqlServer",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/80ed5239-4122-41ed-b54a-6f1fa7552816",
+    "parameters": {}
+   },
+   {
+    "policyDefinitionReferenceId": "deployAdvancedThreatProtectionOnAzureDatabaseForMariaDbServer",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a6cf7411-da9e-49e2-aec0-cba0250eaf8c",
+    "parameters": {}
+   }
+  ]
+ },
+ "id": "/providers/Microsoft.Authorization/policySetDefinitions/e77fc0b3-f7e9-4c58-bc13-cb753ed8e46e",
+ "type": "Microsoft.Authorization/policySetDefinitions",
+ "name": "e77fc0b3-f7e9-4c58-bc13-cb753ed8e46e"
+}

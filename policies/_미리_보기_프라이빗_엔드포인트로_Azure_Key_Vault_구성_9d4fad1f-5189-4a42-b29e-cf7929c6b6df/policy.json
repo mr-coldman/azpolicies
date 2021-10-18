@@ -1,0 +1,161 @@
+{
+ "properties": {
+  "displayName": "[미리 보기]: 프라이빗 엔드포인트로 Azure Key Vault 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "프라이빗 엔드포인트는 원본 또는 대상에서 공용 IP 주소 없이 Azure 서비스에 가상 네트워크를 연결합니다. 프라이빗 엔드포인트를 Key Vault에 매핑하면 데이터 유출 위험이 감소합니다. https://aka.ms/akvprivatelink에서 프라이빗 링크에 관해 자세히 알아보세요.",
+  "metadata": {
+   "version": "1.0.0-preview",
+   "category": "Key Vault",
+   "preview": true
+  },
+  "parameters": {
+   "privateEndpointSubnetId": {
+    "type": "String",
+    "metadata": {
+     "displayName": "프라이빗 엔드포인트 서브넷 ID",
+     "description": "프라이빗 엔드포인트 네트워크 정책이 있는 서브넷을 사용할 수 없습니다.",
+     "strongType": "Microsoft.Network/virtualNetworks/subnets"
+    }
+   },
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "DeployIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "DeployIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.KeyVault/vaults"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.KeyVault/vaults/privateEndpointConnections",
+     "existenceCondition": {
+      "field": "Microsoft.KeyVault/vaults/privateEndpointConnections/privateLinkServiceConnectionState.status",
+      "equals": "Approved"
+     },
+     "roleDefinitionIds": [
+      "/providers/Microsoft.Authorization/roleDefinitions/4d97b98b-1d4f-4787-a291-c67834d212e7",
+      "/providers/Microsoft.Authorization/roleDefinitions/f25e0fa2-a7c8-4377-a976-54943a77a395"
+     ],
+     "deployment": {
+      "properties": {
+       "mode": "incremental",
+       "parameters": {
+        "name": {
+         "value": "[field('name')]"
+        },
+        "serviceId": {
+         "value": "[field('id')]"
+        },
+        "privateEndpointSubnetId": {
+         "value": "[parameters('privateEndpointSubnetId')]"
+        }
+       },
+       "template": {
+        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "name": {
+          "type": "string"
+         },
+         "serviceId": {
+          "type": "string"
+         },
+         "privateEndpointSubnetId": {
+          "type": "string"
+         }
+        },
+        "variables": {
+         "privateEndpointName": "[concat('pe-',substring(parameters('name'),0,min(length(parameters('name')),50)),'-',uniquestring(deployment().name))]"
+        },
+        "resources": [
+         {
+          "type": "Microsoft.Resources/deployments",
+          "name": "[variables('privateEndpointName')]",
+          "apiVersion": "2020-06-01",
+          "properties": {
+           "mode": "Incremental",
+           "expressionEvaluationOptions": {
+            "scope": "inner"
+           },
+           "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "parameters": {
+             "serviceId": {
+              "type": "string"
+             },
+             "privateEndpointSubnetId": {
+              "type": "string"
+             },
+             "subnetLocation": {
+              "type": "string"
+             }
+            },
+            "variables": {
+             "privateEndpointName": "[deployment().name]"
+            },
+            "resources": [
+             {
+              "name": "[variables('privateEndpointName')]",
+              "type": "Microsoft.Network/privateEndpoints",
+              "apiVersion": "2020-07-01",
+              "location": "[parameters('subnetLocation')]",
+              "tags": {},
+              "properties": {
+               "subnet": {
+                "id": "[parameters('privateEndpointSubnetId')]"
+               },
+               "privateLinkServiceConnections": [
+                {
+                 "name": "[variables('privateEndpointName')]",
+                 "properties": {
+                  "privateLinkServiceId": "[parameters('serviceId')]",
+                  "groupIds": [
+                   "vault"
+                  ],
+                  "requestMessage": "autoapprove"
+                 }
+                }
+               ],
+               "manualPrivateLinkServiceConnections": []
+              }
+             }
+            ]
+           },
+           "parameters": {
+            "serviceId": {
+             "value": "[parameters('serviceId')]"
+            },
+            "privateEndpointSubnetId": {
+             "value": "[parameters('privateEndpointSubnetId')]"
+            },
+            "subnetLocation": {
+             "value": "[reference(first(take(split(parameters('privateEndpointSubnetId'),'/subnets'),1)),'2020-07-01','Full').location]"
+            }
+           }
+          }
+         }
+        ]
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/9d4fad1f-5189-4a42-b29e-cf7929c6b6df",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "9d4fad1f-5189-4a42-b29e-cf7929c6b6df"
+}

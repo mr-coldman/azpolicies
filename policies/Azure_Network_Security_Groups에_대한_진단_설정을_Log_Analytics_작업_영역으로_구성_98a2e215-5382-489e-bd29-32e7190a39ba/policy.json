@@ -1,0 +1,164 @@
+{
+ "properties": {
+  "displayName": "Azure Network Security Groups에 대한 진단 설정을 Log Analytics 작업 영역으로 구성",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "Azure 네트워크 보안 그룹에 진단 설정을 배포하여 리소스 로그를 Log Analytics 작업 영역으로 스트리밍합니다.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Network"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "정책 실행을 사용하거나 사용하지 않도록 설정"
+    },
+    "allowedValues": [
+     "DeployIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "DeployIfNotExists"
+   },
+   "diagnosticsSettingNameToUse": {
+    "type": "String",
+    "metadata": {
+     "displayName": "설정 이름",
+     "description": "진단 설정에 대한 정책의 이름입니다."
+    },
+    "defaultValue": "setByPolicy"
+   },
+   "logAnalytics": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Log Analytics 작업 영역",
+     "description": "드롭다운 목록에서 Log Analytics 작업 영역 선택",
+     "strongType": "omsWorkspace",
+     "assignPermissions": true
+    }
+   },
+   "NetworkSecurityGroupEventEnabled": {
+    "type": "String",
+    "metadata": {
+     "displayName": "NetworkSecurityGroupEvent - Enabled",
+     "description": "NetworkSecurityGroupEvent 로그를 Log Analytics 작업 영역으로 스트리밍할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "True"
+   },
+   "NetworkSecurityGroupRuleCounterEnabled": {
+    "type": "String",
+    "metadata": {
+     "displayName": "NetworkSecurityGroupRuleCounter - 사용",
+     "description": "NetworkSecurityGroupRuleCounter 로그를 Log Analytics 작업 영역으로 스트리밍할지 여부 - True 또는 False"
+    },
+    "allowedValues": [
+     "True",
+     "False"
+    ],
+    "defaultValue": "True"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "equals": "Microsoft.Network/networkSecurityGroups"
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Insights/diagnosticSettings",
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+      "/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"
+     ],
+     "existenceCondition": {
+      "field": "Microsoft.Insights/diagnosticSettings/workspaceId",
+      "equals": "[parameters('logAnalytics')]"
+     },
+     "deployment": {
+      "properties": {
+       "mode": "incremental",
+       "template": {
+        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+         "diagnosticsSettingNameToUse": {
+          "type": "string"
+         },
+         "resourceName": {
+          "type": "string"
+         },
+         "logAnalytics": {
+          "type": "string"
+         },
+         "location": {
+          "type": "string"
+         },
+         "NetworkSecurityGroupEventEnabled": {
+          "type": "string"
+         },
+         "NetworkSecurityGroupRuleCounterEnabled": {
+          "type": "string"
+         }
+        },
+        "variables": {},
+        "resources": [
+         {
+          "type": "Microsoft.Network/networkSecurityGroups/providers/diagnosticSettings",
+          "apiVersion": "2017-05-01-preview",
+          "name": "[concat(parameters('resourceName'), '/', 'Microsoft.Insights/', parameters('diagnosticsSettingNameToUse'))]",
+          "location": "[parameters('location')]",
+          "dependsOn": [],
+          "properties": {
+           "workspaceId": "[parameters('logAnalytics')]",
+           "metrics": [],
+           "logs": [
+            {
+             "category": "NetworkSecurityGroupEvent",
+             "enabled": "[parameters('NetworkSecurityGroupEventEnabled')]"
+            },
+            {
+             "category": "NetworkSecurityGroupRuleCounter",
+             "enabled": "[parameters('NetworkSecurityGroupRuleCounterEnabled')]"
+            }
+           ]
+          }
+         }
+        ],
+        "outputs": {}
+       },
+       "parameters": {
+        "diagnosticsSettingNameToUse": {
+         "value": "[parameters('diagnosticsSettingNameToUse')]"
+        },
+        "logAnalytics": {
+         "value": "[parameters('logAnalytics')]"
+        },
+        "location": {
+         "value": "[field('location')]"
+        },
+        "resourceName": {
+         "value": "[field('name')]"
+        },
+        "NetworkSecurityGroupEventEnabled": {
+         "value": "[parameters('NetworkSecurityGroupEventEnabled')]"
+        },
+        "NetworkSecurityGroupRuleCounterEnabled": {
+         "value": "[parameters('NetworkSecurityGroupRuleCounterEnabled')]"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/98a2e215-5382-489e-bd29-32e7190a39ba",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "98a2e215-5382-489e-bd29-32e7190a39ba"
+}

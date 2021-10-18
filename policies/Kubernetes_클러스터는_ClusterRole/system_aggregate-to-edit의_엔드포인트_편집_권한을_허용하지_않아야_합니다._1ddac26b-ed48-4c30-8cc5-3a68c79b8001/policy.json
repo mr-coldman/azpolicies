@@ -1,0 +1,77 @@
+{
+ "properties": {
+  "displayName": "Kubernetes 클러스터는 ClusterRole/system:aggregate-to-edit의 엔드포인트 편집 권한을 허용하지 않아야 합니다.",
+  "policyType": "BuiltIn",
+  "mode": "Microsoft.Kubernetes.Data",
+  "description": "ClusterRole/system:aggregate-to-edit는 CVE-2021-25740으로 인해 엔드포인트 편집 권한을 허용하지 않아야 합니다. Endpoint 및 EndpointSlice 권한은 교차 네임스페이스 전달을 허용합니다(https://github.com/kubernetes/kubernetes/issues/103675). 이 정책은 일반적으로 Kubernetes Service(AKS)와 AKS Engine 및 Azure Arc 지원 Kubernetes에 대한 미리 보기에 대해 사용할 수 있습니다. 자세한 내용은 https://aka.ms/kubepolicydoc을 참조하세요.",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Kubernetes"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "효과",
+     "description": "'감사'는 비준수 리소스를 만들거나 업데이트하도록 허용하지만 리소스에 비준수로 플래그 지정합니다. '사용 안 함'은 정책을 끕니다."
+    },
+    "allowedValues": [
+     "Audit",
+     "Disabled"
+    ],
+    "defaultValue": "Audit"
+   },
+   "excludedNamespaces": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "네임스페이스 제외",
+     "description": "정책 평가에서 제외할 Kubernetes 네임스페이스의 목록입니다."
+    },
+    "defaultValue": [
+     "kube-system",
+     "gatekeeper-system",
+     "azure-arc"
+    ]
+   },
+   "namespaces": {
+    "type": "Array",
+    "metadata": {
+     "displayName": "네임스페이스 포함 사항",
+     "description": "정책 평가에만 포함할 Kubernetes 네임스페이스의 목록입니다. 빈 목록은 정책이 모든 네임스페이스의 모든 리소스에 적용됨을 의미합니다."
+    },
+    "defaultValue": []
+   },
+   "labelSelector": {
+    "type": "Object",
+    "metadata": {
+     "displayName": "Kubernetes 레이블 선택기",
+     "description": "정책 평가를 위해 Kubernetes 리소스를 선택하는 레이블 쿼리입니다. 빈 레이블 선택기는 모든 Kubernetes 리소스와 일치합니다."
+    },
+    "defaultValue": {}
+   }
+  },
+  "policyRule": {
+   "if": {
+    "field": "type",
+    "in": [
+     "AKS Engine",
+     "Microsoft.Kubernetes/connectedClusters",
+     "Microsoft.ContainerService/managedClusters"
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "constraintTemplate": "https://store.policy.core.windows.net/kubernetes/block-endpoint-edit-default-role/v1/template.yaml",
+     "constraint": "https://store.policy.core.windows.net/kubernetes/block-endpoint-edit-default-role/v1/constraint.yaml",
+     "excludedNamespaces": "[parameters('excludedNamespaces')]",
+     "namespaces": "[parameters('namespaces')]",
+     "labelSelector": "[parameters('labelSelector')]"
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/1ddac26b-ed48-4c30-8cc5-3a68c79b8001",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "1ddac26b-ed48-4c30-8cc5-3a68c79b8001"
+}
